@@ -29,7 +29,7 @@ public class HttpClient {
 			fullUrl = url;
 		}
 
-		System.out.println(fullUrl);
+		System.setProperty("jsse.enableSNIExtension", "false"); //解决javax.net.ssl.SSLProtocolException问题
 		String result = "";
 		BufferedReader in = null;
 		try {
