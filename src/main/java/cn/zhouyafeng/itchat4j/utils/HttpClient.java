@@ -36,11 +36,13 @@ public class HttpClient {
 			HttpURLConnection connection = null;
 			if (urlConnection instanceof HttpURLConnection) {
 				connection = (HttpURLConnection) urlConnection;
+				connection.setRequestProperty("User-Agent", Config.USER_AGENT);
 			} else {
 				System.out.println("请输入 URL 地址");
 				return null;
 			}
 			in = connection.getInputStream();
+			System.out.println(in.available());
 
 		} catch (IOException e) {
 			e.printStackTrace();
