@@ -81,15 +81,11 @@ public class Wechat {
 		InputStream in = httpClient.doGet(qrUrl, null);
 		OutputStream out = null;
 		try {
-			int bytesWritten = 0;
 			int byteCount = 0;
-			out = new FileOutputStream("D://QR.jpg");
-			byte[] tmp = new byte[1024 * 16];
-			byte[] bytes = new byte[1024 * 40];
-			while ((byteCount = in.read(tmp)) != -1) {
-				out.write(bytes, bytesWritten, byteCount);
-				bytesWritten += byteCount;
-
+			out = new FileOutputStream("D://QR.jpg", true);
+			byte[] bytes = new byte[1024];
+			while ((byteCount = in.read(bytes)) != -1) {
+				out.write(bytes, 0, byteCount);
 			}
 			in.close();
 			out.flush();

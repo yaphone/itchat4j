@@ -42,7 +42,6 @@ public class HttpClient {
 				return null;
 			}
 			in = connection.getInputStream();
-			System.out.println(in.available());
 
 		} catch (IOException e) {
 			e.printStackTrace();
