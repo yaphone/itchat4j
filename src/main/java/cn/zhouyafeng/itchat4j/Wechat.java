@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import cn.zhouyafeng.itchat4j.utils.Config;
 import cn.zhouyafeng.itchat4j.utils.HttpClient;
@@ -26,6 +25,7 @@ public class Wechat {
 	private HttpClient httpClient = new HttpClient();
 	private static Logger logger = Logger.getLogger("Wechat");
 	private boolean isLoginIn = false;
+	private Map<String, Object> loginInfo = new HashMap<String, Object>();
 
 	Wechat() {
 		getQRuuid();
@@ -40,12 +40,13 @@ public class Wechat {
 			for (int count = 0; count < 10; count++) {
 				logger.info("Getting uuid of QR code.");
 				while (getQRuuid() == null) {
-					Thread.sleep(1);
+					Thread.sleep(1000);
 				}
 				logger.info("Downloading QR code.");
 				Boolean qrStarge = getQR();
 				if (qrStarge) { // 获取登陆二维码图片成功
 					logger.info("Get QR success");
+					break;
 				} else if (count == 10) {
 					logger.info("Failed to get QR code, please restart the program.");
 					System.exit(0);
@@ -53,8 +54,20 @@ public class Wechat {
 			}
 			logger.info("Please scan the QR code to log in.");
 			while (!isLoginIn) {
+				String status = checkLogin();
+				if (status.equals("200")) {
+					isLoginIn = true;
+					System.out.println("登陆成功");
+				} else if (status.equals("201")) {
+					logger.info("Please press confirm on your phone.");
+					isLoginIn = false;
+				} else {
+					break;
+				}
 			}
+			break;
 		}
+		return 0;
 	}
 
 	public String getQRuuid() {
@@ -76,8 +89,7 @@ public class Wechat {
 				e.printStackTrace();
 			}
 			String regEx = "window.QRLogin.code = (\\d+); window.QRLogin.uuid = (\\S+?);";
-			Pattern pattern = Pattern.compile(regEx);
-			Matcher matcher = pattern.matcher(result);
+			Matcher matcher = Tools.getMatcher(regEx, result);
 			if (matcher.find()) {
 				if ((matcher.group(1).equals("200"))) {
 					String orgUuid = matcher.group(2); // "Aakzcf8mLQ=="
@@ -146,20 +158,26 @@ public class Wechat {
 			e.printStackTrace();
 		}
 		String regEx = "window.code=(\\d+)";
-		Pattern pattern = Pattern.compile(regEx);
-		Matcher matcher = pattern.matcher(result);
+		Matcher matcher = Tools.getMatcher(regEx, result);
 		if (matcher.find()) {
-			if (matcher.group(1).equals(200)) { // 已登陆
-				processLoginInfo();
+			if (matcher.group(1).equals("200")) { // 已登陆
+				processLoginInfo(result);
 				return "200";
-			} else if (matcher.group(1).equals(201)) { // 已扫描，未登陆
+			} else if (matcher.group(1).equals("201")) { // 已扫描，未登陆
 				return "201";
 			}
 		}
 		return "400";
 	}
 
-	public void processLoginInfo() {
-		// TODO
+	public void processLoginInfo(String result) {
+		String regEx = "window.redirect_uri=\"(\\S+);\"";
+		Matcher matcher = Tools.getMatcher(regEx, result);
+		if (matcher.find()) {
+			String url = matcher.group(1);
+			loginInfo.put("url", url);
+			// TODO
+		}
+
 	}
 }
