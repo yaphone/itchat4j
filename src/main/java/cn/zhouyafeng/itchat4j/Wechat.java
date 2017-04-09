@@ -7,11 +7,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Random;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
+
+import org.w3c.dom.Document;
 
 import cn.zhouyafeng.itchat4j.utils.Config;
 import cn.zhouyafeng.itchat4j.utils.HttpClient;
@@ -21,7 +28,6 @@ public class Wechat {
 	private boolean alive = false;
 	private String uuid = null;
 	private String baseUrl = Config.BASE_URL;
-	private Wechat instance = null;
 	private HttpClient httpClient = new HttpClient();
 	private static Logger logger = Logger.getLogger("Wechat");
 	private boolean isLoginIn = false;
@@ -65,8 +71,11 @@ public class Wechat {
 					break;
 				}
 			}
-			break;
+			if (isLoginIn)
+				break;
+			logger.info("Log in time out, reloading QR code");
 		}
+		// TODO web_init()
 		return 0;
 	}
 
@@ -170,14 +179,131 @@ public class Wechat {
 		return "400";
 	}
 
+	/**
+	 * 处理登陆信息
+	 * 
+	 * @author Email:zhouyaphone@163.com
+	 * @date 2017年4月9日 下午12:16:26
+	 * @param result
+	 */
 	public void processLoginInfo(String result) {
-		String regEx = "window.redirect_uri=\"(\\S+);\"";
+		String regEx = "window.redirect_uri=\"(\\S+)\";";
 		Matcher matcher = Tools.getMatcher(regEx, result);
 		if (matcher.find()) {
-			String url = matcher.group(1);
+			String originalUrl = matcher.group(1);
+			String url = originalUrl.substring(0, originalUrl.lastIndexOf('/')); // https://wx2.qq.com/cgi-bin/mmwebwx-bin
 			loginInfo.put("url", url);
-			// TODO
-		}
+			Map<String, List<String>> possibleUrlMap = getPossibleUrlMap();
+			Iterator<Entry<String, List<String>>> iterator = possibleUrlMap.entrySet().iterator();
+			while (iterator.hasNext()) {
+				Map.Entry<String, List<String>> entry = iterator.next();
+				String indexUrl = entry.getKey();
+				String fileUrl = "https://" + entry.getValue().get(0) + "/cgi-bin/mmwebwx-bin";
+				String syncUrl = "https://" + entry.getValue().get(1) + "/cgi-bin/mmwebwx-bin";
+				// System.out.println(fileUrl);
+				// System.out.println(syncUrl);
+				if (loginInfo.get("url").toString().contains(indexUrl)) {
+					loginInfo.put("fileUrl", fileUrl);
+					loginInfo.put("syncUrl", syncUrl);
+					break;
+				}
+			}
+			if (loginInfo.get("fileUrl") == null && loginInfo.get("syncUrl") == null) {
+				loginInfo.put("fileUrl", url);
+				loginInfo.put("syncUrl", url);
+			}
+			loginInfo.put("deviceid", "e" + String.valueOf(new Random().nextLong()).substring(1, 16)); // 生成15位随机数
+			loginInfo.put("BaseRequest", new ArrayList<String>());
+			BufferedReader br = new BufferedReader(new InputStreamReader(httpClient.doGet(originalUrl, null)));
+			String text = "";
+			String current;
+			try {
+				while ((current = br.readLine()) != null) {
+					text += current;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			Document doc = Tools.xmlParser(text);
+			Map<String, String> baseRequest = new HashMap<String, String>();
+			if (doc != null) {
+				loginInfo.put("skey", doc.getElementsByTagName("skey").item(0).getFirstChild().getNodeValue());
+				baseRequest.put("skey", (String) loginInfo.get("skey"));
+				loginInfo.put("wxsid", doc.getElementsByTagName("wxsid").item(0).getFirstChild().getNodeValue());
+				baseRequest.put("wxsid", (String) loginInfo.get("wxsid"));
+				loginInfo.put("wxuin", doc.getElementsByTagName("wxuin").item(0).getFirstChild().getNodeValue());
+				baseRequest.put("wxuin", (String) loginInfo.get("wxuin"));
+				loginInfo.put("pass_ticket",
+						doc.getElementsByTagName("pass_ticket").item(0).getFirstChild().getNodeValue());
+				baseRequest.put("pass_ticket", (String) loginInfo.get("pass_ticket"));
+			}
 
+		}
 	}
+
+	Map<String, List<String>> getPossibleUrlMap() {
+		Map<String, List<String>> possibleUrlMap = new HashMap<String, List<String>>();
+		possibleUrlMap.put("wx2.qq.com", new ArrayList<String>() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			{
+				add("file.wx2.qq.com");
+				add("webpush.wx2.qq.com");
+			}
+		});
+		possibleUrlMap.put("wx8.qq.com", new ArrayList<String>() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			{
+				add("file.wx8.qq.com");
+				add("webpush.wx8.qq.com");
+			}
+		});
+		possibleUrlMap.put("qq.com", new ArrayList<String>() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			{
+				add("file.wx.qq.com");
+				add("webpush.wx.qq.com");
+			}
+		});
+		possibleUrlMap.put("web2.wechat.com", new ArrayList<String>() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			{
+				add("file.web2.wechat.com");
+				add("webpush.web2.wechat.com");
+			}
+		});
+		possibleUrlMap.put("wechat.com", new ArrayList<String>() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			{
+				add("file.web.wechat.com");
+				add("webpush.web.wechat.com");
+			}
+		});
+		return possibleUrlMap;
+	}
+
+	Map<String, String> webInit() {
+		String url = loginInfo.get("url") + String.valueOf(new Date().getTime());
+		return null;
+	}
+
 }
