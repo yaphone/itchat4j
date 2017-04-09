@@ -75,7 +75,7 @@ public class Wechat {
 				break;
 			logger.info("Log in time out, reloading QR code");
 		}
-		// TODO web_init()
+		this.webInit();
 		return 0;
 	}
 
@@ -228,14 +228,15 @@ public class Wechat {
 			Map<String, String> baseRequest = new HashMap<String, String>();
 			if (doc != null) {
 				loginInfo.put("skey", doc.getElementsByTagName("skey").item(0).getFirstChild().getNodeValue());
-				baseRequest.put("skey", (String) loginInfo.get("skey"));
+				baseRequest.put("Skey", (String) loginInfo.get("skey"));
 				loginInfo.put("wxsid", doc.getElementsByTagName("wxsid").item(0).getFirstChild().getNodeValue());
-				baseRequest.put("wxsid", (String) loginInfo.get("wxsid"));
+				baseRequest.put("Sid", (String) loginInfo.get("wxsid"));
 				loginInfo.put("wxuin", doc.getElementsByTagName("wxuin").item(0).getFirstChild().getNodeValue());
-				baseRequest.put("wxuin", (String) loginInfo.get("wxuin"));
+				baseRequest.put("Uin", (String) loginInfo.get("wxuin"));
 				loginInfo.put("pass_ticket",
 						doc.getElementsByTagName("pass_ticket").item(0).getFirstChild().getNodeValue());
-				baseRequest.put("pass_ticket", (String) loginInfo.get("pass_ticket"));
+				baseRequest.put("DeviceID", (String) loginInfo.get("pass_ticket"));
+				loginInfo.put("baseRequest", baseRequest);
 			}
 
 		}
@@ -301,9 +302,17 @@ public class Wechat {
 		return possibleUrlMap;
 	}
 
-	Map<String, String> webInit() {
+	boolean webInit() {
 		String url = loginInfo.get("url") + String.valueOf(new Date().getTime());
-		return null;
+		Map<String, String> paramMap = (Map<String, String>) loginInfo.get("baseRequest");
+		String params = String.format("{\"BaseRequest\":{\"Uin\":%s, \"Skey\":%s, \"DeviceID\":%s, \"Sid\":%s}}",
+				paramMap.get("Uin"), paramMap.get("Skey"), paramMap.get("DeviceID"), paramMap.get("Sid"));
+		// {"BaseRequest": {"Uin": "264833395", "Skey":
+		// "@crypt_6b6c25c8_dddc7f7439208530c2372055ae30983f", "DeviceID":
+		// "e%2Fqe6nMDCwZvxF%2F8vfwx0W8R5sB%2FXFyGJBKZlvgGnE0%3D", "Sid":
+		// "akzVqrw0haClkH0C"}}
+		BufferedReader br = new BufferedReader(new InputStreamReader(httpClient.doPost(url, params)));
+		return false;
 	}
 
 }
