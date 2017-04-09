@@ -18,17 +18,24 @@ import java.util.Random;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 
 import cn.zhouyafeng.itchat4j.utils.Config;
-import cn.zhouyafeng.itchat4j.utils.HttpClient;
+import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
 import cn.zhouyafeng.itchat4j.utils.Tools;
 
 public class Wechat {
 	private boolean alive = false;
 	private String uuid = null;
 	private String baseUrl = Config.BASE_URL;
-	private HttpClient httpClient = new HttpClient();
+	private MyHttpClient myHttpClient = new MyHttpClient();
+	private HttpClient httpClient = HttpClientBuilder.create().build();
 	private static Logger logger = Logger.getLogger("Wechat");
 	private boolean isLoginIn = false;
 	private Map<String, Object> loginInfo = new HashMap<String, Object>();
@@ -85,7 +92,7 @@ public class Wechat {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("appid", "wx782c26e4c19acffb");
 		params.put("fun", "new");
-		InputStream in = httpClient.doGet(uuidUrl, params);
+		InputStream in = myHttpClient.doGet(uuidUrl, params);
 		if (in != null) {
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			String result = "";
@@ -118,7 +125,7 @@ public class Wechat {
 	 */
 	public boolean getQR() {
 		String qrUrl = baseUrl + "/qrcode/" + this.uuid;
-		InputStream in = httpClient.doGet(qrUrl, null);
+		InputStream in = myHttpClient.doGet(qrUrl, null);
 		String qrPath = Config.getLocalPath() + File.separator + "QR.jpg";
 		OutputStream out = null;
 		try {
@@ -156,7 +163,7 @@ public class Wechat {
 		params.put("tip", "0");
 		params.put("r", String.valueOf(localTime / 1579L));
 		params.put("_", String.valueOf(localTime));
-		BufferedReader br = new BufferedReader(new InputStreamReader(httpClient.doGet(checkUrl, params)));
+		BufferedReader br = new BufferedReader(new InputStreamReader(myHttpClient.doGet(checkUrl, params)));
 		String result = "";
 		String current;
 		try {
@@ -214,7 +221,7 @@ public class Wechat {
 			}
 			loginInfo.put("deviceid", "e" + String.valueOf(new Random().nextLong()).substring(1, 16)); // 生成15位随机数
 			loginInfo.put("BaseRequest", new ArrayList<String>());
-			BufferedReader br = new BufferedReader(new InputStreamReader(httpClient.doGet(originalUrl, null)));
+			BufferedReader br = new BufferedReader(new InputStreamReader(myHttpClient.doGet(originalUrl, null)));
 			String text = "";
 			String current;
 			try {
@@ -305,13 +312,28 @@ public class Wechat {
 	boolean webInit() {
 		String url = loginInfo.get("url") + String.valueOf(new Date().getTime());
 		Map<String, String> paramMap = (Map<String, String>) loginInfo.get("baseRequest");
-		String params = String.format("{\"BaseRequest\":{\"Uin\":%s, \"Skey\":%s, \"DeviceID\":%s, \"Sid\":%s}}",
+		String paramsStr = String.format(
+				"{\"BaseRequest\"={\"Uin\":\"%s\", \"Skey\":\"%s\", \"DeviceID\":\"%s\", \"Sid\":\"%s\"}}",
 				paramMap.get("Uin"), paramMap.get("Skey"), paramMap.get("DeviceID"), paramMap.get("Sid"));
+		System.out.println(paramsStr);
 		// {"BaseRequest": {"Uin": "264833395", "Skey":
 		// "@crypt_6b6c25c8_dddc7f7439208530c2372055ae30983f", "DeviceID":
 		// "e%2Fqe6nMDCwZvxF%2F8vfwx0W8R5sB%2FXFyGJBKZlvgGnE0%3D", "Sid":
 		// "akzVqrw0haClkH0C"}}
-		BufferedReader br = new BufferedReader(new InputStreamReader(httpClient.doPost(url, params)));
+		HttpPost request = new HttpPost(url);
+		try {
+			StringEntity params = new StringEntity(paramsStr);
+			request.addHeader("content-type", "application/x-www-form-urlencoded");
+			request.setHeader("User-Agent", Config.USER_AGENT);
+			request.setEntity(params);
+			HttpResponse response = httpClient.execute(request);
+			System.out.println(EntityUtils.toString(response.getEntity()));
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return false;
 	}
 

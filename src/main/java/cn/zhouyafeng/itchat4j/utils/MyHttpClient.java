@@ -16,7 +16,7 @@ import java.util.Map;
  * @version 1.0
  *
  */
-public class HttpClient {
+public class MyHttpClient {
 	String fullUrl = "";
 	StringBuffer sb = new StringBuffer();
 
