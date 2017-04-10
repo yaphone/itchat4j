@@ -310,12 +310,19 @@ public class Wechat {
 	}
 
 	boolean webInit() {
-		String url = loginInfo.get("url") + String.valueOf(new Date().getTime());
-		Map<String, String> paramMap = (Map<String, String>) loginInfo.get("baseRequest");
+		String url = loginInfo.get("url") + "/webwxinit?&r=" + String.valueOf(new Date().getTime());
+		System.out.println(url);
+		Map<String, String> baseRequest = (Map<String, String>) loginInfo.get("baseRequest");
+		// Map<String, Map<String, String>> paramMap =
+		// loginInfo.get("BaseRequest");
+		// paramMap.put("BaseRequest", baseRequest);
+		// String paramsStr = JSON.toJSONString(paramMap);
+		// System.out.println(JSON.toJSONString(paramMap));
 		String paramsStr = String.format(
-				"{\"BaseRequest\"={\"Uin\":\"%s\", \"Skey\":\"%s\", \"DeviceID\":\"%s\", \"Sid\":\"%s\"}}",
-				paramMap.get("Uin"), paramMap.get("Skey"), paramMap.get("DeviceID"), paramMap.get("Sid"));
+				"{\"BaseRequest\":{\"Uin\":\"%s\", \"Skey\":\"%s\",\"DeviceID\":\"%s\", \"Sid\":\"%s\"}}",
+				baseRequest.get("Uin"), baseRequest.get("Skey"), baseRequest.get("DeviceID"), baseRequest.get("Sid"));
 		System.out.println(paramsStr);
+		// System.out.println(paramsStr);
 		// {"BaseRequest": {"Uin": "264833395", "Skey":
 		// "@crypt_6b6c25c8_dddc7f7439208530c2372055ae30983f", "DeviceID":
 		// "e%2Fqe6nMDCwZvxF%2F8vfwx0W8R5sB%2FXFyGJBKZlvgGnE0%3D", "Sid":
@@ -323,9 +330,8 @@ public class Wechat {
 		HttpPost request = new HttpPost(url);
 		try {
 			StringEntity params = new StringEntity(paramsStr);
-			request.addHeader("content-type", "application/x-www-form-urlencoded");
+			request.setHeader("Content-type", "application/json; charset=utf-8");
 			request.setHeader("User-Agent", Config.USER_AGENT);
-			request.setEntity(params);
 			HttpResponse response = httpClient.execute(request);
 			System.out.println(EntityUtils.toString(response.getEntity()));
 
