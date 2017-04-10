@@ -18,11 +18,18 @@ import java.util.Random;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
+import org.apache.http.Consts;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.http.ParseException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 
@@ -35,13 +42,14 @@ public class Wechat {
 	private String uuid = null;
 	private String baseUrl = Config.BASE_URL;
 	private MyHttpClient myHttpClient = new MyHttpClient();
-	private HttpClient httpClient = HttpClientBuilder.create().build();
+	private CloseableHttpClient httpClient = HttpClients.createDefault();
 	private static Logger logger = Logger.getLogger("Wechat");
 	private boolean isLoginIn = false;
 	private Map<String, Object> loginInfo = new HashMap<String, Object>();
 
 	Wechat() {
-		getQRuuid();
+		System.setProperty("jsse.enableSNIExtension", "false");
+		// getQRuuid();
 	}
 
 	public int login() throws InterruptedException {
@@ -86,34 +94,67 @@ public class Wechat {
 		return 0;
 	}
 
+	/**
+	 * 生成UUID
+	 * 
+	 * @author Email:zhouyaphone@163.com
+	 * @date 2017年4月11日 上午12:51:29
+	 * @return
+	 */
 	public String getQRuuid() {
-		this.uuid = null;
+		String result = "";
 		String uuidUrl = baseUrl + "/jslogin";
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("appid", "wx782c26e4c19acffb");
-		params.put("fun", "new");
-		InputStream in = myHttpClient.doGet(uuidUrl, params);
-		if (in != null) {
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
-			String result = "";
-			String current;
-			try {
-				while ((current = br.readLine()) != null) {
-					result += current;
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
+		List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+		params.add(new BasicNameValuePair("appid", "wx782c26e4c19acffb"));
+		params.add(new BasicNameValuePair("fun", "new"));
+		try {
+			String paramStr = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
+			HttpGet httpGet = new HttpGet(uuidUrl + "?" + paramStr);
+			CloseableHttpResponse response = httpClient.execute(httpGet);
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+				result = EntityUtils.toString(entity);
 			}
-			String regEx = "window.QRLogin.code = (\\d+); window.QRLogin.uuid = (\\S+?);";
-			Matcher matcher = Tools.getMatcher(regEx, result);
-			if (matcher.find()) {
-				if ((matcher.group(1).equals("200"))) {
-					String orgUuid = matcher.group(2); // "Aakzcf8mLQ=="
-					uuid = orgUuid.substring(1, orgUuid.length() - 1); // 去掉双引号
-				}
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String regEx = "window.QRLogin.code = (\\d+); window.QRLogin.uuid = \"(\\S+?)\";";
+		Matcher matcher = Tools.getMatcher(regEx, result);
+		if (matcher.find()) {
+			if ((matcher.group(1).equals("200"))) {
+				uuid = matcher.group(2);//
+				System.out.println(uuid);
 			}
 		}
 		return uuid;
+	}
+
+	public boolean getQR() {
+		String qrPath = Config.getLocalPath() + File.separator + "QR.jpg";
+		String qrUrl = baseUrl + "/qrcode/" + this.uuid;
+		HttpGet httpGet = new HttpGet(qrUrl);
+		try {
+			CloseableHttpResponse response = httpClient.execute(httpGet);
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+				OutputStream out = new FileOutputStream(qrPath);
+				byte[] bytes = EntityUtils.toByteArray(entity);
+				out.write(bytes);
+				out.flush();
+				out.close();
+				Tools.printQr(qrPath);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -123,7 +164,7 @@ public class Wechat {
 	 * @date 2017年4月8日 下午9:55:22
 	 * @return
 	 */
-	public boolean getQR() {
+	public boolean getQR2() {
 		String qrUrl = baseUrl + "/qrcode/" + this.uuid;
 		InputStream in = myHttpClient.doGet(qrUrl, null);
 		String qrPath = Config.getLocalPath() + File.separator + "QR.jpg";

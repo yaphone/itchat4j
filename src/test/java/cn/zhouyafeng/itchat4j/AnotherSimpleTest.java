@@ -1,6 +1,8 @@
 package cn.zhouyafeng.itchat4j;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -30,5 +32,7 @@ public class AnotherSimpleTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		List<Integer> list = new ArrayList<Integer>();
+		list.add(1);
 	}
 }
