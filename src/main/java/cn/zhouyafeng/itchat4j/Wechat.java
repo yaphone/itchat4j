@@ -27,27 +27,22 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
-import org.apache.http.impl.client.DefaultRedirectStrategy;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import cn.zhouyafeng.itchat4j.utils.Config;
-import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
 import cn.zhouyafeng.itchat4j.utils.Tools;
 
 public class Wechat {
 	private boolean alive = false;
 	private String uuid = null;
 	private String baseUrl = Config.BASE_URL;
-	private MyHttpClient myHttpClient = new MyHttpClient();
 	private CloseableHttpClient httpClient = HttpClients.createDefault();
 	private static Logger logger = Logger.getLogger("Wechat");
 	private boolean isLoginIn = false;
@@ -58,15 +53,7 @@ public class Wechat {
 	public static RequestConfig requestConfig = null;
 
 	Wechat() {
-		context = HttpClientContext.create();
-		cookieStore = new BasicCookieStore();
-		// 配置超时时间（连接服务端超时1秒，请求数据返回超时2秒）
-		requestConfig = RequestConfig.custom().setConnectTimeout(120000).setSocketTimeout(60000)
-				.setConnectionRequestTimeout(60000).build();
-		// 设置默认跳转以及存储cookie
-		httpClient = HttpClientBuilder.create().setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy())
-				.setRedirectStrategy(new DefaultRedirectStrategy()).setDefaultRequestConfig(requestConfig)
-				.setDefaultCookieStore(cookieStore).build();
+
 		System.setProperty("jsse.enableSNIExtension", "false");
 		// getQRuuid();
 	}
@@ -307,8 +294,7 @@ public class Wechat {
 		Matcher matcher = Tools.getMatcher(regEx, result);
 		if (matcher.find()) {
 			String originalUrl = matcher.group(1);
-			String url = originalUrl.substring(0, originalUrl.lastIndexOf('/')); //
-			https: // wx2.qq.com/cgi-bin/mmwebwx-bin
+			String url = originalUrl.substring(0, originalUrl.lastIndexOf('/')); // https://wx2.qq.com/cgi-bin/mmwebwx-bin
 			loginInfo.put("url", url);
 			Map<String, List<String>> possibleUrlMap = getPossibleUrlMap();
 			Iterator<Entry<String, List<String>>> iterator = possibleUrlMap.entrySet().iterator();
@@ -425,37 +411,45 @@ public class Wechat {
 	boolean webInit() {
 		String url = loginInfo.get("url") + "/webwxinit?&r=" + String.valueOf(new Date().getTime());
 		System.out.println(url);
+
+		@SuppressWarnings("unchecked")
 		Map<String, String> baseRequest = (Map<String, String>) loginInfo.get("baseRequest");
 		Map<String, Map<String, String>> paramMap = new HashMap<String, Map<String, String>>();
 		paramMap.put("BaseRequest", baseRequest);
 		String paramsStr = JSON.toJSONString(paramMap);
-		System.out.println(JSON.toJSONString(paramMap));
 		// String paramsStr = String.format(
-		// "{\"BaseRequest\":{\"Uin\":\"%s\",
-		// \"Skey\":\"%s\",\"DeviceID\":\"%s\", \"Sid\":\"%s\"}}",
+		// "{\"BaseRequest\":{\"Uin\":\"%s\",\"Skey\":\"%s\",\"DeviceID\":\"%s\",
+		// \"Sid\":\"%s\"}}",
 		// baseRequest.get("Uin"), baseRequest.get("Skey"),
 		// baseRequest.get("DeviceID"), baseRequest.get("Sid"));
-		System.out.println(paramsStr);
-		// System.out.println(paramsStr);
-		// {"BaseRequest": {"Uin": "264833395", "Skey":
-		// "@crypt_6b6c25c8_dddc7f7439208530c2372055ae30983f", "DeviceID":
-		// "e%2Fqe6nMDCwZvxF%2F8vfwx0W8R5sB%2FXFyGJBKZlvgGnE0%3D", "Sid":
-		// "akzVqrw0haClkH0C"}}
 		HttpPost request = new HttpPost(url);
-
 		try {
 			StringEntity params = new StringEntity(paramsStr);
 			request.setHeader("Content-type", "application/json; charset=utf-8");
 			request.setHeader("User-Agent", Config.USER_AGENT);
+			request.setEntity(params);
 			HttpResponse response = httpClient.execute(request);
-			System.out.println(EntityUtils.toString(response.getEntity()));
+			String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+			JSONObject obj = JSON.parseObject(result);
+			logger.info(obj.getJSONObject("User").get("NickName").toString());
+			// TODO deal with login info
+			// # deal with login info
+			// utils.emoji_formatter(dic['User'], 'NickName')
+			// self.loginInfo['InviteStartCount'] = int(dic['InviteStartCount'])
+			// self.loginInfo['User'] = utils.struct_friend_info(dic['User'])
+			// self.loginInfo['SyncKey'] = dic['SyncKey']
+			// self.loginInfo['synckey'] = '|'.join(['%s_%s' % (item['Key'],
+			// item['Val'])
+			// for item in dic['SyncKey']['List']])
+			// self.storageClass.userName = dic['User']['UserName']
+			// self.storageClass.nickName = dic['User']['NickName']
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
 		}
 
-		return false;
+		return true;
 	}
 
 }
