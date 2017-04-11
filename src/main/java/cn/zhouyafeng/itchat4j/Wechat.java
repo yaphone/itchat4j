@@ -1,11 +1,8 @@
 package cn.zhouyafeng.itchat4j;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,16 +19,25 @@ import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
+import org.apache.http.impl.client.DefaultRedirectStrategy;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
+
+import com.alibaba.fastjson.JSON;
 
 import cn.zhouyafeng.itchat4j.utils.Config;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
@@ -47,7 +53,20 @@ public class Wechat {
 	private boolean isLoginIn = false;
 	private Map<String, Object> loginInfo = new HashMap<String, Object>();
 
+	public static HttpClientContext context = null;
+	public static CookieStore cookieStore = null;
+	public static RequestConfig requestConfig = null;
+
 	Wechat() {
+		context = HttpClientContext.create();
+		cookieStore = new BasicCookieStore();
+		// 配置超时时间（连接服务端超时1秒，请求数据返回超时2秒）
+		requestConfig = RequestConfig.custom().setConnectTimeout(120000).setSocketTimeout(60000)
+				.setConnectionRequestTimeout(60000).build();
+		// 设置默认跳转以及存储cookie
+		httpClient = HttpClientBuilder.create().setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy())
+				.setRedirectStrategy(new DefaultRedirectStrategy()).setDefaultRequestConfig(requestConfig)
+				.setDefaultCookieStore(cookieStore).build();
 		System.setProperty("jsse.enableSNIExtension", "false");
 		// getQRuuid();
 	}
@@ -158,37 +177,6 @@ public class Wechat {
 	}
 
 	/**
-	 * 生成登陆二维码图片
-	 * 
-	 * @author Email:zhouyaphone@163.com
-	 * @date 2017年4月8日 下午9:55:22
-	 * @return
-	 */
-	public boolean getQR2() {
-		String qrUrl = baseUrl + "/qrcode/" + this.uuid;
-		InputStream in = myHttpClient.doGet(qrUrl, null);
-		String qrPath = Config.getLocalPath() + File.separator + "QR.jpg";
-		OutputStream out = null;
-		try {
-			int byteCount = 0;
-			out = new FileOutputStream(qrPath);
-			byte[] bytes = new byte[1024];
-			while ((byteCount = in.read(bytes)) != -1) {
-				out.write(bytes, 0, byteCount);
-			}
-			in.close();
-			out.close();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		}
-		// 打开二维码图片
-		Tools.printQr(qrPath);
-		return true;
-	}
-
-	/**
 	 * 检查登陆状态
 	 * 
 	 * @author Email:zhouyaphone@163.com
@@ -196,22 +184,28 @@ public class Wechat {
 	 * @return
 	 */
 	public String checkLogin() {
+		String result = "";
 		String checkUrl = baseUrl + "/cgi-bin/mmwebwx-bin/login";
 		Long localTime = new Date().getTime();
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("loginicon", "true");
-		params.put("uuid", uuid);
-		params.put("tip", "0");
-		params.put("r", String.valueOf(localTime / 1579L));
-		params.put("_", String.valueOf(localTime));
-		BufferedReader br = new BufferedReader(new InputStreamReader(myHttpClient.doGet(checkUrl, params)));
-		String result = "";
-		String current;
+		List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+		params.add(new BasicNameValuePair("loginicon", "true"));
+		params.add(new BasicNameValuePair("uuid", uuid));
+		params.add(new BasicNameValuePair("tip", "0"));
+		params.add(new BasicNameValuePair("r", String.valueOf(localTime / 1579L)));
+		params.add(new BasicNameValuePair("_", String.valueOf(localTime)));
 		try {
-			while ((current = br.readLine()) != null) {
-				result += current;
+			String paramStr = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
+			HttpGet httpGet = new HttpGet(checkUrl + "?" + paramStr);
+			CloseableHttpResponse response = httpClient.execute(httpGet);
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+				result = EntityUtils.toString(entity);
 			}
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		String regEx = "window.code=(\\d+)";
@@ -227,9 +221,83 @@ public class Wechat {
 		return "400";
 	}
 
+	// /**
+	// * 处理登陆信息
+	// *
+	// * @author Email:zhouyaphone@163.com
+	// * @date 2017年4月9日 下午12:16:26
+	// * @param result
+	// */
+	// public void processLoginInfo(String result) {
+	// String regEx = "window.redirect_uri=\"(\\S+)\";";
+	// Matcher matcher = Tools.getMatcher(regEx, result);
+	// if (matcher.find()) {
+	// String originalUrl = matcher.group(1);
+	// String url = originalUrl.substring(0, originalUrl.lastIndexOf('/')); //
+	// https:wx2.qq.com/cgi-bin/mmwebwx-bin
+	// loginInfo.put("url", url);
+	// Map<String, List<String>> possibleUrlMap = getPossibleUrlMap();
+	// Iterator<Entry<String, List<String>>> iterator =
+	// possibleUrlMap.entrySet().iterator();
+	// while (iterator.hasNext()) {
+	// Map.Entry<String, List<String>> entry = iterator.next();
+	// String indexUrl = entry.getKey();
+	// String fileUrl = "https://" + entry.getValue().get(0) +
+	// "/cgi-bin/mmwebwx-bin";
+	// String syncUrl = "https://" + entry.getValue().get(1) +
+	// "/cgi-bin/mmwebwx-bin";
+	// // System.out.println(fileUrl);
+	// // System.out.println(syncUrl);
+	// if (loginInfo.get("url").toString().contains(indexUrl)) {
+	// loginInfo.put("fileUrl", fileUrl);
+	// loginInfo.put("syncUrl", syncUrl);
+	// break;
+	// }
+	// }
+	// if (loginInfo.get("fileUrl") == null && loginInfo.get("syncUrl") == null)
+	// {
+	// loginInfo.put("fileUrl", url);
+	// loginInfo.put("syncUrl", url);
+	// }
+	// loginInfo.put("deviceid", "e" + String.valueOf(new
+	// Random().nextLong()).substring(1, 16)); // 生成15位随机数
+	// loginInfo.put("BaseRequest", new ArrayList<String>());
+	// BufferedReader br = new BufferedReader(new
+	// InputStreamReader(myHttpClient.doGet(originalUrl, null)));
+	// String text = "";
+	// String current;
+	// try {
+	// while ((current = br.readLine()) != null) {
+	// text += current;
+	// }
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// }
+	// System.out.println(text);
+	// Document doc = Tools.xmlParser(text);
+	// Map<String, String> baseRequest = new HashMap<String, String>();
+	// if (doc != null) {
+	// loginInfo.put("skey",
+	// doc.getElementsByTagName("skey").item(0).getFirstChild().getNodeValue());
+	// baseRequest.put("Skey", (String) loginInfo.get("skey"));
+	// loginInfo.put("wxsid",
+	// doc.getElementsByTagName("wxsid").item(0).getFirstChild().getNodeValue());
+	// baseRequest.put("Sid", (String) loginInfo.get("wxsid"));
+	// loginInfo.put("wxuin",
+	// doc.getElementsByTagName("wxuin").item(0).getFirstChild().getNodeValue());
+	// baseRequest.put("Uin", (String) loginInfo.get("wxuin"));
+	// loginInfo.put("pass_ticket",
+	// doc.getElementsByTagName("pass_ticket").item(0).getFirstChild().getNodeValue());
+	// baseRequest.put("DeviceID", (String) loginInfo.get("pass_ticket"));
+	// loginInfo.put("baseRequest", baseRequest);
+	// }
+	//
+	// }
+	// }
+
 	/**
 	 * 处理登陆信息
-	 * 
+	 *
 	 * @author Email:zhouyaphone@163.com
 	 * @date 2017年4月9日 下午12:16:26
 	 * @param result
@@ -239,7 +307,8 @@ public class Wechat {
 		Matcher matcher = Tools.getMatcher(regEx, result);
 		if (matcher.find()) {
 			String originalUrl = matcher.group(1);
-			String url = originalUrl.substring(0, originalUrl.lastIndexOf('/')); // https://wx2.qq.com/cgi-bin/mmwebwx-bin
+			String url = originalUrl.substring(0, originalUrl.lastIndexOf('/')); //
+			https: // wx2.qq.com/cgi-bin/mmwebwx-bin
 			loginInfo.put("url", url);
 			Map<String, List<String>> possibleUrlMap = getPossibleUrlMap();
 			Iterator<Entry<String, List<String>>> iterator = possibleUrlMap.entrySet().iterator();
@@ -248,8 +317,6 @@ public class Wechat {
 				String indexUrl = entry.getKey();
 				String fileUrl = "https://" + entry.getValue().get(0) + "/cgi-bin/mmwebwx-bin";
 				String syncUrl = "https://" + entry.getValue().get(1) + "/cgi-bin/mmwebwx-bin";
-				// System.out.println(fileUrl);
-				// System.out.println(syncUrl);
 				if (loginInfo.get("url").toString().contains(indexUrl)) {
 					loginInfo.put("fileUrl", fileUrl);
 					loginInfo.put("syncUrl", syncUrl);
@@ -262,16 +329,21 @@ public class Wechat {
 			}
 			loginInfo.put("deviceid", "e" + String.valueOf(new Random().nextLong()).substring(1, 16)); // 生成15位随机数
 			loginInfo.put("BaseRequest", new ArrayList<String>());
-			BufferedReader br = new BufferedReader(new InputStreamReader(myHttpClient.doGet(originalUrl, null)));
 			String text = "";
-			String current;
+			HttpGet httpGet = new HttpGet(originalUrl);
+			httpGet.setHeader("User-Agent", Config.USER_AGENT);
+			httpGet.setConfig(RequestConfig.custom().setRedirectsEnabled(false).build()); // 禁止重定向
 			try {
-				while ((current = br.readLine()) != null) {
-					text += current;
+				CloseableHttpResponse response = httpClient.execute(httpGet);
+				HttpEntity entity = response.getEntity();
+				if (entity != null) {
+					text = EntityUtils.toString(entity);
 				}
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
+				return;
 			}
+			// System.out.println(text);
 			Document doc = Tools.xmlParser(text);
 			Map<String, String> baseRequest = new HashMap<String, String>();
 			if (doc != null) {
@@ -354,14 +426,15 @@ public class Wechat {
 		String url = loginInfo.get("url") + "/webwxinit?&r=" + String.valueOf(new Date().getTime());
 		System.out.println(url);
 		Map<String, String> baseRequest = (Map<String, String>) loginInfo.get("baseRequest");
-		// Map<String, Map<String, String>> paramMap =
-		// loginInfo.get("BaseRequest");
-		// paramMap.put("BaseRequest", baseRequest);
-		// String paramsStr = JSON.toJSONString(paramMap);
-		// System.out.println(JSON.toJSONString(paramMap));
-		String paramsStr = String.format(
-				"{\"BaseRequest\":{\"Uin\":\"%s\", \"Skey\":\"%s\",\"DeviceID\":\"%s\", \"Sid\":\"%s\"}}",
-				baseRequest.get("Uin"), baseRequest.get("Skey"), baseRequest.get("DeviceID"), baseRequest.get("Sid"));
+		Map<String, Map<String, String>> paramMap = new HashMap<String, Map<String, String>>();
+		paramMap.put("BaseRequest", baseRequest);
+		String paramsStr = JSON.toJSONString(paramMap);
+		System.out.println(JSON.toJSONString(paramMap));
+		// String paramsStr = String.format(
+		// "{\"BaseRequest\":{\"Uin\":\"%s\",
+		// \"Skey\":\"%s\",\"DeviceID\":\"%s\", \"Sid\":\"%s\"}}",
+		// baseRequest.get("Uin"), baseRequest.get("Skey"),
+		// baseRequest.get("DeviceID"), baseRequest.get("Sid"));
 		System.out.println(paramsStr);
 		// System.out.println(paramsStr);
 		// {"BaseRequest": {"Uin": "264833395", "Skey":
@@ -369,6 +442,7 @@ public class Wechat {
 		// "e%2Fqe6nMDCwZvxF%2F8vfwx0W8R5sB%2FXFyGJBKZlvgGnE0%3D", "Sid":
 		// "akzVqrw0haClkH0C"}}
 		HttpPost request = new HttpPost(url);
+
 		try {
 			StringEntity params = new StringEntity(paramsStr);
 			request.setHeader("Content-type", "application/json; charset=utf-8");
