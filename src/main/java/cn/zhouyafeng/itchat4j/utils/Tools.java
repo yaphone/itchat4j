@@ -3,9 +3,8 @@ package cn.zhouyafeng.itchat4j.utils;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -82,7 +81,7 @@ public class Tools {
 		return doc;
 	}
 
-	public JSONObject structFriendInfo(JSONObject obj) {
+	public static JSONObject structFriendInfo(JSONObject userObj) {
 		Map<String, Object> friendInfoTemplate = new HashMap<String, Object>();
 		friendInfoTemplate.put("UserName", "");
 		friendInfoTemplate.put("City", "");
@@ -117,17 +116,17 @@ public class Tools {
 
 		friendInfoTemplate.put("MemberList", new ArrayList<Object>());
 
-		JSONObject userObj = (JSONObject) obj.get("User");
-		Iterator<Entry<String, Object>> it = userObj.entrySet().iterator();
-		while (it.hasNext()) {
-			// System.out.println(it.next().getKey());
-			if (friendInfoTemplate.containsKey(it.next().getKey())) {
-
+		JSONObject r = new JSONObject();
+		Set<String> keySet = friendInfoTemplate.keySet();
+		for (String key : keySet) {
+			if (userObj.containsKey(key)) {
+				r.put(key, userObj.get(key));
+			} else {
+				r.put(key, friendInfoTemplate.get(key));
 			}
-
 		}
 
-		return null;
+		return r;
 	}
 
 }

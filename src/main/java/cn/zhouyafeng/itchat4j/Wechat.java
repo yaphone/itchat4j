@@ -84,7 +84,7 @@ public class Wechat {
 				String status = checkLogin();
 				if (status.equals("200")) {
 					isLoginIn = true;
-					System.out.println("登陆成功");
+					logger.info(("登陆成功"));
 				} else if (status.equals("201")) {
 					logger.info("Please press confirm on your phone.");
 					isLoginIn = false;
@@ -133,7 +133,6 @@ public class Wechat {
 		if (matcher.find()) {
 			if ((matcher.group(1).equals("200"))) {
 				uuid = matcher.group(2);//
-				System.out.println(uuid);
 			}
 		}
 		return uuid;
@@ -207,80 +206,6 @@ public class Wechat {
 		}
 		return "400";
 	}
-
-	// /**
-	// * 处理登陆信息
-	// *
-	// * @author Email:zhouyaphone@163.com
-	// * @date 2017年4月9日 下午12:16:26
-	// * @param result
-	// */
-	// public void processLoginInfo(String result) {
-	// String regEx = "window.redirect_uri=\"(\\S+)\";";
-	// Matcher matcher = Tools.getMatcher(regEx, result);
-	// if (matcher.find()) {
-	// String originalUrl = matcher.group(1);
-	// String url = originalUrl.substring(0, originalUrl.lastIndexOf('/')); //
-	// https:wx2.qq.com/cgi-bin/mmwebwx-bin
-	// loginInfo.put("url", url);
-	// Map<String, List<String>> possibleUrlMap = getPossibleUrlMap();
-	// Iterator<Entry<String, List<String>>> iterator =
-	// possibleUrlMap.entrySet().iterator();
-	// while (iterator.hasNext()) {
-	// Map.Entry<String, List<String>> entry = iterator.next();
-	// String indexUrl = entry.getKey();
-	// String fileUrl = "https://" + entry.getValue().get(0) +
-	// "/cgi-bin/mmwebwx-bin";
-	// String syncUrl = "https://" + entry.getValue().get(1) +
-	// "/cgi-bin/mmwebwx-bin";
-	// // System.out.println(fileUrl);
-	// // System.out.println(syncUrl);
-	// if (loginInfo.get("url").toString().contains(indexUrl)) {
-	// loginInfo.put("fileUrl", fileUrl);
-	// loginInfo.put("syncUrl", syncUrl);
-	// break;
-	// }
-	// }
-	// if (loginInfo.get("fileUrl") == null && loginInfo.get("syncUrl") == null)
-	// {
-	// loginInfo.put("fileUrl", url);
-	// loginInfo.put("syncUrl", url);
-	// }
-	// loginInfo.put("deviceid", "e" + String.valueOf(new
-	// Random().nextLong()).substring(1, 16)); // 生成15位随机数
-	// loginInfo.put("BaseRequest", new ArrayList<String>());
-	// BufferedReader br = new BufferedReader(new
-	// InputStreamReader(myHttpClient.doGet(originalUrl, null)));
-	// String text = "";
-	// String current;
-	// try {
-	// while ((current = br.readLine()) != null) {
-	// text += current;
-	// }
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// System.out.println(text);
-	// Document doc = Tools.xmlParser(text);
-	// Map<String, String> baseRequest = new HashMap<String, String>();
-	// if (doc != null) {
-	// loginInfo.put("skey",
-	// doc.getElementsByTagName("skey").item(0).getFirstChild().getNodeValue());
-	// baseRequest.put("Skey", (String) loginInfo.get("skey"));
-	// loginInfo.put("wxsid",
-	// doc.getElementsByTagName("wxsid").item(0).getFirstChild().getNodeValue());
-	// baseRequest.put("Sid", (String) loginInfo.get("wxsid"));
-	// loginInfo.put("wxuin",
-	// doc.getElementsByTagName("wxuin").item(0).getFirstChild().getNodeValue());
-	// baseRequest.put("Uin", (String) loginInfo.get("wxuin"));
-	// loginInfo.put("pass_ticket",
-	// doc.getElementsByTagName("pass_ticket").item(0).getFirstChild().getNodeValue());
-	// baseRequest.put("DeviceID", (String) loginInfo.get("pass_ticket"));
-	// loginInfo.put("baseRequest", baseRequest);
-	// }
-	//
-	// }
-	// }
 
 	/**
 	 * 处理登陆信息
@@ -410,8 +335,6 @@ public class Wechat {
 
 	boolean webInit() {
 		String url = loginInfo.get("url") + "/webwxinit?&r=" + String.valueOf(new Date().getTime());
-		System.out.println(url);
-
 		@SuppressWarnings("unchecked")
 		Map<String, String> baseRequest = (Map<String, String>) loginInfo.get("baseRequest");
 		Map<String, Map<String, String>> paramMap = new HashMap<String, Map<String, String>>();
@@ -431,8 +354,9 @@ public class Wechat {
 			HttpResponse response = httpClient.execute(request);
 			String result = EntityUtils.toString(response.getEntity(), "UTF-8");
 			JSONObject obj = JSON.parseObject(result);
-			logger.info(obj.getJSONObject("User").get("NickName").toString());
 			// TODO utils.emoji_formatter(dic['User'], 'NickName')
+			obj.put("User", Tools.structFriendInfo((JSONObject) obj.get("User"))); // 为userObj添加新字段
+			// TODO
 
 		} catch (Exception e) {
 			e.printStackTrace();
