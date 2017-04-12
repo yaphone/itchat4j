@@ -1,38 +1,36 @@
 package cn.zhouyafeng.itchat4j;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
-
-import cn.zhouyafeng.itchat4j.utils.Config;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.util.IOUtils;
 
 public class AnotherSimpleTest {
 	public static void main(String[] args) {
-		HttpClient httpClient = HttpClientBuilder.create().build();
-		String url = "http://127.0.0.1:8080/blog/page/all";
-		HttpPost request = new HttpPost(url);
-		request.setHeader("Content-type", "application/json; charset=utf-8");
-		request.setHeader("User-Agent", Config.USER_AGENT);
+		String path = "D:\\itchat.txt";
+		File file = new File(path);
+		Reader r;
 		try {
-			HttpResponse response = httpClient.execute(request);
-			System.out.println("*****************************************");
-			System.out.println(EntityUtils.toString(response.getEntity()));
-			System.out.println("*****************************************");
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
+			r = new FileReader(file);
+			String text = IOUtils.readAll(r);
+			JSONObject obj = JSON.parseObject(text);
+			Long InviteStartCount = obj.getLong("InviteStartCount");
+			// System.out.println(InviteStartCount);
+			// System.out.println(obj.get("User"));
+			Iterator<Entry<String, Object>> it = ((JSONObject) obj.get("User")).entrySet().iterator();
+			while (it.hasNext()) {
+				System.out.println(it.next().getKey());
+			}
+		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		List<Integer> list = new ArrayList<Integer>();
-		list.add(1);
+
 	}
 }

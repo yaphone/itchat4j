@@ -432,17 +432,7 @@ public class Wechat {
 			String result = EntityUtils.toString(response.getEntity(), "UTF-8");
 			JSONObject obj = JSON.parseObject(result);
 			logger.info(obj.getJSONObject("User").get("NickName").toString());
-			// TODO deal with login info
-			// # deal with login info
-			// utils.emoji_formatter(dic['User'], 'NickName')
-			// self.loginInfo['InviteStartCount'] = int(dic['InviteStartCount'])
-			// self.loginInfo['User'] = utils.struct_friend_info(dic['User'])
-			// self.loginInfo['SyncKey'] = dic['SyncKey']
-			// self.loginInfo['synckey'] = '|'.join(['%s_%s' % (item['Key'],
-			// item['Val'])
-			// for item in dic['SyncKey']['List']])
-			// self.storageClass.userName = dic['User']['UserName']
-			// self.storageClass.nickName = dic['User']['NickName']
+			// TODO utils.emoji_formatter(dic['User'], 'NickName')
 
 		} catch (Exception e) {
 			e.printStackTrace();
