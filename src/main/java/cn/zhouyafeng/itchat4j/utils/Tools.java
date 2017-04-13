@@ -14,6 +14,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 /**
@@ -127,6 +129,17 @@ public class Tools {
 		}
 
 		return r;
+	}
+
+	public static String getSynckey(JSONObject obj) {
+		JSONArray obj2 = obj.getJSONArray("List");
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < obj2.size(); i++) {
+			JSONObject obj3 = (JSONObject) JSON.toJSON(obj2.get(i));
+			sb.append(obj3.get("Val") + "|");
+		}
+		return sb.substring(0, sb.length() - 1); // 656159784|656159911|656159873|1491905341
+
 	}
 
 }

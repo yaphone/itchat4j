@@ -356,6 +356,7 @@ public class Wechat {
 			JSONObject obj = JSON.parseObject(result);
 			// TODO utils.emoji_formatter(dic['User'], 'NickName')
 			obj.put("User", Tools.structFriendInfo((JSONObject) obj.get("User"))); // 为userObj添加新字段
+			obj.put("synckey", obj.getJSONObject("SyncKey"));
 			// TODO
 
 		} catch (Exception e) {
