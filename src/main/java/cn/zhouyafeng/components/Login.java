@@ -38,7 +38,6 @@ import com.alibaba.fastjson.JSONObject;
 import cn.zhouyafeng.itchat4j.utils.Config;
 import cn.zhouyafeng.itchat4j.utils.Core;
 import cn.zhouyafeng.itchat4j.utils.ReturnValue;
-import cn.zhouyafeng.itchat4j.utils.Storage;
 import cn.zhouyafeng.itchat4j.utils.Tools;
 
 public class Login {
@@ -46,11 +45,7 @@ public class Login {
 	private String baseUrl = Config.BASE_URL;
 	private boolean isLoginIn = false;
 
-	private boolean alive;
-	private String uuid;
 	private CloseableHttpClient httpClient;
-	private Map<String, Object> loginInfo = new HashMap<String, Object>();
-	private Storage storage = Storage.getInstance();
 	private Core core = Core.getInstance();
 
 	// httpClient初始化
@@ -59,16 +54,12 @@ public class Login {
 	public static RequestConfig requestConfig = null;
 
 	public Login() {
-		this.alive = core.isAlive();
-		this.uuid = core.getUuid();
 		this.httpClient = core.getHttpClient();
-		this.loginInfo = core.getLoginInfo();
-		this.storage = core.getStorageClass();
 
 	}
 
 	public int login() {
-		if (alive) { // 已登陆
+		if (core.isAlive()) { // 已登陆
 			logger.warning("itchat has already logged in.");
 			return 0;
 		}
@@ -146,15 +137,15 @@ public class Login {
 		Matcher matcher = Tools.getMatcher(regEx, result);
 		if (matcher.find()) {
 			if ((matcher.group(1).equals("200"))) {
-				uuid = matcher.group(2);//
+				core.setUuid(matcher.group(2));//
 			}
 		}
-		return uuid;
+		return core.getUuid();
 	}
 
 	public boolean getQR() {
 		String qrPath = Config.getLocalPath() + File.separator + "QR.jpg";
-		String qrUrl = baseUrl + "/qrcode/" + this.uuid;
+		String qrUrl = baseUrl + "/qrcode/" + core.getUuid();
 		HttpGet httpGet = new HttpGet(qrUrl);
 		try {
 			CloseableHttpResponse response = httpClient.execute(httpGet);
@@ -189,7 +180,7 @@ public class Login {
 		Long localTime = new Date().getTime();
 		List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
 		params.add(new BasicNameValuePair("loginicon", "true"));
-		params.add(new BasicNameValuePair("uuid", uuid));
+		params.add(new BasicNameValuePair("uuid", core.getUuid()));
 		params.add(new BasicNameValuePair("tip", "0"));
 		params.add(new BasicNameValuePair("r", String.valueOf(localTime / 1579L)));
 		params.add(new BasicNameValuePair("_", String.valueOf(localTime)));
@@ -234,7 +225,7 @@ public class Login {
 		if (matcher.find()) {
 			String originalUrl = matcher.group(1);
 			String url = originalUrl.substring(0, originalUrl.lastIndexOf('/')); // https://wx2.qq.com/cgi-bin/mmwebwx-bin
-			loginInfo.put("url", url);
+			core.getLoginInfo().put("url", url);
 			Map<String, List<String>> possibleUrlMap = getPossibleUrlMap();
 			Iterator<Entry<String, List<String>>> iterator = possibleUrlMap.entrySet().iterator();
 			while (iterator.hasNext()) {
@@ -242,19 +233,18 @@ public class Login {
 				String indexUrl = entry.getKey();
 				String fileUrl = "https://" + entry.getValue().get(0) + "/cgi-bin/mmwebwx-bin";
 				String syncUrl = "https://" + entry.getValue().get(1) + "/cgi-bin/mmwebwx-bin";
-				if (loginInfo.get("url").toString().contains(indexUrl)) {
-					loginInfo.put("fileUrl", fileUrl);
-					loginInfo.put("syncUrl", syncUrl);
+				if (core.getLoginInfo().get("url").toString().contains(indexUrl)) {
+					core.getLoginInfo().put("fileUrl", fileUrl);
+					core.getLoginInfo().put("syncUrl", syncUrl);
 					break;
 				}
 			}
-			if (loginInfo.get("fileUrl") == null && loginInfo.get("syncUrl") == null) {
-				loginInfo.put("fileUrl", url);
-				loginInfo.put("syncUrl", url);
+			if (core.getLoginInfo().get("fileUrl") == null && core.getLoginInfo().get("syncUrl") == null) {
+				core.getLoginInfo().put("fileUrl", url);
+				core.getLoginInfo().put("syncUrl", url);
 			}
-			loginInfo.put("deviceid", "e" + String.valueOf(new Random().nextLong()).substring(1, 16)); // 生成15位随机数
-			loginInfo.put("BaseRequest", new ArrayList<String>());
-			core.setLoginInfo(loginInfo);
+			core.getLoginInfo().put("deviceid", "e" + String.valueOf(new Random().nextLong()).substring(1, 16)); // 生成15位随机数
+			core.getLoginInfo().put("BaseRequest", new ArrayList<String>());
 			String text = "";
 			HttpGet httpGet = new HttpGet(originalUrl);
 			httpGet.setHeader("User-Agent", Config.USER_AGENT);
@@ -274,17 +264,20 @@ public class Login {
 			Map<String, Map<String, String>> BaseRequest = new HashMap<String, Map<String, String>>();
 			Map<String, String> baseRequest = new HashMap<String, String>();
 			if (doc != null) {
-				loginInfo.put("skey", doc.getElementsByTagName("skey").item(0).getFirstChild().getNodeValue());
-				baseRequest.put("Skey", (String) loginInfo.get("skey"));
-				loginInfo.put("wxsid", doc.getElementsByTagName("wxsid").item(0).getFirstChild().getNodeValue());
-				baseRequest.put("Sid", (String) loginInfo.get("wxsid"));
-				loginInfo.put("wxuin", doc.getElementsByTagName("wxuin").item(0).getFirstChild().getNodeValue());
-				baseRequest.put("Uin", (String) loginInfo.get("wxuin"));
-				loginInfo.put("pass_ticket",
+				core.getLoginInfo().put("skey",
+						doc.getElementsByTagName("skey").item(0).getFirstChild().getNodeValue());
+				baseRequest.put("Skey", (String) core.getLoginInfo().get("skey"));
+				core.getLoginInfo().put("wxsid",
+						doc.getElementsByTagName("wxsid").item(0).getFirstChild().getNodeValue());
+				baseRequest.put("Sid", (String) core.getLoginInfo().get("wxsid"));
+				core.getLoginInfo().put("wxuin",
+						doc.getElementsByTagName("wxuin").item(0).getFirstChild().getNodeValue());
+				baseRequest.put("Uin", (String) core.getLoginInfo().get("wxuin"));
+				core.getLoginInfo().put("pass_ticket",
 						doc.getElementsByTagName("pass_ticket").item(0).getFirstChild().getNodeValue());
-				baseRequest.put("DeviceID", (String) loginInfo.get("pass_ticket"));
+				baseRequest.put("DeviceID", (String) core.getLoginInfo().get("pass_ticket"));
 				BaseRequest.put("BaseRequest", baseRequest);
-				loginInfo.put("baseRequest", BaseRequest);
+				core.getLoginInfo().put("baseRequest", BaseRequest);
 			}
 
 		}
@@ -352,9 +345,10 @@ public class Login {
 
 	private JSONObject webInit() {
 		JSONObject obj = null;
-		String url = loginInfo.get("url") + "/webwxinit?&r=" + String.valueOf(new Date().getTime());
+		String url = core.getLoginInfo().get("url") + "/webwxinit?&r=" + String.valueOf(new Date().getTime());
 		@SuppressWarnings("unchecked")
-		Map<String, Map<String, String>> paramMap = (Map<String, Map<String, String>>) loginInfo.get("baseRequest");
+		Map<String, Map<String, String>> paramMap = (Map<String, Map<String, String>>) core.getLoginInfo()
+				.get("baseRequest");
 		// Map<String, Map<String, String>> paramMap = new HashMap<String,
 		// Map<String, String>>();
 		// paramMap.put("BaseRequest", baseRequest);
@@ -372,8 +366,8 @@ public class Login {
 			// TODO utils.emoji_formatter(dic['User'], 'NickName')
 			obj.put("User", Tools.structFriendInfo((JSONObject) obj.get("User"))); // 为userObj添加新字段
 			obj.put("synckey", obj.getJSONObject("SyncKey"));
-			storage.setUserName(((JSONObject) obj.get("User")).getString("UserName"));
-			storage.setNickName(((JSONObject) obj.get("User")).getString("NickName"));
+			core.getStorageClass().setUserName(((JSONObject) obj.get("User")).getString("UserName"));
+			core.getStorageClass().setNickName(((JSONObject) obj.get("User")).getString("NickName"));
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -383,17 +377,17 @@ public class Login {
 
 	private ReturnValue showMobileLogin() {
 		JSONObject obj = null;
-		String url = (String) loginInfo.get("url");
-		String passTicket = (String) loginInfo.get("pass_ticket");
+		String url = (String) core.getLoginInfo().get("url");
+		String passTicket = (String) core.getLoginInfo().get("pass_ticket");
 		String mobileUrl = String.format("%s/webwxstatusnotify?lang=zh_CN&pass_ticket=%s", url, passTicket);
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		@SuppressWarnings("unchecked")
-		Map<String, Map<String, String>> baseRequestMap = (Map<String, Map<String, String>>) loginInfo
+		Map<String, Map<String, String>> baseRequestMap = (Map<String, Map<String, String>>) core.getLoginInfo()
 				.get("baseRequest");
 		paramMap.put("BaseRequest", baseRequestMap);
 		paramMap.put("Code", 3);
-		paramMap.put("FromUserName", storage.getUserName());
-		paramMap.put("ToUserName", storage.getUserName());
+		paramMap.put("FromUserName", core.getStorageClass().getUserName());
+		paramMap.put("ToUserName", core.getStorageClass().getUserName());
 		paramMap.put("ClientMsgId", String.valueOf(new Date().getTime()));
 		String paramsStr = JSON.toJSONString(paramMap);
 		HttpPost request = new HttpPost(mobileUrl);
