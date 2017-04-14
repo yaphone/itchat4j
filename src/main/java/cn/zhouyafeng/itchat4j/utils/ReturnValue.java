@@ -1,5 +1,5 @@
 package cn.zhouyafeng.itchat4j.utils;
 
-public class Login {
+public class ReturnValue {
 
 }
