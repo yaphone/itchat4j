@@ -4,6 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Storage {
+
+	private static Storage instance;
+
+	private Storage() {
+	};
+
+	public static Storage getInstance() {
+		if (instance == null) {
+			synchronized (Storage.class) {
+				if (instance == null) {
+					instance = new Storage();
+				}
+			}
+		}
+		return instance;
+	}
+
 	private String userName;
 	private String nickName;
 	private List<Object> memberList = new ArrayList<Object>();

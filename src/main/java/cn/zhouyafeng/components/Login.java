@@ -28,7 +28,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
@@ -37,31 +36,38 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.zhouyafeng.itchat4j.utils.Config;
+import cn.zhouyafeng.itchat4j.utils.Core;
 import cn.zhouyafeng.itchat4j.utils.ReturnValue;
 import cn.zhouyafeng.itchat4j.utils.Storage;
 import cn.zhouyafeng.itchat4j.utils.Tools;
 
 public class Login {
-	private boolean alive = false;
-	private String uuid = null;
-	private String baseUrl = Config.BASE_URL;
-	private CloseableHttpClient httpClient = HttpClients.createDefault();
 	private static Logger logger = Logger.getLogger("Wechat");
+	private String baseUrl = Config.BASE_URL;
 	private boolean isLoginIn = false;
-	private Map<String, Object> loginInfo = new HashMap<String, Object>();
-	private Storage storage = new Storage();
 
-	// httpClient
+	private boolean alive;
+	private String uuid;
+	private CloseableHttpClient httpClient;
+	private Map<String, Object> loginInfo = new HashMap<String, Object>();
+	private Storage storage = Storage.getInstance();
+	private Core core = Core.getInstance();
+
+	// httpClient初始化
 	public static HttpClientContext context = null;
 	public static CookieStore cookieStore = null;
 	public static RequestConfig requestConfig = null;
 
 	public Login() {
+		this.alive = core.isAlive();
+		this.uuid = core.getUuid();
+		this.httpClient = core.getHttpClient();
+		this.loginInfo = core.getLoginInfo();
+		this.storage = core.getStorageClass();
 
-		// getQRuuid();
 	}
 
-	public int login() throws InterruptedException {
+	public int login() {
 		if (alive) { // 已登陆
 			logger.warning("itchat has already logged in.");
 			return 0;
@@ -70,7 +76,11 @@ public class Login {
 			for (int count = 0; count < 10; count++) {
 				logger.info("Getting uuid of QR code.");
 				while (getQRuuid() == null) {
-					Thread.sleep(1000);
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						logger.info(e.getMessage());
+					}
 				}
 				logger.info("Downloading QR code.");
 				Boolean qrStarge = getQR();
@@ -218,9 +228,9 @@ public class Login {
 	 * @date 2017年4月9日 下午12:16:26
 	 * @param result
 	 */
-	public void processLoginInfo(String result) {
+	public void processLoginInfo(String loginContent) {
 		String regEx = "window.redirect_uri=\"(\\S+)\";";
-		Matcher matcher = Tools.getMatcher(regEx, result);
+		Matcher matcher = Tools.getMatcher(regEx, loginContent);
 		if (matcher.find()) {
 			String originalUrl = matcher.group(1);
 			String url = originalUrl.substring(0, originalUrl.lastIndexOf('/')); // https://wx2.qq.com/cgi-bin/mmwebwx-bin
@@ -244,6 +254,7 @@ public class Login {
 			}
 			loginInfo.put("deviceid", "e" + String.valueOf(new Random().nextLong()).substring(1, 16)); // 生成15位随机数
 			loginInfo.put("BaseRequest", new ArrayList<String>());
+			core.setLoginInfo(loginInfo);
 			String text = "";
 			HttpGet httpGet = new HttpGet(originalUrl);
 			httpGet.setHeader("User-Agent", Config.USER_AGENT);

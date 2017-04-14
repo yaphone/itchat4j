@@ -4,42 +4,149 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
 public class Core {
-	private Core instance;
+
+	private static Core instance;
 
 	private Core() {
-		boolean alive = false;
-		Storage storageClass = new Storage();
-		List<Object> memberList = storageClass.getMemberList();
-		List<Object> mpList = storageClass.getMpList();
-		List<Object> chatroomList = storageClass.getChatroomList();
-		List<Object> msgList = storageClass.getMsgList();
-		Map<String, Object> loginInfo = new HashMap<String, Object>();
-		HttpClient httpClient = HttpClients.createDefault();
-		String uuid = null;
-		Map<String, Object> functionDict = new HashMap<String, Object>();
-		functionDict.put("FriendChat", new HashMap<Object, Object>());
-		functionDict.put("GroupChat", new HashMap<Object, Object>());
-		functionDict.put("MpChat", new HashMap<Object, Object>());
-		boolean useHotReload = false;
-		String hotReloadDir = "itchat.pkl";
-		int receivingRetryCount = 5;
 
 	}
 
-	// 单例模式
-	public Core getInstance() {
+	public static Core getInstance() {
 		if (instance == null) {
 			synchronized (Core.class) {
-				if (instance == null) {
-					instance = new Core();
-				}
+				instance = new Core();
 			}
 		}
 		return instance;
+	}
+
+	boolean alive = false;
+	Storage storageClass = Storage.getInstance();
+	List<Object> memberList = storageClass.getMemberList();
+	List<Object> mpList = storageClass.getMpList();
+	List<Object> chatroomList = storageClass.getChatroomList();
+	List<Object> msgList = storageClass.getMsgList();
+	Map<String, Object> loginInfo = new HashMap<String, Object>();
+	CloseableHttpClient httpClient = HttpClients.createDefault();
+	String uuid = null;
+	Map<String, Object> functionDict = new HashMap<String, Object>() {
+		{
+			put("FriendChat", new HashMap<Object, Object>());
+			put("GroupChat", new HashMap<Object, Object>());
+			put("MpChat", new HashMap<Object, Object>());
+		}
+	};
+
+	boolean useHotReload = false;
+	String hotReloadDir = "itchat.pkl";
+	int receivingRetryCount = 5;
+
+	public boolean isAlive() {
+		return alive;
+	}
+
+	public void setAlive(boolean alive) {
+		this.alive = alive;
+	}
+
+	public Storage getStorageClass() {
+		return storageClass;
+	}
+
+	public void setStorageClass(Storage storageClass) {
+		this.storageClass = storageClass;
+	}
+
+	public List<Object> getMemberList() {
+		return memberList;
+	}
+
+	public void setMemberList(List<Object> memberList) {
+		this.memberList = memberList;
+	}
+
+	public List<Object> getMpList() {
+		return mpList;
+	}
+
+	public void setMpList(List<Object> mpList) {
+		this.mpList = mpList;
+	}
+
+	public List<Object> getChatroomList() {
+		return chatroomList;
+	}
+
+	public void setChatroomList(List<Object> chatroomList) {
+		this.chatroomList = chatroomList;
+	}
+
+	public List<Object> getMsgList() {
+		return msgList;
+	}
+
+	public void setMsgList(List<Object> msgList) {
+		this.msgList = msgList;
+	}
+
+	public Map<String, Object> getLoginInfo() {
+		return loginInfo;
+	}
+
+	public void setLoginInfo(Map<String, Object> loginInfo) {
+		this.loginInfo = loginInfo;
+	}
+
+	public CloseableHttpClient getHttpClient() {
+		return httpClient;
+	}
+
+	public void setHttpClient(CloseableHttpClient httpClient) {
+		this.httpClient = httpClient;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public Map<String, Object> getFunctionDict() {
+		return functionDict;
+	}
+
+	public void setFunctionDict(Map<String, Object> functionDict) {
+		this.functionDict = functionDict;
+	}
+
+	public boolean isUseHotReload() {
+		return useHotReload;
+	}
+
+	public void setUseHotReload(boolean useHotReload) {
+		this.useHotReload = useHotReload;
+	}
+
+	public String getHotReloadDir() {
+		return hotReloadDir;
+	}
+
+	public void setHotReloadDir(String hotReloadDir) {
+		this.hotReloadDir = hotReloadDir;
+	}
+
+	public int getReceivingRetryCount() {
+		return receivingRetryCount;
+	}
+
+	public void setReceivingRetryCount(int receivingRetryCount) {
+		this.receivingRetryCount = receivingRetryCount;
 	}
 
 }
