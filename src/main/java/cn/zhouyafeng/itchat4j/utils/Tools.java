@@ -3,6 +3,7 @@ package cn.zhouyafeng.itchat4j.utils;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -36,6 +37,25 @@ public class Tools {
 				Runtime runtime = Runtime.getRuntime();
 				try {
 					runtime.exec("cmd /c start " + qrPath);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			break;
+
+		default:
+			break;
+		}
+		return true;
+	}
+
+	public static boolean clearScreen() {
+		switch (Config.getOsName()) {
+		case WINDOWS:
+			if (Config.getOsName().equals(OsName.WINDOWS)) {
+				Runtime runtime = Runtime.getRuntime();
+				try {
+					runtime.exec("cmd /c " + "cls");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -140,6 +160,17 @@ public class Tools {
 		}
 		return sb.substring(0, sb.length() - 1); // 656159784|656159911|656159873|1491905341
 
+	}
+
+	public static JSONObject searchDictList(List<JSONObject> list, String key, String value) {
+		JSONObject r = null;
+		for (JSONObject i : list) {
+			if (i.getString(key).equals(value)) {
+				r = i;
+				break;
+			}
+		}
+		return r;
 	}
 
 }

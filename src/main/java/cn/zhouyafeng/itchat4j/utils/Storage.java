@@ -3,6 +3,8 @@ package cn.zhouyafeng.itchat4j.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
+
 public class Storage {
 
 	private static Storage instance;
@@ -23,8 +25,8 @@ public class Storage {
 
 	private String userName;
 	private String nickName;
-	private List<Object> memberList = new ArrayList<Object>();
-	private List<Object> mpList = new ArrayList<Object>();
+	private List<JSONObject> memberList = new ArrayList<JSONObject>();
+	private List<JSONObject> mpList = new ArrayList<JSONObject>();
 	private List<Object> chatroomList = new ArrayList<Object>();
 	private List<Object> msgList = new ArrayList<Object>();
 	private String lastInputUserName;
@@ -53,19 +55,19 @@ public class Storage {
 		this.nickName = nickName;
 	}
 
-	public List<Object> getMemberList() {
+	public List<JSONObject> getMemberList() {
 		return memberList;
 	}
 
-	public void setMemberList(List<Object> memberList) {
+	public void setMemberList(List<JSONObject> memberList) {
 		this.memberList = memberList;
 	}
 
-	public List<Object> getMpList() {
+	public List<JSONObject> getMpList() {
 		return mpList;
 	}
 
-	public void setMpList(List<Object> mpList) {
+	public void setMpList(List<JSONObject> mpList) {
 		this.mpList = mpList;
 	}
 

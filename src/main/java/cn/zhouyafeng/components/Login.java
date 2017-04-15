@@ -36,6 +36,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.zhouyafeng.itchat4j.utils.Config;
+import cn.zhouyafeng.itchat4j.utils.Contact;
 import cn.zhouyafeng.itchat4j.utils.Core;
 import cn.zhouyafeng.itchat4j.utils.ReturnValue;
 import cn.zhouyafeng.itchat4j.utils.Tools;
@@ -44,6 +45,7 @@ public class Login {
 	private static Logger logger = Logger.getLogger("Wechat");
 	private String baseUrl = Config.BASE_URL;
 	private boolean isLoginIn = false;
+	private Contact contact = new Contact();
 
 	private CloseableHttpClient httpClient;
 	private Core core = Core.getInstance();
@@ -102,6 +104,9 @@ public class Login {
 		}
 		this.webInit();
 		this.showMobileLogin();
+		contact.getContact(true);
+		Tools.clearScreen();
+		logger.info(String.format("Login successfully as %s", core.getStorageClass().getNickName()));
 		return 0;
 	}
 
@@ -192,12 +197,8 @@ public class Login {
 			if (entity != null) {
 				result = EntityUtils.toString(entity);
 			}
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.info(e.getMessage());
 		}
 		String regEx = "window.code=(\\d+)";
 		Matcher matcher = Tools.getMatcher(regEx, result);
@@ -364,10 +365,10 @@ public class Login {
 			String result = EntityUtils.toString(response.getEntity(), "UTF-8");
 			obj = JSON.parseObject(result);
 			// TODO utils.emoji_formatter(dic['User'], 'NickName')
-			obj.put("User", Tools.structFriendInfo((JSONObject) obj.get("User"))); // 为userObj添加新字段
+			obj.put("User", Tools.structFriendInfo(obj.getJSONObject("User"))); // 为userObj添加新字段
 			obj.put("synckey", obj.getJSONObject("SyncKey"));
-			core.getStorageClass().setUserName(((JSONObject) obj.get("User")).getString("UserName"));
-			core.getStorageClass().setNickName(((JSONObject) obj.get("User")).getString("NickName"));
+			core.getStorageClass().setUserName((obj.getJSONObject("User")).getString("UserName"));
+			core.getStorageClass().setNickName((obj.getJSONObject("User")).getString("NickName"));
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -399,7 +400,6 @@ public class Login {
 			HttpResponse response = httpClient.execute(request);
 			String result = EntityUtils.toString(response.getEntity(), "UTF-8");
 			obj = JSON.parseObject(result);
-			System.out.println(obj);
 		} catch (Exception e) {
 
 		}

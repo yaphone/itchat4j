@@ -7,6 +7,8 @@ import java.util.Map;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
+import com.alibaba.fastjson.JSONObject;
+
 public class Core {
 
 	private static Core instance;
@@ -26,13 +28,14 @@ public class Core {
 
 	boolean alive = false;
 	Storage storageClass = Storage.getInstance();
-	List<Object> memberList = storageClass.getMemberList();
-	List<Object> mpList = storageClass.getMpList();
+	List<JSONObject> memberList = storageClass.getMemberList();
+	List<JSONObject> mpList = storageClass.getMpList();
 	List<Object> chatroomList = storageClass.getChatroomList();
 	List<Object> msgList = storageClass.getMsgList();
 	Map<String, Object> loginInfo = new HashMap<String, Object>();
 	CloseableHttpClient httpClient = HttpClients.createDefault();
 	String uuid = null;
+
 	Map<String, Object> functionDict = new HashMap<String, Object>() {
 		{
 			put("FriendChat", new HashMap<Object, Object>());
@@ -61,19 +64,19 @@ public class Core {
 		this.storageClass = storageClass;
 	}
 
-	public List<Object> getMemberList() {
+	public List<JSONObject> getMemberList() {
 		return memberList;
 	}
 
-	public void setMemberList(List<Object> memberList) {
+	public void setMemberList(List<JSONObject> memberList) {
 		this.memberList = memberList;
 	}
 
-	public List<Object> getMpList() {
+	public List<JSONObject> getMpList() {
 		return mpList;
 	}
 
-	public void setMpList(List<Object> mpList) {
+	public void setMpList(List<JSONObject> mpList) {
 		this.mpList = mpList;
 	}
 
