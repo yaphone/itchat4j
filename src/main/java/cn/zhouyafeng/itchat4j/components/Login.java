@@ -2,7 +2,6 @@ package cn.zhouyafeng.itchat4j.components;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,7 +17,6 @@ import java.util.regex.Matcher;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.ParseException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -107,6 +105,7 @@ public class Login {
 		contact.getContact(true);
 		Tools.clearScreen();
 		logger.info(String.format("Login successfully as %s", core.getStorageClass().getNickName()));
+		startReceiving();
 		return 0;
 	}
 
@@ -131,11 +130,7 @@ public class Login {
 			if (entity != null) {
 				result = EntityUtils.toString(entity);
 			}
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		String regEx = "window.QRLogin.code = (\\d+); window.QRLogin.uuid = \"(\\S+?)\";";
@@ -405,6 +400,52 @@ public class Login {
 		}
 		// TODO
 		return null;
+	}
+
+	void startReceiving() {
+		core.setAlive(true);
+		new Thread(new Runnable() {
+
+			public void run() {
+				while (core.isAlive()) {
+					try {
+						syncCheck();
+					} catch (Exception e) {
+						logger.info(e.getMessage());
+					}
+				}
+			}
+		}).start();
+	}
+
+	void syncCheck() {
+		String syncUrl = (String) core.getLoginInfo().get("syncUrl");
+		if (syncUrl == null || syncUrl.equals("")) {
+			syncUrl = (String) core.getLoginInfo().get("url");
+		}
+		String url = String.format("%s/synccheck", syncUrl);
+		// String url = String.format("%s/synccheck", args);
+		List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+		params.add(new BasicNameValuePair("r", String.valueOf(new Date().getTime())));
+		params.add(new BasicNameValuePair("skey", (String) core.getLoginInfo().get("skey")));
+		params.add(new BasicNameValuePair("sid", (String) core.getLoginInfo().get("sid")));
+		params.add(new BasicNameValuePair("uin", (String) core.getLoginInfo().get("uin")));
+		params.add(new BasicNameValuePair("deviceid", (String) core.getLoginInfo().get("deviceid")));
+		params.add(new BasicNameValuePair("synckey", (String) core.getLoginInfo().get("synckey")));
+		params.add(new BasicNameValuePair("_", (String) core.getLoginInfo().get("skey")));
+		try {
+			String paramStr = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
+			HttpGet httpGet = new HttpGet(url + "?" + paramStr);
+			httpGet.setHeader("User-Agent", Config.USER_AGENT);
+			CloseableHttpResponse response = httpClient.execute(httpGet);
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+				String result = EntityUtils.toString(entity);
+				String regEx = "window.synccheck={retcode:\"(\\d+)\",selector:\"(\\d+)\"}";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }
