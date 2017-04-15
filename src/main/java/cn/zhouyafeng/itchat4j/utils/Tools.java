@@ -75,9 +75,9 @@ public class Tools {
 	 * @date 2017年4月9日 上午12:27:10
 	 * @return
 	 */
-	public static Matcher getMatcher(String regEx, String result) {
+	public static Matcher getMatcher(String regEx, String text) {
 		Pattern pattern = Pattern.compile(regEx);
-		Matcher matcher = pattern.matcher(result);
+		Matcher matcher = pattern.matcher(text);
 		return matcher;
 	}
 

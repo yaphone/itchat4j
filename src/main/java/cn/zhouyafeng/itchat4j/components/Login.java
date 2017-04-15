@@ -31,6 +31,7 @@ import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.zhouyafeng.itchat4j.utils.Config;
@@ -360,8 +361,17 @@ public class Login {
 			String result = EntityUtils.toString(response.getEntity(), "UTF-8");
 			obj = JSON.parseObject(result);
 			// TODO utils.emoji_formatter(dic['User'], 'NickName')
-			obj.put("User", Tools.structFriendInfo(obj.getJSONObject("User"))); // 为userObj添加新字段
-			obj.put("synckey", obj.getJSONObject("SyncKey"));
+			core.getLoginInfo().put("InviteStartCount", obj.getInteger("InviteStartCount"));
+			core.getLoginInfo().put("User", Tools.structFriendInfo(obj.getJSONObject("User"))); // 为userObj添加新字段
+			core.getLoginInfo().put("SyncKey", obj.getJSONObject("SyncKey"));
+			JSONArray syncArray = obj.getJSONObject("SyncKey").getJSONArray("List");
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < syncArray.size(); i++) {
+				sb.append(syncArray.getJSONObject(i).getString("Key") + "_"
+						+ syncArray.getJSONObject(i).getString("Val") + "|");
+			}
+			String synckey = sb.toString();
+			core.getLoginInfo().put("synckey", synckey.substring(0, synckey.length() - 1));// 1_656161336|2_656161626|3_656161313|11_656159955|13_656120033|201_1492273724|1000_1492265953|1001_1492250432|1004_1491805192
 			core.getStorageClass().setUserName((obj.getJSONObject("User")).getString("UserName"));
 			core.getStorageClass().setNickName((obj.getJSONObject("User")).getString("NickName"));
 
@@ -413,12 +423,18 @@ public class Login {
 					} catch (Exception e) {
 						logger.info(e.getMessage());
 					}
+					try {
+						Thread.sleep(1000);
+					} catch (Exception e) {
+						logger.info(e.getMessage());
+					}
 				}
 			}
 		}).start();
 	}
 
-	void syncCheck() {
+	String syncCheck() {
+		String result = null;
 		String syncUrl = (String) core.getLoginInfo().get("syncUrl");
 		if (syncUrl == null || syncUrl.equals("")) {
 			syncUrl = (String) core.getLoginInfo().get("url");
@@ -428,24 +444,32 @@ public class Login {
 		List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
 		params.add(new BasicNameValuePair("r", String.valueOf(new Date().getTime())));
 		params.add(new BasicNameValuePair("skey", (String) core.getLoginInfo().get("skey")));
-		params.add(new BasicNameValuePair("sid", (String) core.getLoginInfo().get("sid")));
-		params.add(new BasicNameValuePair("uin", (String) core.getLoginInfo().get("uin")));
+		params.add(new BasicNameValuePair("sid", (String) core.getLoginInfo().get("wxsid")));
+		params.add(new BasicNameValuePair("uin", (String) core.getLoginInfo().get("wxuin")));
 		params.add(new BasicNameValuePair("deviceid", (String) core.getLoginInfo().get("deviceid")));
 		params.add(new BasicNameValuePair("synckey", (String) core.getLoginInfo().get("synckey")));
-		params.add(new BasicNameValuePair("_", (String) core.getLoginInfo().get("skey")));
+		params.add(new BasicNameValuePair("_", String.valueOf(new Date().getTime())));
+		System.out.println(params);
 		try {
 			String paramStr = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
 			HttpGet httpGet = new HttpGet(url + "?" + paramStr);
 			httpGet.setHeader("User-Agent", Config.USER_AGENT);
+			httpGet.setConfig(RequestConfig.custom().setRedirectsEnabled(false).build()); // 禁止重定向
 			CloseableHttpResponse response = httpClient.execute(httpGet);
 			HttpEntity entity = response.getEntity();
 			if (entity != null) {
-				String result = EntityUtils.toString(entity);
-				String regEx = "window.synccheck={retcode:\"(\\d+)\",selector:\"(\\d+)\"}";
+				String text = EntityUtils.toString(entity);
+				System.out.println(text);
+				String regEx = "window.synccheck=\\{retcode:\"(\\d+)\",selector:\"(\\d+)\"\\}";
+				Matcher matcher = Tools.getMatcher(regEx, text);
+				if (matcher.find()) {
+					result = matcher.group(2);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return result;
 	}
 
 }
