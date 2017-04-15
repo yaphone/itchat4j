@@ -1,6 +1,6 @@
 package cn.zhouyafeng.itchat4j;
 
-import cn.zhouyafeng.components.Login;
+import cn.zhouyafeng.itchat4j.components.Login;
 import cn.zhouyafeng.itchat4j.utils.Core;
 
 public class Wechat {

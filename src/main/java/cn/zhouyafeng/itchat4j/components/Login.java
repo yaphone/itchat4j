@@ -1,4 +1,4 @@
-package cn.zhouyafeng.components;
+package cn.zhouyafeng.itchat4j.components;
 
 import java.io.File;
 import java.io.FileOutputStream;
