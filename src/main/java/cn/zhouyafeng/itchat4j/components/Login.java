@@ -225,17 +225,21 @@ public class Login {
 			core.getLoginInfo().put("url", url);
 			Map<String, List<String>> possibleUrlMap = getPossibleUrlMap();
 			Iterator<Entry<String, List<String>>> iterator = possibleUrlMap.entrySet().iterator();
+			Map.Entry<String, List<String>> entry;
+			String fileUrl;
+			String syncUrl;
 			while (iterator.hasNext()) {
-				Map.Entry<String, List<String>> entry = iterator.next();
+				entry = iterator.next();
 				String indexUrl = entry.getKey();
-				String fileUrl = "https://" + entry.getValue().get(0) + "/cgi-bin/mmwebwx-bin";
-				String syncUrl = "https://" + entry.getValue().get(1) + "/cgi-bin/mmwebwx-bin";
+				fileUrl = "https://" + entry.getValue().get(0) + "/cgi-bin/mmwebwx-bin";
+				syncUrl = "https://" + entry.getValue().get(1) + "/cgi-bin/mmwebwx-bin";
 				if (core.getLoginInfo().get("url").toString().contains(indexUrl)) {
 					core.getLoginInfo().put("fileUrl", fileUrl);
 					core.getLoginInfo().put("syncUrl", syncUrl);
 					break;
 				}
 			}
+			// System.out.println(core.getLoginInfo().get("syncUrl"));
 			if (core.getLoginInfo().get("fileUrl") == null && core.getLoginInfo().get("syncUrl") == null) {
 				core.getLoginInfo().put("fileUrl", url);
 				core.getLoginInfo().put("syncUrl", url);
@@ -253,7 +257,7 @@ public class Login {
 					text = EntityUtils.toString(entity);
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.info(e.getMessage());
 				return;
 			}
 			// System.out.println(text);
@@ -304,17 +308,17 @@ public class Login {
 				add("webpush.wx8.qq.com");
 			}
 		});
-		possibleUrlMap.put("qq.com", new ArrayList<String>() {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			{
-				add("file.wx.qq.com");
-				add("webpush.wx.qq.com");
-			}
-		});
+		// possibleUrlMap.put("qq.com", new ArrayList<String>() {
+		// /**
+		// *
+		// */
+		// private static final long serialVersionUID = 1L;
+		//
+		// {
+		// add("file.wx.qq.com");
+		// add("webpush.wx.qq.com");
+		// }
+		// });
 		possibleUrlMap.put("web2.wechat.com", new ArrayList<String>() {
 			/**
 			 * 
@@ -433,9 +437,17 @@ public class Login {
 		}).start();
 	}
 
+	/**
+	 * 保活心跳
+	 * 
+	 * @author Email:zhouyaphone@163.com
+	 * @date 2017年4月16日 上午11:11:34
+	 * @return
+	 */
 	String syncCheck() {
 		String result = null;
 		String syncUrl = (String) core.getLoginInfo().get("syncUrl");
+		// String syncUrl = "https://webpush.wx2.qq.com/cgi-bin/mmwebwx-bin";
 		if (syncUrl == null || syncUrl.equals("")) {
 			syncUrl = (String) core.getLoginInfo().get("url");
 		}
@@ -449,20 +461,19 @@ public class Login {
 		params.add(new BasicNameValuePair("deviceid", (String) core.getLoginInfo().get("deviceid")));
 		params.add(new BasicNameValuePair("synckey", (String) core.getLoginInfo().get("synckey")));
 		params.add(new BasicNameValuePair("_", String.valueOf(new Date().getTime())));
-		System.out.println(params);
 		try {
 			String paramStr = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
 			HttpGet httpGet = new HttpGet(url + "?" + paramStr);
 			httpGet.setHeader("User-Agent", Config.USER_AGENT);
-			httpGet.setConfig(RequestConfig.custom().setRedirectsEnabled(false).build()); // 禁止重定向
 			CloseableHttpResponse response = httpClient.execute(httpGet);
 			HttpEntity entity = response.getEntity();
 			if (entity != null) {
 				String text = EntityUtils.toString(entity);
-				System.out.println(text);
 				String regEx = "window.synccheck=\\{retcode:\"(\\d+)\",selector:\"(\\d+)\"\\}";
 				Matcher matcher = Tools.getMatcher(regEx, text);
-				if (matcher.find()) {
+				if (!matcher.find() || matcher.group(1).equals("2")) {
+					logger.info(String.format("Unexpected sync check result: %s", text));
+				} else {
 					result = matcher.group(2);
 				}
 			}
