@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -171,6 +172,17 @@ public class Tools {
 			}
 		}
 		return r;
+	}
+
+	public static void emojiFormatter(JSONObject d, String k) {
+		// TODO
+	}
+
+	public static void msgFormatter(JSONObject d, String k) {
+		emojiFormatter(d, k);
+
+		d.put(k, d.getString(k).replace("<br/>", "\n"));
+		d.put(k, StringEscapeUtils.unescapeHtml4(d.getString(k)));
 	}
 
 }

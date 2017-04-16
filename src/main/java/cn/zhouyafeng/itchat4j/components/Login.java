@@ -394,7 +394,7 @@ public class Login {
 		@SuppressWarnings("unchecked")
 		Map<String, Map<String, String>> baseRequestMap = (Map<String, Map<String, String>>) core.getLoginInfo()
 				.get("baseRequest");
-		paramMap.put("BaseRequest", baseRequestMap);
+		paramMap.put("BaseRequest", baseRequestMap.get("BaseRequest"));
 		paramMap.put("Code", 3);
 		paramMap.put("FromUserName", core.getStorageClass().getUserName());
 		paramMap.put("ToUserName", core.getStorageClass().getUserName());
@@ -423,12 +423,27 @@ public class Login {
 			public void run() {
 				while (core.isAlive()) {
 					try {
-						syncCheck();
+						String i = syncCheck();
+						if (i == null) {
+							core.setAlive(false);
+						} else if (i.equals("0")) {
+							continue;
+						} else {
+							JSONArray msgList = new JSONArray();
+							JSONArray contactList = new JSONArray();
+							JSONObject msgObj = getMsg();
+							if (msgObj != null) {
+								msgList = msgObj.getJSONArray("AddMsgList");
+								contactList = msgObj.getJSONArray("ModContactList");
+								Message.produceMsg(msgList);
+							}
+						}
+
 					} catch (Exception e) {
 						logger.info(e.getMessage());
 					}
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(5000);
 					} catch (Exception e) {
 						logger.info(e.getMessage());
 					}
@@ -481,6 +496,50 @@ public class Login {
 			e.printStackTrace();
 		}
 		return result;
+	}
+
+	JSONObject getMsg() {
+		JSONObject result = new JSONObject();
+		String url = String.format("%s/webwxsync?sid=%s&skey=%s&pass_ticket=%s", core.getLoginInfo().get("url"),
+				core.getLoginInfo().get("wxsid"), core.getLoginInfo().get("skey"),
+				core.getLoginInfo().get("pass_ticket"));
+		// System.out.println(url);
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		@SuppressWarnings("unchecked")
+		Map<String, Map<String, String>> baseRequestMap = (Map<String, Map<String, String>>) core.getLoginInfo()
+				.get("baseRequest");
+		paramMap.put("BaseRequest", baseRequestMap.get("BaseRequest"));
+		paramMap.put("SyncKey", core.getLoginInfo().get("SyncKey"));
+		paramMap.put("rr", -new Date().getTime() / 1000);
+		HttpPost httpPost = new HttpPost(url);
+		httpPost.setHeader("ContentType", "application/json; charset=UTF-8");
+		httpPost.setHeader("User-Agent", Config.USER_AGENT);
+		CloseableHttpResponse response;
+		try {
+			StringEntity params = new StringEntity(JSON.toJSONString(paramMap));
+			httpPost.setEntity(params);
+			response = httpClient.execute(httpPost);
+			String text = EntityUtils.toString(response.getEntity(), "UTF-8");
+			JSONObject obj = JSON.parseObject(text);
+			if (obj.getJSONObject("BaseResponse").getInteger("Ret") != 0) {
+				result = null;
+			} else {
+				result = obj;
+				core.getLoginInfo().put("SyncKey", obj.getJSONObject("SyncCheckKey"));
+				JSONArray syncArray = obj.getJSONObject("SyncKey").getJSONArray("List");
+				StringBuilder sb = new StringBuilder();
+				for (int i = 0; i < syncArray.size(); i++) {
+					sb.append(syncArray.getJSONObject(i).getString("Key") + "_"
+							+ syncArray.getJSONObject(i).getString("Val") + "|");
+				}
+				String synckey = sb.toString();
+				core.getLoginInfo().put("synckey", synckey.substring(0, synckey.length() - 1));// 1_656161336|2_656161626|3_656161313|11_656159955|13_656120033|201_1492273724|1000_1492265953|1001_1492250432|1004_1491805192
+			}
+		} catch (Exception e) {
+			logger.info(e.getMessage());
+		}
+		return result;
+
 	}
 
 }
