@@ -1,19 +1,31 @@
 package cn.zhouyafeng.itchat4j.components;
 
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.util.EntityUtils;
+
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.zhouyafeng.itchat4j.utils.Config;
 import cn.zhouyafeng.itchat4j.utils.Core;
 import cn.zhouyafeng.itchat4j.utils.Tools;
 
 public class Message {
 	private static Logger logger = Logger.getLogger("Message");
 	private static Core core = Core.getInstance();
+	private static CloseableHttpClient httpClient = core.getHttpClient();
 
 	public static Object getDownloadFn() {
 		// TODO
@@ -72,12 +84,53 @@ public class Message {
 			m.put("Text", msg.getString("Text"));
 			result.add(m);
 		}
-		System.out.println(result);
 		return result;
 	}
 
-	static void produceGroupChat(Core core, JSONObject m) {
+	public static void produceGroupChat(Core core, JSONObject m) {
 		// TODO
 	};
+
+	public static void send(String msg, String toUserName, String mediaId) {
+		sendMsg(msg, toUserName);
+	}
+
+	public static void sendMsg(String msg, String toUserName) {
+		logger.info(String.format("Request to send a text message to %s: %s", toUserName, msg));
+		sendRawMsg(1, msg, toUserName);
+	}
+
+	public static void sendRawMsg(int msgType, String content, String toUserName) {
+		String url = String.format("%s/webwxsendmsg", core.getLoginInfo().get("url"));
+
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		@SuppressWarnings("unchecked")
+		Map<String, Map<String, String>> baseRequestMap = (Map<String, Map<String, String>>) core.getLoginInfo()
+				.get("baseRequest");
+		paramMap.put("BaseRequest", baseRequestMap.get("BaseRequest"));
+		Map<String, Object> msgMap = new HashMap<String, Object>();
+		msgMap.put("Type", msgType);
+		msgMap.put("Content", content);
+		msgMap.put("FromUserName", core.getStorageClass().getUserName());
+		msgMap.put("ToUserName", toUserName == null ? core.getStorageClass().getUserName() : toUserName);
+		msgMap.put("LocalID", new Date().getTime() * 10);
+		msgMap.put("ClientMsgId", new Date().getTime() * 10);
+		paramMap.put("Msg", msgMap);
+		paramMap.put("Scene", 0);
+		HttpPost httpPost = new HttpPost(url);
+		httpPost.setHeader("ContentType", "application/json; charset=UTF-8");
+		httpPost.setHeader("User-Agent", Config.USER_AGENT);
+		CloseableHttpResponse response;
+		try {
+			StringEntity params = new StringEntity(JSON.toJSONString(paramMap));
+			httpPost.setEntity(params);
+			response = httpClient.execute(httpPost);
+			String text = EntityUtils.toString(response.getEntity(), "UTF-8");
+			JSONObject obj = JSON.parseObject(text);
+		} catch (Exception e) {
+			logger.info(e.getMessage());
+		}
+
+	}
 
 }
