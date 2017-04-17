@@ -419,6 +419,7 @@ public class Login {
 	void startReceiving() {
 		core.setAlive(true);
 		new Thread(new Runnable() {
+			int retryCount = 0;
 
 			public void run() {
 				while (core.isAlive()) {
@@ -435,18 +436,41 @@ public class Login {
 							if (msgObj != null) {
 								msgList = msgObj.getJSONArray("AddMsgList");
 								contactList = msgObj.getJSONArray("ModContactList");
-								Message.produceMsg(msgList);
+								msgList = Message.produceMsg(msgList);
+								for (int j = 0; j < msgList.size(); j++) {
+									core.getMsgList().add(msgList.getJSONObject(j));
+								}
+								JSONArray chatroomList = new JSONArray();
+								JSONArray otherList = new JSONArray();
+								for (int k = 0; k < contactList.size(); k++) {
+									if (contactList.getString(k).contains("@@")) {
+										chatroomList.add(contactList.getString(k));
+									} else {
+										otherList.add(contactList.getString(k));
+									}
+								}
+								// TODO chatroomMsg =
+								// update_local_chatrooms(self, chatroomList)
+								// TODO self.msgList.put(chatroomMsg)
+								// TODO update_local_friends(self, otherList)
 							}
 						}
+						retryCount = 0;
 
 					} catch (Exception e) {
 						logger.info(e.getMessage());
+						retryCount += 1;
+						if (core.getReceivingRetryCount() < retryCount) {
+							core.setAlive(false);
+						} else {
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e1) {
+								logger.info(e.getMessage());
+							}
+						}
 					}
-					try {
-						Thread.sleep(5000);
-					} catch (Exception e) {
-						logger.info(e.getMessage());
-					}
+
 				}
 			}
 		}).start();
