@@ -122,7 +122,7 @@ public class Message {
 		httpPost.setHeader("User-Agent", Config.USER_AGENT);
 		CloseableHttpResponse response;
 		try {
-			StringEntity params = new StringEntity(JSON.toJSONString(paramMap));
+			StringEntity params = new StringEntity(JSON.toJSONString(paramMap), "UTF-8");
 			httpPost.setEntity(params);
 			response = httpClient.execute(httpPost);
 			String text = EntityUtils.toString(response.getEntity(), "UTF-8");
