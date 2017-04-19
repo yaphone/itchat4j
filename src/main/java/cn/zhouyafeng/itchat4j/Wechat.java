@@ -38,8 +38,10 @@ public class Wechat {
 			public void run() {
 				while (true) {
 					if (core.getMsgList().size() > 0) {
-						Message.send("Hello World", ((JSONObject) core.getMsgList().get(0)).getString("FromUserName"),
-								"");
+						System.out.println(((JSONObject) core.getMsgList().get(0)).getString("Content"));
+						if (((JSONObject) core.getMsgList().get(0)).getString("Content").length() > 0)
+							Message.send("Hello World",
+									((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
 						core.getMsgList().remove(0);
 					}
 					try {
