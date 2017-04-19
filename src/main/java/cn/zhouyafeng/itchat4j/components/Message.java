@@ -28,7 +28,7 @@ public class Message {
 	private static CloseableHttpClient httpClient = core.getHttpClient();
 
 	public static Object getDownloadFn() {
-		// TODO
+		// TODO 处理下载
 		return null;
 	};
 
