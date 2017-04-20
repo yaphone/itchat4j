@@ -119,7 +119,7 @@ public class Login {
 		List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
 		params.add(new BasicNameValuePair("appid", "wx782c26e4c19acffb"));
 		params.add(new BasicNameValuePair("fun", "new"));
-		HttpEntity entity = myHttpClient.doGet(uuidUrl, params, false);
+		HttpEntity entity = myHttpClient.doGet(uuidUrl, params, true);
 		try {
 			result = EntityUtils.toString(entity);
 		} catch (Exception e) {
@@ -145,7 +145,7 @@ public class Login {
 	public boolean getQR() {
 		String qrPath = Config.getLocalPath() + File.separator + "QR.jpg";
 		String qrUrl = baseUrl + "/qrcode/" + core.getUuid();
-		HttpEntity entity = myHttpClient.doGet(qrUrl, null, false);
+		HttpEntity entity = myHttpClient.doGet(qrUrl, null, true);
 		try {
 
 			OutputStream out = new FileOutputStream(qrPath);
@@ -180,14 +180,9 @@ public class Login {
 		params.add(new BasicNameValuePair("tip", "0"));
 		params.add(new BasicNameValuePair("r", String.valueOf(localTime / 1579L)));
 		params.add(new BasicNameValuePair("_", String.valueOf(localTime)));
+		HttpEntity entity = myHttpClient.doGet(checkUrl, params, true);
 		try {
-			String paramStr = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
-			HttpGet httpGet = new HttpGet(checkUrl + "?" + paramStr);
-			CloseableHttpResponse response = httpClient.execute(httpGet);
-			HttpEntity entity = response.getEntity();
-			if (entity != null) {
-				result = EntityUtils.toString(entity);
-			}
+			result = EntityUtils.toString(entity);
 		} catch (Exception e) {
 			logger.info(e.getMessage());
 		}
@@ -244,10 +239,14 @@ public class Login {
 			String text = "";
 			HttpGet httpGet = new HttpGet(originalUrl);
 			httpGet.setHeader("User-Agent", Config.USER_AGENT);
-			httpGet.setConfig(RequestConfig.custom().setRedirectsEnabled(false).build()); // 禁止重定向
+			httpGet.setConfig(RequestConfig.custom().setRedirectsEnabled(false).build());
+			// // 禁止重定向
+
 			try {
 				CloseableHttpResponse response = httpClient.execute(httpGet);
 				HttpEntity entity = response.getEntity();
+				// HttpEntity entity = myHttpClient.doGet(originalUrl, null,
+				// true);
 				if (entity != null) {
 					text = EntityUtils.toString(entity);
 				}
@@ -263,15 +262,20 @@ public class Login {
 				core.getLoginInfo().put("skey",
 						doc.getElementsByTagName("skey").item(0).getFirstChild().getNodeValue());
 				baseRequest.put("Skey", (String) core.getLoginInfo().get("skey"));
+				// System.out.println(core.getLoginInfo().get("skey"));
 				core.getLoginInfo().put("wxsid",
 						doc.getElementsByTagName("wxsid").item(0).getFirstChild().getNodeValue());
 				baseRequest.put("Sid", (String) core.getLoginInfo().get("wxsid"));
+				// System.out.println(core.getLoginInfo().get("wxsid"));
 				core.getLoginInfo().put("wxuin",
 						doc.getElementsByTagName("wxuin").item(0).getFirstChild().getNodeValue());
 				baseRequest.put("Uin", (String) core.getLoginInfo().get("wxuin"));
+				// System.out.println(core.getLoginInfo().get("wxuin"));
 				core.getLoginInfo().put("pass_ticket",
 						doc.getElementsByTagName("pass_ticket").item(0).getFirstChild().getNodeValue());
 				baseRequest.put("DeviceID", (String) core.getLoginInfo().get("pass_ticket"));
+				// System.out.println((String)
+				// core.getLoginInfo().get("pass_ticket"));
 				BaseRequest.put("BaseRequest", baseRequest);
 				core.getLoginInfo().put("baseRequest", BaseRequest);
 			}
@@ -357,7 +361,9 @@ public class Login {
 			request.setHeader("User-Agent", Config.USER_AGENT);
 			request.setEntity(params);
 			HttpResponse response = httpClient.execute(request);
-			String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+			HttpEntity entity = response.getEntity();
+			// HttpEntity entity = myHttpClient.doPost(url, params);
+			String result = EntityUtils.toString(entity, "UTF-8");
 			obj = JSON.parseObject(result);
 			// TODO utils.emoji_formatter(dic['User'], 'NickName')
 			core.getLoginInfo().put("InviteStartCount", obj.getInteger("InviteStartCount"));
@@ -370,6 +376,7 @@ public class Login {
 						+ syncArray.getJSONObject(i).getString("Val") + "|");
 			}
 			String synckey = sb.toString();
+			System.out.println(synckey);
 			core.getLoginInfo().put("synckey", synckey.substring(0, synckey.length() - 1));// 1_656161336|2_656161626|3_656161313|11_656159955|13_656120033|201_1492273724|1000_1492265953|1001_1492250432|1004_1491805192
 			core.getStorageClass().setUserName((obj.getJSONObject("User")).getString("UserName"));
 			core.getStorageClass().setNickName((obj.getJSONObject("User")).getString("NickName"));
