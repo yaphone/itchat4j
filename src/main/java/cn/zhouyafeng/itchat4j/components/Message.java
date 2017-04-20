@@ -27,7 +27,7 @@ public class Message {
 	private static Core core = Core.getInstance();
 	private static CloseableHttpClient httpClient = core.getHttpClient();
 
-	public static Object getDownloadFn() {
+	public static Object getDownloadFn(Core core, String url, String msgId) {
 		// TODO 处理下载
 		return null;
 	};
@@ -59,8 +59,8 @@ public class Message {
 					msg.put("Text", m.getString("Content"));
 				}
 			} else if (m.getInteger("MsgType") == 3 || m.getInteger("MsgType") == 47) { // picture
-				getDownloadFn();
-			} else if (m.getInteger("MsgType") == 34) { // voidce
+				// getDownloadFn();
+			} else if (m.getInteger("MsgType") == 34) { // voice
 
 			} else if (m.getInteger("MsgType") == 37) {// friends
 

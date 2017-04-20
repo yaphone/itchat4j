@@ -17,13 +17,11 @@ import java.util.regex.Matcher;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.CookieStore;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -37,6 +35,7 @@ import com.alibaba.fastjson.JSONObject;
 import cn.zhouyafeng.itchat4j.utils.Config;
 import cn.zhouyafeng.itchat4j.utils.Contact;
 import cn.zhouyafeng.itchat4j.utils.Core;
+import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
 import cn.zhouyafeng.itchat4j.utils.ReturnValue;
 import cn.zhouyafeng.itchat4j.utils.Tools;
 
@@ -49,10 +48,7 @@ public class Login {
 	private CloseableHttpClient httpClient;
 	private Core core = Core.getInstance();
 
-	// httpClient初始化
-	public static HttpClientContext context = null;
-	public static CookieStore cookieStore = null;
-	public static RequestConfig requestConfig = null;
+	private MyHttpClient myHttpClient = core.getMyHttpClient();
 
 	public Login() {
 		this.httpClient = core.getHttpClient();
@@ -118,21 +114,16 @@ public class Login {
 	 * @return
 	 */
 	public String getQRuuid() {
-		String result = "";
+		String result = null;
 		String uuidUrl = baseUrl + "/jslogin";
 		List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
 		params.add(new BasicNameValuePair("appid", "wx782c26e4c19acffb"));
 		params.add(new BasicNameValuePair("fun", "new"));
+		HttpEntity entity = myHttpClient.doGet(uuidUrl, params, false);
 		try {
-			String paramStr = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
-			HttpGet httpGet = new HttpGet(uuidUrl + "?" + paramStr);
-			CloseableHttpResponse response = httpClient.execute(httpGet);
-			HttpEntity entity = response.getEntity();
-			if (entity != null) {
-				result = EntityUtils.toString(entity);
-			}
+			result = EntityUtils.toString(entity);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.info(e.getMessage());
 		}
 		String regEx = "window.QRLogin.code = (\\d+); window.QRLogin.uuid = \"(\\S+?)\";";
 		Matcher matcher = Tools.getMatcher(regEx, result);
@@ -144,24 +135,28 @@ public class Login {
 		return core.getUuid();
 	}
 
+	/**
+	 * 获取登陆二维码图片
+	 * 
+	 * @author Email:zhouyaphone@163.com
+	 * @date 2017年4月20日 下午11:44:08
+	 * @return
+	 */
 	public boolean getQR() {
 		String qrPath = Config.getLocalPath() + File.separator + "QR.jpg";
 		String qrUrl = baseUrl + "/qrcode/" + core.getUuid();
-		HttpGet httpGet = new HttpGet(qrUrl);
+		HttpEntity entity = myHttpClient.doGet(qrUrl, null, false);
 		try {
-			CloseableHttpResponse response = httpClient.execute(httpGet);
-			HttpEntity entity = response.getEntity();
-			if (entity != null) {
-				OutputStream out = new FileOutputStream(qrPath);
-				byte[] bytes = EntityUtils.toByteArray(entity);
-				out.write(bytes);
-				out.flush();
-				out.close();
-				Tools.printQr(qrPath);
-			}
+
+			OutputStream out = new FileOutputStream(qrPath);
+			byte[] bytes = EntityUtils.toByteArray(entity);
+			out.write(bytes);
+			out.flush();
+			out.close();
+			Tools.printQr(qrPath);
+
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.info(e.getMessage());
 			return false;
 		}
 

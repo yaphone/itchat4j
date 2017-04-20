@@ -34,6 +34,7 @@ public class Core {
 	List<Object> msgList = storageClass.getMsgList();
 	Map<String, Object> loginInfo = new HashMap<String, Object>();
 	CloseableHttpClient httpClient = HttpClients.createDefault();
+	MyHttpClient myHttpClient = new MyHttpClient();
 	String uuid = null;
 
 	Map<String, Object> functionDict = new HashMap<String, Object>() {
@@ -150,6 +151,14 @@ public class Core {
 
 	public void setReceivingRetryCount(int receivingRetryCount) {
 		this.receivingRetryCount = receivingRetryCount;
+	}
+
+	public MyHttpClient getMyHttpClient() {
+		return myHttpClient;
+	}
+
+	public void setMyHttpClient(MyHttpClient myHttpClient) {
+		this.myHttpClient = myHttpClient;
 	}
 
 }
