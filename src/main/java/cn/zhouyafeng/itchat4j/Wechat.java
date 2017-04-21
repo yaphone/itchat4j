@@ -12,7 +12,6 @@ import cn.zhouyafeng.itchat4j.utils.Core;
 
 public class Wechat {
 	private static Logger logger = Logger.getLogger("Wechat");
-	private static Wechat instance;
 	private static Core core = Core.getInstance();
 
 	private IMsgHandlerFace msgHandler;
@@ -34,7 +33,6 @@ public class Wechat {
 					if (core.getMsgList().size() > 0) {
 						if (((JSONObject) core.getMsgList().get(0)).getString("Content").length() > 0) {
 							JSONObject msg = (JSONObject) core.getMsgList().get(0);
-							System.out.println(msg);
 							String result = msgHandler.textMsgHandle(msg);
 							Message.send(result, ((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
 							core.getMsgList().remove(0);

@@ -14,16 +14,8 @@ import java.util.Random;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
-import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
@@ -45,13 +37,11 @@ public class Login {
 	private boolean isLoginIn = false;
 	private Contact contact = new Contact();
 
-	private CloseableHttpClient httpClient;
 	private Core core = Core.getInstance();
 
 	private MyHttpClient myHttpClient = core.getMyHttpClient();
 
 	public Login() {
-		this.httpClient = core.getHttpClient();
 
 	}
 
@@ -229,7 +219,6 @@ public class Login {
 					break;
 				}
 			}
-			// System.out.println(core.getLoginInfo().get("syncUrl"));
 			if (core.getLoginInfo().get("fileUrl") == null && core.getLoginInfo().get("syncUrl") == null) {
 				core.getLoginInfo().put("fileUrl", url);
 				core.getLoginInfo().put("syncUrl", url);
@@ -237,24 +226,15 @@ public class Login {
 			core.getLoginInfo().put("deviceid", "e" + String.valueOf(new Random().nextLong()).substring(1, 16)); // 生成15位随机数
 			core.getLoginInfo().put("BaseRequest", new ArrayList<String>());
 			String text = "";
-			HttpGet httpGet = new HttpGet(originalUrl);
-			httpGet.setHeader("User-Agent", Config.USER_AGENT);
-			httpGet.setConfig(RequestConfig.custom().setRedirectsEnabled(false).build());
 			// // 禁止重定向
 
 			try {
-				CloseableHttpResponse response = httpClient.execute(httpGet);
-				HttpEntity entity = response.getEntity();
-				// HttpEntity entity = myHttpClient.doGet(originalUrl, null,
-				// true);
-				if (entity != null) {
-					text = EntityUtils.toString(entity);
-				}
+				HttpEntity entity = myHttpClient.doGet(originalUrl, null, false);
+				text = EntityUtils.toString(entity);
 			} catch (Exception e) {
 				logger.info(e.getMessage());
 				return;
 			}
-			// System.out.println(text);
 			Document doc = Tools.xmlParser(text);
 			Map<String, Map<String, String>> BaseRequest = new HashMap<String, Map<String, String>>();
 			Map<String, String> baseRequest = new HashMap<String, String>();
@@ -262,20 +242,15 @@ public class Login {
 				core.getLoginInfo().put("skey",
 						doc.getElementsByTagName("skey").item(0).getFirstChild().getNodeValue());
 				baseRequest.put("Skey", (String) core.getLoginInfo().get("skey"));
-				// System.out.println(core.getLoginInfo().get("skey"));
 				core.getLoginInfo().put("wxsid",
 						doc.getElementsByTagName("wxsid").item(0).getFirstChild().getNodeValue());
 				baseRequest.put("Sid", (String) core.getLoginInfo().get("wxsid"));
-				// System.out.println(core.getLoginInfo().get("wxsid"));
 				core.getLoginInfo().put("wxuin",
 						doc.getElementsByTagName("wxuin").item(0).getFirstChild().getNodeValue());
 				baseRequest.put("Uin", (String) core.getLoginInfo().get("wxuin"));
-				// System.out.println(core.getLoginInfo().get("wxuin"));
 				core.getLoginInfo().put("pass_ticket",
 						doc.getElementsByTagName("pass_ticket").item(0).getFirstChild().getNodeValue());
 				baseRequest.put("DeviceID", (String) core.getLoginInfo().get("pass_ticket"));
-				// System.out.println((String)
-				// core.getLoginInfo().get("pass_ticket"));
 				BaseRequest.put("BaseRequest", baseRequest);
 				core.getLoginInfo().put("baseRequest", BaseRequest);
 			}
@@ -349,20 +324,10 @@ public class Login {
 		@SuppressWarnings("unchecked")
 		Map<String, Map<String, String>> paramMap = (Map<String, Map<String, String>>) core.getLoginInfo()
 				.get("baseRequest");
-		// Map<String, Map<String, String>> paramMap = new HashMap<String,
-		// Map<String, String>>();
-		// paramMap.put("BaseRequest", baseRequest);
 		String paramsStr = JSON.toJSONString(paramMap);
-		// System.out.println(paramsStr);
-		HttpPost request = new HttpPost(url);
 		try {
 			StringEntity params = new StringEntity(paramsStr);
-			request.setHeader("Content-type", "application/json; charset=utf-8");
-			request.setHeader("User-Agent", Config.USER_AGENT);
-			request.setEntity(params);
-			HttpResponse response = httpClient.execute(request);
-			HttpEntity entity = response.getEntity();
-			// HttpEntity entity = myHttpClient.doPost(url, params);
+			HttpEntity entity = myHttpClient.doPost(url, params);
 			String result = EntityUtils.toString(entity, "UTF-8");
 			obj = JSON.parseObject(result);
 			// TODO utils.emoji_formatter(dic['User'], 'NickName')
@@ -376,7 +341,6 @@ public class Login {
 						+ syncArray.getJSONObject(i).getString("Val") + "|");
 			}
 			String synckey = sb.toString();
-			System.out.println(synckey);
 			core.getLoginInfo().put("synckey", synckey.substring(0, synckey.length() - 1));// 1_656161336|2_656161626|3_656161313|11_656159955|13_656120033|201_1492273724|1000_1492265953|1001_1492250432|1004_1491805192
 			core.getStorageClass().setUserName((obj.getJSONObject("User")).getString("UserName"));
 			core.getStorageClass().setNickName((obj.getJSONObject("User")).getString("NickName"));
@@ -402,14 +366,10 @@ public class Login {
 		paramMap.put("ToUserName", core.getStorageClass().getUserName());
 		paramMap.put("ClientMsgId", String.valueOf(new Date().getTime()));
 		String paramsStr = JSON.toJSONString(paramMap);
-		HttpPost request = new HttpPost(mobileUrl);
 		try {
 			StringEntity params = new StringEntity(paramsStr);
-			request.setHeader("Content-type", "application/json; charset=utf-8");
-			request.setHeader("User-Agent", Config.USER_AGENT);
-			request.setEntity(params);
-			HttpResponse response = httpClient.execute(request);
-			String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+			HttpEntity entity = myHttpClient.doPost(mobileUrl, params);
+			String result = EntityUtils.toString(entity, "UTF-8");
 			obj = JSON.parseObject(result);
 		} catch (Exception e) {
 
@@ -493,7 +453,6 @@ public class Login {
 			syncUrl = (String) core.getLoginInfo().get("url");
 		}
 		String url = String.format("%s/synccheck", syncUrl);
-		// String url = String.format("%s/synccheck", args);
 		List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
 		params.add(new BasicNameValuePair("r", String.valueOf(new Date().getTime())));
 		params.add(new BasicNameValuePair("skey", (String) core.getLoginInfo().get("skey")));
@@ -503,20 +462,14 @@ public class Login {
 		params.add(new BasicNameValuePair("synckey", (String) core.getLoginInfo().get("synckey")));
 		params.add(new BasicNameValuePair("_", String.valueOf(new Date().getTime())));
 		try {
-			String paramStr = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
-			HttpGet httpGet = new HttpGet(url + "?" + paramStr);
-			httpGet.setHeader("User-Agent", Config.USER_AGENT);
-			CloseableHttpResponse response = httpClient.execute(httpGet);
-			HttpEntity entity = response.getEntity();
-			if (entity != null) {
-				String text = EntityUtils.toString(entity);
-				String regEx = "window.synccheck=\\{retcode:\"(\\d+)\",selector:\"(\\d+)\"\\}";
-				Matcher matcher = Tools.getMatcher(regEx, text);
-				if (!matcher.find() || matcher.group(1).equals("2")) {
-					logger.info(String.format("Unexpected sync check result: %s", text));
-				} else {
-					result = matcher.group(2);
-				}
+			HttpEntity entity = myHttpClient.doGet(url, params, true);
+			String text = EntityUtils.toString(entity);
+			String regEx = "window.synccheck=\\{retcode:\"(\\d+)\",selector:\"(\\d+)\"\\}";
+			Matcher matcher = Tools.getMatcher(regEx, text);
+			if (!matcher.find() || matcher.group(1).equals("2")) {
+				logger.info(String.format("Unexpected sync check result: %s", text));
+			} else {
+				result = matcher.group(2);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -529,7 +482,6 @@ public class Login {
 		String url = String.format("%s/webwxsync?sid=%s&skey=%s&pass_ticket=%s", core.getLoginInfo().get("url"),
 				core.getLoginInfo().get("wxsid"), core.getLoginInfo().get("skey"),
 				core.getLoginInfo().get("pass_ticket"));
-		// System.out.println(url);
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		@SuppressWarnings("unchecked")
 		Map<String, Map<String, String>> baseRequestMap = (Map<String, Map<String, String>>) core.getLoginInfo()
@@ -537,15 +489,10 @@ public class Login {
 		paramMap.put("BaseRequest", baseRequestMap.get("BaseRequest"));
 		paramMap.put("SyncKey", core.getLoginInfo().get("SyncKey"));
 		paramMap.put("rr", -new Date().getTime() / 1000);
-		HttpPost httpPost = new HttpPost(url);
-		httpPost.setHeader("ContentType", "application/json; charset=UTF-8");
-		httpPost.setHeader("User-Agent", Config.USER_AGENT);
-		CloseableHttpResponse response;
 		try {
 			StringEntity params = new StringEntity(JSON.toJSONString(paramMap));
-			httpPost.setEntity(params);
-			response = httpClient.execute(httpPost);
-			String text = EntityUtils.toString(response.getEntity(), "UTF-8");
+			HttpEntity entity = myHttpClient.doPost(url, params);
+			String text = EntityUtils.toString(entity, "UTF-8");
 			JSONObject obj = JSON.parseObject(text);
 			if (obj.getJSONObject("BaseResponse").getInteger("Ret") != 0) {
 				result = null;
