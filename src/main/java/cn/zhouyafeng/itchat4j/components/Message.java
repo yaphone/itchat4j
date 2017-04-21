@@ -1,5 +1,9 @@
 package cn.zhouyafeng.itchat4j.components;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,13 +14,16 @@ import java.util.regex.Matcher;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.zhouyafeng.itchat4j.utils.Config;
 import cn.zhouyafeng.itchat4j.utils.Core;
+import cn.zhouyafeng.itchat4j.utils.MsgType;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
 import cn.zhouyafeng.itchat4j.utils.Tools;
 
@@ -25,8 +32,34 @@ public class Message {
 	private static Core core = Core.getInstance();
 	private static MyHttpClient myHttpClient = core.getMyHttpClient();
 
-	public static Object getDownloadFn(Core core, String url, String msgId) {
+	/**
+	 * 处理下载任务
+	 * 
+	 * @author Email:zhouyaphone@163.com
+	 * @date 2017年4月21日 下午11:00:25
+	 * @param url
+	 * @param msgId
+	 * @return
+	 */
+	public static Object getDownloadFn(String url, String msgId) {
 		// TODO 处理下载
+		List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+		params.add(new BasicNameValuePair("msgid", msgId));
+		params.add(new BasicNameValuePair("skey", (String) core.getLoginInfo().get("skey")));
+		HttpEntity entity = myHttpClient.doGet(url, params, true);
+		String path = Config.getLocalPath() + File.separator + "test.jpg";
+		try {
+			OutputStream out = new FileOutputStream(path);
+			byte[] bytes = EntityUtils.toByteArray(entity);
+			out.write(bytes);
+			out.flush();
+			out.close();
+			Tools.printQr(path);
+
+		} catch (Exception e) {
+			logger.info(e.getMessage());
+			return false;
+		}
 		return null;
 	};
 
@@ -53,12 +86,22 @@ public class Message {
 					msg.put("Type", "Map");
 					msg.put("Text", data);
 				} else {
-					msg.put("Type", "Text");
+					msg.put("Type", MsgType.TEXT);
 					msg.put("Text", m.getString("Content"));
 				}
+				m.put("Type", msg.getString("Type"));
+				m.put("Text", msg.getString("Text"));
 			} else if (m.getInteger("MsgType") == 3 || m.getInteger("MsgType") == 47) { // picture
-				// getDownloadFn();
+				m.put("Type", MsgType.PIC);
+				// msg.put("Text", m.get("NewMsgId"));
+				// String url = String.format("%s/webwxgetmsgimg", (String)
+				// core.getLoginInfo().get("url"));
+				// String msgId = m.getString("NewMsgId");
+				// getDownloadFn(url, msgId);
+				// DownloadTools.getDownloadFn(msg, "D:" + File.separator +
+				// "test.jpg");
 			} else if (m.getInteger("MsgType") == 34) { // voice
+				m.put("Type", MsgType.VOICE);
 
 			} else if (m.getInteger("MsgType") == 37) {// friends
 
@@ -78,8 +121,7 @@ public class Message {
 			} else {
 				logger.info("Useless msg");
 			}
-			m.put("Type", msg.getString("Type"));
-			m.put("Text", msg.getString("Text"));
+
 			result.add(m);
 		}
 		return result;

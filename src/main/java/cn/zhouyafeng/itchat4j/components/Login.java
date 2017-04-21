@@ -137,7 +137,6 @@ public class Login {
 		String qrUrl = baseUrl + "/qrcode/" + core.getUuid();
 		HttpEntity entity = myHttpClient.doGet(qrUrl, null, true);
 		try {
-
 			OutputStream out = new FileOutputStream(qrPath);
 			byte[] bytes = EntityUtils.toByteArray(entity);
 			out.write(bytes);
@@ -352,7 +351,6 @@ public class Login {
 	}
 
 	private ReturnValue showMobileLogin() {
-		JSONObject obj = null;
 		String url = (String) core.getLoginInfo().get("url");
 		String passTicket = (String) core.getLoginInfo().get("pass_ticket");
 		String mobileUrl = String.format("%s/webwxstatusnotify?lang=zh_CN&pass_ticket=%s", url, passTicket);
@@ -369,8 +367,7 @@ public class Login {
 		try {
 			StringEntity params = new StringEntity(paramsStr);
 			HttpEntity entity = myHttpClient.doPost(mobileUrl, params);
-			String result = EntityUtils.toString(entity, "UTF-8");
-			obj = JSON.parseObject(result);
+			EntityUtils.toString(entity, "UTF-8");
 		} catch (Exception e) {
 
 		}

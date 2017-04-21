@@ -9,6 +9,7 @@ import cn.zhouyafeng.itchat4j.components.Login;
 import cn.zhouyafeng.itchat4j.components.Message;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.Core;
+import cn.zhouyafeng.itchat4j.utils.MsgType;
 
 public class Wechat {
 	private static Logger logger = Logger.getLogger("Wechat");
@@ -33,8 +34,21 @@ public class Wechat {
 					if (core.getMsgList().size() > 0) {
 						if (((JSONObject) core.getMsgList().get(0)).getString("Content").length() > 0) {
 							JSONObject msg = (JSONObject) core.getMsgList().get(0);
-							String result = msgHandler.textMsgHandle(msg);
-							Message.send(result, ((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
+							if (msg.getString("Type") != null) {
+								if (msg.getString("Type").equals(MsgType.TEXT)) {
+									String result = msgHandler.textMsgHandle(msg);
+									Message.send(result,
+											((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
+								} else if (msg.getString("Type").equals(MsgType.PIC)) {
+									String result = msgHandler.picMsgHandle(msg);
+									Message.send(result,
+											((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
+								} else if (msg.getString("Type").equals(MsgType.VOICE)) {
+									String result = msgHandler.voiceMsgHandle(msg);
+									Message.send(result,
+											((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
+								}
+							}
 							core.getMsgList().remove(0);
 						}
 					}

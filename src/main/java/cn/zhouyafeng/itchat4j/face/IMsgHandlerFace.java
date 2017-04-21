@@ -12,10 +12,32 @@ import com.alibaba.fastjson.JSONObject;
  */
 public interface IMsgHandlerFace {
 	/**
-	 * 处理文本信息
 	 * 
 	 * @author Email:zhouyaphone@163.com
 	 * @date 2017年4月20日 上午12:15:00
+	 * @param msg
+	 * @return
 	 */
 	public String textMsgHandle(JSONObject msg);
+
+	/**
+	 * 处理图片信息
+	 * 
+	 * @author Email:zhouyaphone@163.com
+	 * @date 2017年4月21日 下午11:07:06
+	 * @param msg
+	 * @return
+	 */
+	public String picMsgHandle(JSONObject msg);
+
+	/**
+	 * 处理声音信息
+	 * 
+	 * @author Email:zhouyaphone@163.com
+	 * @date 2017年4月22日 上午12:09:44
+	 * @param msg
+	 * @return
+	 */
+	public String voiceMsgHandle(JSONObject msg);
+
 }
