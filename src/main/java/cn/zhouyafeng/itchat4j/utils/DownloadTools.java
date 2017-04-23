@@ -50,7 +50,6 @@ public class DownloadTools {
 		}
 		params.add(new BasicNameValuePair("msgid", msg.getString("NewMsgId")));
 		params.add(new BasicNameValuePair("skey", (String) core.getLoginInfo().get("skey")));
-		// System.out.println(params);
 		HttpEntity entity = myHttpClient.doGet(url, params, true, headerMap);
 		try {
 			OutputStream out = new FileOutputStream(path);

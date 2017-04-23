@@ -22,7 +22,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 /**
- * HTTP访问类
+ * HTTP访问类，对Apache HttpClient进行简单封装，适配器模式
  * 
  * @author Email:zhouyaphone@163.com
  * @date 创建时间：2017年4月9日 下午7:05:04

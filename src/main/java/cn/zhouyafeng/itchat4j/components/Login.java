@@ -28,7 +28,6 @@ import cn.zhouyafeng.itchat4j.utils.Config;
 import cn.zhouyafeng.itchat4j.utils.Contact;
 import cn.zhouyafeng.itchat4j.utils.Core;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
-import cn.zhouyafeng.itchat4j.utils.ReturnValue;
 import cn.zhouyafeng.itchat4j.utils.Tools;
 
 public class Login {
@@ -350,7 +349,7 @@ public class Login {
 		return obj;
 	}
 
-	private ReturnValue showMobileLogin() {
+	private void showMobileLogin() {
 		String url = (String) core.getLoginInfo().get("url");
 		String passTicket = (String) core.getLoginInfo().get("pass_ticket");
 		String mobileUrl = String.format("%s/webwxstatusnotify?lang=zh_CN&pass_ticket=%s", url, passTicket);
@@ -371,8 +370,6 @@ public class Login {
 		} catch (Exception e) {
 
 		}
-		// TODO
-		return null;
 	}
 
 	void startReceiving() {

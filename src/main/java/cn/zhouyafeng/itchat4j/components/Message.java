@@ -1,9 +1,5 @@
 package cn.zhouyafeng.itchat4j.components;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,55 +10,38 @@ import java.util.regex.Matcher;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import cn.zhouyafeng.itchat4j.utils.Config;
 import cn.zhouyafeng.itchat4j.utils.Core;
 import cn.zhouyafeng.itchat4j.utils.MsgType;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
 import cn.zhouyafeng.itchat4j.utils.Tools;
 
+/**
+ * 消息处理类
+ * 
+ * @author Email:zhouyaphone@163.com
+ * @date 创建时间：2017年4月23日 下午2:30:37
+ * @version 1.0
+ *
+ */
 public class Message {
 	private static Logger logger = Logger.getLogger("Message");
 	private static Core core = Core.getInstance();
 	private static MyHttpClient myHttpClient = core.getMyHttpClient();
 
 	/**
-	 * 处理下载任务
+	 * 接收消息，放入队列
 	 * 
 	 * @author Email:zhouyaphone@163.com
-	 * @date 2017年4月21日 下午11:00:25
-	 * @param url
-	 * @param msgId
+	 * @date 2017年4月23日 下午2:30:48
+	 * @param msgList
 	 * @return
 	 */
-	public static Object getDownloadFn(String url, String msgId) {
-		// TODO 处理下载
-		List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
-		params.add(new BasicNameValuePair("msgid", msgId));
-		params.add(new BasicNameValuePair("skey", (String) core.getLoginInfo().get("skey")));
-		HttpEntity entity = myHttpClient.doGet(url, params, true, null);
-		String path = Config.getLocalPath() + File.separator + "test.jpg";
-		try {
-			OutputStream out = new FileOutputStream(path);
-			byte[] bytes = EntityUtils.toByteArray(entity);
-			out.write(bytes);
-			out.flush();
-			out.close();
-			Tools.printQr(path);
-
-		} catch (Exception e) {
-			logger.info(e.getMessage());
-			return false;
-		}
-		return null;
-	};
-
 	public static JSONArray produceMsg(JSONArray msgList) {
 		JSONArray result = new JSONArray();
 		List<Integer> srl = Arrays.asList(40, 43, 50, 52, 53, 9999);
@@ -93,24 +72,14 @@ public class Message {
 				m.put("Text", msg.getString("Text"));
 			} else if (m.getInteger("MsgType") == 3 || m.getInteger("MsgType") == 47) { // picture
 				m.put("Type", MsgType.PIC);
-				// msg.put("Text", m.get("NewMsgId"));
-				// String url = String.format("%s/webwxgetmsgimg", (String)
-				// core.getLoginInfo().get("url"));
-				// String msgId = m.getString("NewMsgId");
-				// getDownloadFn(url, msgId);
-				// DownloadTools.getDownloadFn(msg, "D:" + File.separator +
-				// "test.jpg");
 			} else if (m.getInteger("MsgType") == 34) { // voice
 				m.put("Type", MsgType.VOICE);
-
 			} else if (m.getInteger("MsgType") == 37) {// friends
 
 			} else if (m.getInteger("MsgType") == 42) { // name card
 
 			} else if (m.getInteger("MsgType") == 43 || m.getInteger("MsgType") == 62) {// tiny
-																						// video
 				m.put("Type", MsgType.VIEDO);
-
 			} else if (m.getInteger("MsgType") == 49) { // sharing
 
 			} else if (m.getInteger("MsgType") == 51) {// phone init
@@ -141,6 +110,15 @@ public class Message {
 		sendRawMsg(1, msg, toUserName);
 	}
 
+	/**
+	 * 消息发送
+	 * 
+	 * @author Email:zhouyaphone@163.com
+	 * @date 2017年4月23日 下午2:32:02
+	 * @param msgType
+	 * @param content
+	 * @param toUserName
+	 */
 	public static void sendRawMsg(int msgType, String content, String toUserName) {
 		String url = String.format("%s/webwxsendmsg", core.getLoginInfo().get("url"));
 

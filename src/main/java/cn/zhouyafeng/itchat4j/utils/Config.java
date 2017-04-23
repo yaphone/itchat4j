@@ -3,6 +3,14 @@ package cn.zhouyafeng.itchat4j.utils;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * 配置信息
+ * 
+ * @author Email:zhouyaphone@163.com
+ * @date 创建时间：2017年4月23日 下午2:26:21
+ * @version 1.0
+ *
+ */
 public class Config {
 	public static final String picDir = "D://itchat4j";
 	public static final String VERSION = "1.2.18";
@@ -31,7 +39,7 @@ public class Config {
 	}
 
 	/**
-	 * 获取工作平台
+	 * 获取系统平台
 	 * 
 	 * @author Email:zhouyaphone@163.com
 	 * @date 2017年4月8日 下午10:27:53

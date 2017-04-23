@@ -12,13 +12,13 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.vdurmont.emoji.EmojiParser;
 
 /**
  * 工具类
@@ -174,15 +174,58 @@ public class Tools {
 		return r;
 	}
 
+	/**
+	 * 处理emoji表情
+	 * 
+	 * @author Email:zhouyaphone@163.com
+	 * @date 2017年4月23日 下午2:39:04
+	 * @param d
+	 * @param k
+	 */
 	public static void emojiFormatter(JSONObject d, String k) {
-		// TODO
+		Matcher matcher = Tools.getMatcher("<span class=\"emoji emoji(.{1,10})\"></span>", d.getString(k));
+		StringBuilder sb = new StringBuilder();
+		String content = d.getString(k);
+		int lastStart = 0;
+		while (matcher.find()) {
+			String str = matcher.group(1);
+			if (str.length() == 6) {
+
+			} else if (str.length() == 10) {
+
+			} else {
+				str = "&#x" + str + ";";
+				String tmp = content.substring(lastStart, matcher.start());
+				sb.append(tmp + str);
+				lastStart = matcher.end();
+			}
+		}
+		if (lastStart < content.length()) {
+			sb.append(content.substring(lastStart));
+		}
+		if (sb.length() != 0) {
+			d.put(k, EmojiParser.parseToUnicode(sb.toString()));
+		} else {
+			d.put(k, content);
+		}
+		// System.out.println(content);
+		// System.out.println(EmojiParser.parseToUnicode(sb.toString()));
+
 	}
 
+	/**
+	 * 消息格式化
+	 * 
+	 * @author Email:zhouyaphone@163.com
+	 * @date 2017年4月23日 下午4:19:08
+	 * @param d
+	 * @param k
+	 */
 	public static void msgFormatter(JSONObject d, String k) {
-		emojiFormatter(d, k);
-
 		d.put(k, d.getString(k).replace("<br/>", "\n"));
-		d.put(k, StringEscapeUtils.unescapeHtml4(d.getString(k)));
+		emojiFormatter(d, k);
+		// d.put(k, StringEscapeUtils.unescapeHtml4(d.getString(k)));
+
 	}
 
 }
