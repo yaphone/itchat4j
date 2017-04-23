@@ -109,7 +109,7 @@ public class Login {
 		List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
 		params.add(new BasicNameValuePair("appid", "wx782c26e4c19acffb"));
 		params.add(new BasicNameValuePair("fun", "new"));
-		HttpEntity entity = myHttpClient.doGet(uuidUrl, params, true);
+		HttpEntity entity = myHttpClient.doGet(uuidUrl, params, true, null);
 		try {
 			result = EntityUtils.toString(entity);
 		} catch (Exception e) {
@@ -135,7 +135,7 @@ public class Login {
 	public boolean getQR() {
 		String qrPath = Config.getLocalPath() + File.separator + "QR.jpg";
 		String qrUrl = baseUrl + "/qrcode/" + core.getUuid();
-		HttpEntity entity = myHttpClient.doGet(qrUrl, null, true);
+		HttpEntity entity = myHttpClient.doGet(qrUrl, null, true, null);
 		try {
 			OutputStream out = new FileOutputStream(qrPath);
 			byte[] bytes = EntityUtils.toByteArray(entity);
@@ -169,7 +169,7 @@ public class Login {
 		params.add(new BasicNameValuePair("tip", "0"));
 		params.add(new BasicNameValuePair("r", String.valueOf(localTime / 1579L)));
 		params.add(new BasicNameValuePair("_", String.valueOf(localTime)));
-		HttpEntity entity = myHttpClient.doGet(checkUrl, params, true);
+		HttpEntity entity = myHttpClient.doGet(checkUrl, params, true, null);
 		try {
 			result = EntityUtils.toString(entity);
 		} catch (Exception e) {
@@ -228,7 +228,7 @@ public class Login {
 			// // 禁止重定向
 
 			try {
-				HttpEntity entity = myHttpClient.doGet(originalUrl, null, false);
+				HttpEntity entity = myHttpClient.doGet(originalUrl, null, false, null);
 				text = EntityUtils.toString(entity);
 			} catch (Exception e) {
 				logger.info(e.getMessage());
@@ -459,7 +459,7 @@ public class Login {
 		params.add(new BasicNameValuePair("synckey", (String) core.getLoginInfo().get("synckey")));
 		params.add(new BasicNameValuePair("_", String.valueOf(new Date().getTime())));
 		try {
-			HttpEntity entity = myHttpClient.doGet(url, params, true);
+			HttpEntity entity = myHttpClient.doGet(url, params, true, null);
 			String text = EntityUtils.toString(entity);
 			String regEx = "window.synccheck=\\{retcode:\"(\\d+)\",selector:\"(\\d+)\"\\}";
 			Matcher matcher = Tools.getMatcher(regEx, text);

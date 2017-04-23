@@ -47,6 +47,10 @@ public class Wechat {
 									String result = msgHandler.voiceMsgHandle(msg);
 									Message.send(result,
 											((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
+								} else if (msg.getString("Type").equals(MsgType.VIEDO)) {
+									String result = msgHandler.viedoMsgHandle(msg);
+									Message.send(result,
+											((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
 								}
 							}
 							core.getMsgList().remove(0);

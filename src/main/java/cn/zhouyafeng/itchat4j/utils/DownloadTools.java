@@ -3,7 +3,9 @@ package cn.zhouyafeng.itchat4j.utils;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.apache.http.HttpEntity;
@@ -35,17 +37,21 @@ public class DownloadTools {
 	 * @return
 	 */
 	public static Object getDownloadFn(JSONObject msg, String type, String path) {
+		Map<String, String> headerMap = new HashMap<String, String>();
 		List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
 		String url = "";
 		if (type.equals(MsgType.PIC)) {
 			url = String.format("%s/webwxgetmsgimg", (String) core.getLoginInfo().get("url"));
 		} else if (type.equals(MsgType.VOICE)) {
 			url = String.format("%s/webwxgetvoice", (String) core.getLoginInfo().get("url"));
+		} else if (type.equals(MsgType.VIEDO)) {
+			headerMap.put("Range", "bytes=0-");
+			url = String.format("%s/webwxgetvideo", (String) core.getLoginInfo().get("url"));
 		}
 		params.add(new BasicNameValuePair("msgid", msg.getString("NewMsgId")));
 		params.add(new BasicNameValuePair("skey", (String) core.getLoginInfo().get("skey")));
 		// System.out.println(params);
-		HttpEntity entity = myHttpClient.doGet(url, params, true);
+		HttpEntity entity = myHttpClient.doGet(url, params, true, headerMap);
 		try {
 			OutputStream out = new FileOutputStream(path);
 			byte[] bytes = EntityUtils.toByteArray(entity);

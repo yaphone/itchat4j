@@ -40,4 +40,14 @@ public interface IMsgHandlerFace {
 	 */
 	public String voiceMsgHandle(JSONObject msg);
 
+	/**
+	 * 处理小视频信息
+	 * 
+	 * @author Email:zhouyaphone@163.com
+	 * @date 2017年4月23日 下午12:19:50
+	 * @param msg
+	 * @return
+	 */
+	public String viedoMsgHandle(JSONObject msg);
+
 }

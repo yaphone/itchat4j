@@ -35,4 +35,10 @@ public class MsgHandler implements IMsgHandlerFace {
 		return "下载声音成功";
 	}
 
+	public String viedoMsgHandle(JSONObject msg) {
+		String path = "D:" + File.separator + "test.mp4";
+		DownloadTools.getDownloadFn(msg, MsgType.VIEDO, path);
+		return "下载小视频成功";
+	}
+
 }

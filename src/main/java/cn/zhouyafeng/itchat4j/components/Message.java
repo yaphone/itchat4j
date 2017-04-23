@@ -46,7 +46,7 @@ public class Message {
 		List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
 		params.add(new BasicNameValuePair("msgid", msgId));
 		params.add(new BasicNameValuePair("skey", (String) core.getLoginInfo().get("skey")));
-		HttpEntity entity = myHttpClient.doGet(url, params, true);
+		HttpEntity entity = myHttpClient.doGet(url, params, true, null);
 		String path = Config.getLocalPath() + File.separator + "test.jpg";
 		try {
 			OutputStream out = new FileOutputStream(path);
@@ -109,6 +109,7 @@ public class Message {
 
 			} else if (m.getInteger("MsgType") == 43 || m.getInteger("MsgType") == 62) {// tiny
 																						// video
+				m.put("Type", MsgType.VIEDO);
 
 			} else if (m.getInteger("MsgType") == 49) { // sharing
 

@@ -2,6 +2,9 @@ package cn.zhouyafeng.itchat4j.utils;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.apache.http.Consts;
@@ -44,7 +47,8 @@ public class MyHttpClient {
 	 * @param params
 	 * @return
 	 */
-	public HttpEntity doGet(String url, List<BasicNameValuePair> params, boolean redirect) {
+	public HttpEntity doGet(String url, List<BasicNameValuePair> params, boolean redirect,
+			Map<String, String> headerMap) {
 		HttpEntity entity = null;
 		HttpGet httpGet = new HttpGet();
 
@@ -59,6 +63,12 @@ public class MyHttpClient {
 				httpGet.setConfig(RequestConfig.custom().setRedirectsEnabled(false).build()); // 禁止重定向
 			}
 			httpGet.setHeader("User-Agent", Config.USER_AGENT);
+			if (headerMap != null) {
+				Set<Entry<String, String>> entries = headerMap.entrySet();
+				for (Entry<String, String> entry : entries) {
+					httpGet.setHeader(entry.getKey(), entry.getValue());
+				}
+			}
 			CloseableHttpResponse response = httpClient.execute(httpGet);
 			entity = response.getEntity();
 		} catch (ClientProtocolException e) {
