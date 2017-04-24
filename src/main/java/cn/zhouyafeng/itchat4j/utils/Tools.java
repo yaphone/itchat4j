@@ -23,7 +23,7 @@ import com.vdurmont.emoji.EmojiParser;
 /**
  * 工具类
  * 
- * @author Email:zhouyaphone@163.com
+ * @author https://github.com/yaphone
  * @date 创建时间：2017年4月8日 下午10:59:55
  * @version 1.0
  *
@@ -72,7 +72,7 @@ public class Tools {
 	/**
 	 * 正则表达式处理工具
 	 * 
-	 * @author Email:zhouyaphone@163.com
+	 * @author https://github.com/yaphone
 	 * @date 2017年4月9日 上午12:27:10
 	 * @return
 	 */
@@ -85,7 +85,7 @@ public class Tools {
 	/**
 	 * xml解析器
 	 * 
-	 * @author Email:zhouyaphone@163.com
+	 * @author https://github.com/yaphone
 	 * @date 2017年4月9日 下午6:24:25
 	 * @param text
 	 * @return
@@ -177,7 +177,7 @@ public class Tools {
 	/**
 	 * 处理emoji表情
 	 * 
-	 * @author Email:zhouyaphone@163.com
+	 * @author https://github.com/yaphone
 	 * @date 2017年4月23日 下午2:39:04
 	 * @param d
 	 * @param k
@@ -208,15 +208,13 @@ public class Tools {
 		} else {
 			d.put(k, content);
 		}
-		// System.out.println(content);
-		// System.out.println(EmojiParser.parseToUnicode(sb.toString()));
 
 	}
 
 	/**
 	 * 消息格式化
 	 * 
-	 * @author Email:zhouyaphone@163.com
+	 * @author https://github.com/yaphone
 	 * @date 2017年4月23日 下午4:19:08
 	 * @param d
 	 * @param k
@@ -224,7 +222,8 @@ public class Tools {
 	public static void msgFormatter(JSONObject d, String k) {
 		d.put(k, d.getString(k).replace("<br/>", "\n"));
 		emojiFormatter(d, k);
-		// d.put(k, StringEscapeUtils.unescapeHtml4(d.getString(k)));
+		// TODO 与emoji表情有部分兼容问题，目前暂未处理解码处理 d.put(k,
+		// StringEscapeUtils.unescapeHtml4(d.getString(k)));
 
 	}
 

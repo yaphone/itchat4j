@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 /**
  * 消息处理接口
  * 
- * @author Email:zhouyaphone@163.com
+ * @author https://github.com/yaphone
  * @date 创建时间：2017年4月20日 上午12:13:49
  * @version 1.0
  *
@@ -13,7 +13,7 @@ import com.alibaba.fastjson.JSONObject;
 public interface IMsgHandlerFace {
 	/**
 	 * 
-	 * @author Email:zhouyaphone@163.com
+	 * @author https://github.com/yaphone
 	 * @date 2017年4月20日 上午12:15:00
 	 * @param msg
 	 * @return
@@ -23,7 +23,7 @@ public interface IMsgHandlerFace {
 	/**
 	 * 处理图片信息
 	 * 
-	 * @author Email:zhouyaphone@163.com
+	 * @author https://github.com/yaphone
 	 * @date 2017年4月21日 下午11:07:06
 	 * @param msg
 	 * @return
@@ -33,7 +33,7 @@ public interface IMsgHandlerFace {
 	/**
 	 * 处理声音信息
 	 * 
-	 * @author Email:zhouyaphone@163.com
+	 * @author https://github.com/yaphone
 	 * @date 2017年4月22日 上午12:09:44
 	 * @param msg
 	 * @return
@@ -43,7 +43,7 @@ public interface IMsgHandlerFace {
 	/**
 	 * 处理小视频信息
 	 * 
-	 * @author Email:zhouyaphone@163.com
+	 * @author https://github.com/yaphone
 	 * @date 2017年4月23日 下午12:19:50
 	 * @param msg
 	 * @return

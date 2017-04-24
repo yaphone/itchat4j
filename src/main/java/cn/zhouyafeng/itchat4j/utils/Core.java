@@ -12,7 +12,7 @@ import com.alibaba.fastjson.JSONObject;
 /**
  * 核心存储类，全局只保存一份，单例模式
  * 
- * @author Email:zhouyaphone@163.com
+ * @author https://github.com/yaphone
  * @date 创建时间：2017年4月23日 下午2:33:56
  * @version 1.0
  *

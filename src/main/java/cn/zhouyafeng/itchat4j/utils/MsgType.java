@@ -3,7 +3,7 @@ package cn.zhouyafeng.itchat4j.utils;
 /**
  * 消息类型
  * 
- * @author Email:zhouyaphone@163.com
+ * @author https://github.com/yaphone
  * @date 创建时间：2017年4月23日 下午12:15:00
  * @version 1.0
  *

@@ -11,6 +11,14 @@ import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.Core;
 import cn.zhouyafeng.itchat4j.utils.MsgType;
 
+/**
+ * 主类，初始化工作
+ * 
+ * @author https://github.com/yaphone
+ * @date 创建时间：2017年4月25日 上午12:42:54
+ * @version 1.0
+ *
+ */
 public class Wechat {
 	private static Logger logger = Logger.getLogger("Wechat");
 	private static Core core = Core.getInstance();
@@ -66,37 +74,5 @@ public class Wechat {
 			}
 		}).start();
 	}
-
-	// public static Wechat getInstance() {
-	// if (instance == null) {
-	// synchronized (Wechat.class) {
-	// if (instance == null) {
-	// instance = new Wechat();
-	// }
-	// }
-	// }
-	// return instance;
-	// }
-
-	// public void send() {
-	// new Thread(new Runnable() {
-	// public void run() {
-	// while (true) {
-	// if (core.getMsgList().size() > 0) {
-	// if (((JSONObject) core.getMsgList().get(0)).getString("Content").length()
-	// > 0)
-	// Message.send("Hello World",
-	// ((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
-	// core.getMsgList().remove(0);
-	// }
-	// try {
-	// Thread.sleep(1000);
-	// } catch (InterruptedException e) {
-	// logger.info(e.getMessage());
-	// }
-	// }
-	// }
-	// }).start();
-	// }
 
 }

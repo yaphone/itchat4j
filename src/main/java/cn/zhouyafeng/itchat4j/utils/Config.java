@@ -6,7 +6,7 @@ import java.io.IOException;
 /**
  * 配置信息
  * 
- * @author Email:zhouyaphone@163.com
+ * @author https://github.com/yaphone
  * @date 创建时间：2017年4月23日 下午2:26:21
  * @version 1.0
  *
@@ -23,7 +23,7 @@ public class Config {
 	/**
 	 * 获取文件目录
 	 * 
-	 * @author Email:zhouyaphone@163.com
+	 * @author https://github.com/yaphone
 	 * @date 2017年4月8日 下午10:27:42
 	 * @return
 	 */
@@ -41,7 +41,7 @@ public class Config {
 	/**
 	 * 获取系统平台
 	 * 
-	 * @author Email:zhouyaphone@163.com
+	 * @author https://github.com/yaphone
 	 * @date 2017年4月8日 下午10:27:53
 	 */
 	public static OsName getOsName() {

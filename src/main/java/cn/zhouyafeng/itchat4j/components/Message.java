@@ -23,7 +23,7 @@ import cn.zhouyafeng.itchat4j.utils.Tools;
 /**
  * 消息处理类
  * 
- * @author Email:zhouyaphone@163.com
+ * @author https://github.com/yaphone
  * @date 创建时间：2017年4月23日 下午2:30:37
  * @version 1.0
  *
@@ -36,7 +36,7 @@ public class Message {
 	/**
 	 * 接收消息，放入队列
 	 * 
-	 * @author Email:zhouyaphone@163.com
+	 * @author https://github.com/yaphone
 	 * @date 2017年4月23日 下午2:30:48
 	 * @param msgList
 	 * @return
@@ -112,7 +112,7 @@ public class Message {
 	/**
 	 * 消息发送
 	 * 
-	 * @author Email:zhouyaphone@163.com
+	 * @author https://github.com/yaphone
 	 * @date 2017年4月23日 下午2:32:02
 	 * @param msgType
 	 * @param content

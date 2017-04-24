@@ -11,7 +11,7 @@ import cn.zhouyafeng.itchat4j.utils.MsgType;
 /**
  * 消息处理类
  * 
- * @author Email:zhouyaphone@163.com
+ * @author https://github.com/yaphone
  * @date 创建时间：2017年4月20日 上午12:19:52
  * @version 1.0
  *

@@ -97,7 +97,7 @@ public class Login {
 	/**
 	 * 生成UUID
 	 * 
-	 * @author Email:zhouyaphone@163.com
+	 * @author https://github.com/yaphone
 	 * @date 2017年4月11日 上午12:51:29
 	 * @return
 	 */
@@ -126,7 +126,7 @@ public class Login {
 	/**
 	 * 获取登陆二维码图片
 	 * 
-	 * @author Email:zhouyaphone@163.com
+	 * @author https://github.com/yaphone
 	 * @date 2017年4月20日 下午11:44:08
 	 * @return
 	 */
@@ -154,7 +154,7 @@ public class Login {
 	/**
 	 * 检查登陆状态
 	 * 
-	 * @author Email:zhouyaphone@163.com
+	 * @author https://github.com/yaphone
 	 * @date 2017年4月8日 下午11:22:16
 	 * @return
 	 */
@@ -190,7 +190,7 @@ public class Login {
 	/**
 	 * 处理登陆信息
 	 *
-	 * @author Email:zhouyaphone@163.com
+	 * @author https://github.com/yaphone
 	 * @date 2017年4月9日 下午12:16:26
 	 * @param result
 	 */
@@ -423,7 +423,7 @@ public class Login {
 	/**
 	 * 保活心跳
 	 * 
-	 * @author Email:zhouyaphone@163.com
+	 * @author https://github.com/yaphone
 	 * @date 2017年4月16日 上午11:11:34
 	 * @return
 	 */
