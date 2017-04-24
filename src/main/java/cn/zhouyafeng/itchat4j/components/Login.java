@@ -43,7 +43,7 @@ public class Login {
 
 	}
 
-	public int login() {
+	public int login(String qrPath) {
 		if (core.isAlive()) { // 已登陆
 			logger.warning("itchat has already logged in.");
 			return 0;
@@ -59,7 +59,7 @@ public class Login {
 					}
 				}
 				logger.info("Downloading QR code.");
-				Boolean qrStarge = getQR();
+				Boolean qrStarge = getQR(qrPath);
 				if (qrStarge) { // 获取登陆二维码图片成功
 					logger.info("Get QR success");
 					break;
@@ -130,8 +130,9 @@ public class Login {
 	 * @date 2017年4月20日 下午11:44:08
 	 * @return
 	 */
-	public boolean getQR() {
-		String qrPath = Config.getLocalPath() + File.separator + "QR.jpg";
+	public boolean getQR(String qrPath) {
+		// String qrPath = Config.getLocalPath() + File.separator + "QR.jpg";
+		qrPath = qrPath + File.separator + "QR.jpg";
 		String qrUrl = baseUrl + "/qrcode/" + core.getUuid();
 		HttpEntity entity = myHttpClient.doGet(qrUrl, null, true, null);
 		try {
@@ -279,17 +280,7 @@ public class Login {
 				add("webpush.wx8.qq.com");
 			}
 		});
-		// possibleUrlMap.put("qq.com", new ArrayList<String>() {
-		// /**
-		// *
-		// */
-		// private static final long serialVersionUID = 1L;
-		//
-		// {
-		// add("file.wx.qq.com");
-		// add("webpush.wx.qq.com");
-		// }
-		// });
+
 		possibleUrlMap.put("web2.wechat.com", new ArrayList<String>() {
 			/**
 			 * 

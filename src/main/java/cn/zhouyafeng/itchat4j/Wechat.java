@@ -17,12 +17,12 @@ public class Wechat {
 
 	private IMsgHandlerFace msgHandler;
 
-	public Wechat(IMsgHandlerFace msgHandler) {
+	public Wechat(IMsgHandlerFace msgHandler, String qrPath) {
 		System.setProperty("jsse.enableSNIExtension", "false"); // 防止SSL错误
 
 		this.msgHandler = msgHandler;
 		Login login = new Login();
-		login.login();
+		login.login(qrPath);
 
 	};
 

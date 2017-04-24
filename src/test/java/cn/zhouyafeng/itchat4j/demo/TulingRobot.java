@@ -69,7 +69,7 @@ public class TulingRobot implements IMsgHandlerFace {
 
 	public static void main(String[] args) {
 		IMsgHandlerFace msgHandler = new TulingRobot();
-		Wechat wechat = new Wechat(msgHandler);
+		Wechat wechat = new Wechat(msgHandler, "D://login");
 		wechat.start();
 	}
 
