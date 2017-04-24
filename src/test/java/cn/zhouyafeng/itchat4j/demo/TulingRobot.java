@@ -1,5 +1,7 @@
 package cn.zhouyafeng.itchat4j.demo;
 
+import java.io.File;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -12,6 +14,8 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.zhouyafeng.itchat4j.Wechat;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
+import cn.zhouyafeng.itchat4j.utils.DownloadTools;
+import cn.zhouyafeng.itchat4j.utils.MsgType;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
 
 /**
@@ -53,23 +57,26 @@ public class TulingRobot implements IMsgHandlerFace {
 	}
 
 	public String picMsgHandle(JSONObject msg) {
-		// TODO Auto-generated method stub
-		return null;
+		return "收到图片";
 	}
 
 	public String voiceMsgHandle(JSONObject msg) {
-		// TODO Auto-generated method stub
-		return null;
+		String fileName = String.valueOf(new Date().getTime());
+		String voicePath = "D://itchat4j/voice" + File.separator + fileName + ".mp3";
+		DownloadTools.getDownloadFn(msg, MsgType.VOICE, voicePath);
+		return "收到语音";
 	}
 
 	public String viedoMsgHandle(JSONObject msg) {
-		// TODO Auto-generated method stub
-		return null;
+		String fileName = String.valueOf(new Date().getTime());
+		String viedoPath = "D://itchat4j/viedo" + File.separator + fileName + ".mp4";
+		DownloadTools.getDownloadFn(msg, MsgType.VIEDO, viedoPath);
+		return "收到视频";
 	}
 
 	public static void main(String[] args) {
 		IMsgHandlerFace msgHandler = new TulingRobot();
-		Wechat wechat = new Wechat(msgHandler, "D://login");
+		Wechat wechat = new Wechat(msgHandler, "D://itchat4j/login");
 		wechat.start();
 	}
 

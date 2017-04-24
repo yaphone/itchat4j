@@ -8,7 +8,5 @@ public class SimpleTest {
 		IMsgHandlerFace msgHandler = new TulingRobot();
 		Wechat wechat = new Wechat(msgHandler, "D://login");
 		wechat.start();
-		// wechat.send();
-
 	}
 }
