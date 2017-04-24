@@ -89,16 +89,13 @@ public class MyHttpClient {
 	 * @param params
 	 * @return
 	 */
-	public HttpEntity doPost(String url, StringEntity params) {
+	public HttpEntity doPost(String url, String paramsStr) {
 		HttpEntity entity = null;
 		HttpPost httpPost = new HttpPost();
 		try {
-			if (params != null) {
-				httpPost = new HttpPost(url);
-				httpPost.setEntity(params);
-			} else {
-				httpPost = new HttpPost(url);
-			}
+			StringEntity params = new StringEntity(paramsStr, Consts.UTF_8);
+			httpPost = new HttpPost(url);
+			httpPost.setEntity(params);
 			httpPost.setHeader("Content-type", "application/json; charset=utf-8");
 			httpPost.setHeader("User-Agent", Config.USER_AGENT);
 			CloseableHttpResponse response = httpClient.execute(httpPost);

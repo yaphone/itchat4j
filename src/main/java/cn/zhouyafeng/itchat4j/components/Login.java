@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
@@ -322,10 +321,9 @@ public class Login {
 		@SuppressWarnings("unchecked")
 		Map<String, Map<String, String>> paramMap = (Map<String, Map<String, String>>) core.getLoginInfo()
 				.get("baseRequest");
-		String paramsStr = JSON.toJSONString(paramMap);
+		String paramStr = JSON.toJSONString(paramMap);
 		try {
-			StringEntity params = new StringEntity(paramsStr);
-			HttpEntity entity = myHttpClient.doPost(url, params);
+			HttpEntity entity = myHttpClient.doPost(url, paramStr);
 			String result = EntityUtils.toString(entity, "UTF-8");
 			obj = JSON.parseObject(result);
 			// TODO utils.emoji_formatter(dic['User'], 'NickName')
@@ -362,10 +360,9 @@ public class Login {
 		paramMap.put("FromUserName", core.getStorageClass().getUserName());
 		paramMap.put("ToUserName", core.getStorageClass().getUserName());
 		paramMap.put("ClientMsgId", String.valueOf(new Date().getTime()));
-		String paramsStr = JSON.toJSONString(paramMap);
+		String paramStr = JSON.toJSONString(paramMap);
 		try {
-			StringEntity params = new StringEntity(paramsStr);
-			HttpEntity entity = myHttpClient.doPost(mobileUrl, params);
+			HttpEntity entity = myHttpClient.doPost(mobileUrl, paramStr);
 			EntityUtils.toString(entity, "UTF-8");
 		} catch (Exception e) {
 
@@ -483,9 +480,9 @@ public class Login {
 		paramMap.put("BaseRequest", baseRequestMap.get("BaseRequest"));
 		paramMap.put("SyncKey", core.getLoginInfo().get("SyncKey"));
 		paramMap.put("rr", -new Date().getTime() / 1000);
+		String paramStr = JSON.toJSONString(paramMap);
 		try {
-			StringEntity params = new StringEntity(JSON.toJSONString(paramMap));
-			HttpEntity entity = myHttpClient.doPost(url, params);
+			HttpEntity entity = myHttpClient.doPost(url, paramStr);
 			String text = EntityUtils.toString(entity, "UTF-8");
 			JSONObject obj = JSON.parseObject(text);
 			if (obj.getJSONObject("BaseResponse").getInteger("Ret") != 0) {

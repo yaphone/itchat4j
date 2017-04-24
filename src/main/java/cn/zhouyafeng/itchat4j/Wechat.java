@@ -17,7 +17,7 @@ public class Wechat {
 
 	private IMsgHandlerFace msgHandler;
 
-	Wechat(IMsgHandlerFace msgHandler) {
+	public Wechat(IMsgHandlerFace msgHandler) {
 		System.setProperty("jsse.enableSNIExtension", "false"); // 防止SSL错误
 
 		this.msgHandler = msgHandler;

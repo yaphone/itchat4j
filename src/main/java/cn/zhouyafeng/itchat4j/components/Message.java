@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -137,8 +136,8 @@ public class Message {
 		paramMap.put("Msg", msgMap);
 		paramMap.put("Scene", 0);
 		try {
-			StringEntity params = new StringEntity(JSON.toJSONString(paramMap), "UTF-8");
-			HttpEntity entity = myHttpClient.doPost(url, params);
+			String paramStr = JSON.toJSONString(paramMap);
+			HttpEntity entity = myHttpClient.doPost(url, paramStr);
 			EntityUtils.toString(entity, "UTF-8");
 		} catch (Exception e) {
 			logger.info(e.getMessage());
