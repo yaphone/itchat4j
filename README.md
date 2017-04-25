@@ -40,3 +40,5 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
 接下来，让我来一步步教你如何使用itchat4j来扩展你的个人微信号。
 
 我们首先在Eclipse中新建一个项目，首先我们导入itchat4j的jar包。
+
+未完，待更新。。。
