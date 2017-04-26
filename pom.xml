@@ -4,8 +4,9 @@
 
   <groupId>cn.zhouyafeng</groupId>
   <artifactId>itchat4j</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
   <packaging>jar</packaging>
+
 
   <name>itchat4j</name>
   <url>http://maven.apache.org</url>
@@ -50,29 +51,45 @@
 	  <version>3.2.0</version>
 	</dependency>
   </dependencies>
+  
+  <!-- build all dependencies in one jar -->
   <build>
-	<plugins>
-		<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-shade-plugin</artifactId>
-			<version>2.4.1</version>
-			<executions>
-				<execution>
-					<phase>package</phase>
-					<goals>
-						<goal>shade</goal>
-					</goals>
-					<configuration>
-						<transformers>
-							<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-								<mainClass>cn.zhouyafeng.itcht4j.SimpleTest</mainClass>
-							</transformer>
-						</transformers>
-					</configuration>
-				</execution>
-			</executions>
-		</plugin>
-
-	</plugins>
-</build>
+    <plugins>
+      <!-- any other plugins -->
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.0.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+            <descriptorRef>src</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+      </plugin>
+      
+    </plugins>
+  </build>
 </project>
