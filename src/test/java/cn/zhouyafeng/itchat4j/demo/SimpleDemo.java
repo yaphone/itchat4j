@@ -22,6 +22,7 @@ import cn.zhouyafeng.itchat4j.utils.MsgType;
 public class SimpleDemo implements IMsgHandlerFace {
 
 	public String textMsgHandle(JSONObject msg) {
+		System.out.println(msg);
 		String text = msg.getString("Text");
 		return text;
 	}

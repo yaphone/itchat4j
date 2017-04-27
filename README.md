@@ -39,6 +39,114 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
 
 接下来，让我来一步步教你如何使用itchat4j来扩展你的个人微信号。
 
-我们首先在Eclipse中新建一个项目，首先我们导入itchat4j的jar包。
+我们首先在Eclipse中新建一个项目，首先我们导入itchat4j的jar包，项目的结构如图所示：
 
-未完，待更新。。。
+
+
+图三：项目结构
+
+
+
+然后我们需要新建一个类来实现`IMsgHandlerFace`这个接口，该接口有四个方法需要实现，`textMsgHandle`用于处理文本信息，`picMsgHandle`用于处理图片信息，`viedoMsgHandle`用于处理小视频信息，`voiceMsgHandle`用于处理语音信息，代码如下：
+
+```java
+public class MsgHandler implements IMsgHandlerFace {
+
+	@Override
+	public String picMsgHandle(JSONObject arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String textMsgHandle(JSONObject arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String viedoMsgHandle(JSONObject arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String voiceMsgHandle(JSONObject arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}
+```
+
+由于没有关联源码，所以接口中的参数都变成了`arg0`这种，建议关联一下源码，源码可在release中下载，当然不关联也不会有啥影响，`arg0`其实是我们需要处理的消息，为了更直观，我们把`arg0`修改为`msg`，msg是fastjson的JSONObject类型，这个其实我们不用关心。在我们这个类中，需要实现我们处理消息的逻辑。
+
+在`textMsgHandler`中，我们通过`msg.getString("Text")`就可以获取收到的文本信息，然后作进一步处理，比如接入图灵机器人、消息自动回复等，在这个方法中，我们需要返回一个字符串，即是需要回复的消息，在SimpleDemo这个示例中，我们直接回复收到的原消息。
+
+在`picMsgHandle`、`voiceMsgHandle`、`viedoMsgHandle`这三个方法中，我们需要将这些消息下载下来，然后再作进一步处理，所以需要为每种类型的消息提供一个保存路径。
+
+就不多说了，让代码自述吧，有不明白的地方，欢迎在Issue中提出来。
+
+```java
+/**
+ * 简单示例程序，收到文本信息自动回复原信息，收到图片、语音、小视频后根据路径自动保存
+ * 
+ * @author https://github.com/yaphone
+ * @date 创建时间：2017年4月25日 上午12:18:09
+ * @version 1.0
+ *
+ */
+public class SimpleDemo implements IMsgHandlerFace {
+
+	public String textMsgHandle(JSONObject msg) {
+		System.out.println(msg);
+		String text = msg.getString("Text");
+		return text;
+	}
+
+	public String picMsgHandle(JSONObject msg) {
+		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+		String picPath = "D://itchat4j/pic" + File.separator + fileName + ".jpg";
+		DownloadTools.getDownloadFn(msg, MsgType.PIC, picPath);
+		return "图片保存成功";
+	}
+
+	public String voiceMsgHandle(JSONObject msg) {
+		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+		String voicePath = "D://itchat4j/voice" + File.separator + fileName + ".mp3";
+		DownloadTools.getDownloadFn(msg, MsgType.VOICE, voicePath);
+		return "声音保存成功";
+	}
+
+	public String viedoMsgHandle(JSONObject msg) {
+		System.out.println(msg);
+		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+		String viedoPath = "D://itchat4j/viedo" + File.separator + fileName + ".mp4";
+		DownloadTools.getDownloadFn(msg, MsgType.VIEDO, viedoPath);
+		return "视频保存成功";
+	}
+
+}
+```
+
+实现这个消息处理的Handle之后，我们需要将其注入到`Wechat`中来启动服务，`Wechat`是服务的主入口，其构造函数接受两个参数，一个是我们刚才实现的`MsgHandler`类，另一个是保存登陆二维码的路径。然后在`Wechat`对象上调用`start()`方法来启动服务，之后会在我们刚才传入的路径下生成一个`QR.jpg`文件，即是我们的登陆二维码，通过手机微信扫描后即可登陆，实现`IMsgHandlerFace`的类即会实现我们的逻辑，额，说的有点乱，还是让代码自述吧。
+
+```Java
+/**
+ * 
+ * @author https://github.com/yaphone
+ * @date 创建时间：2017年4月28日 上午12:44:10
+ * @version 1.0
+ *
+ */
+public class Mytest {
+	public static void main(String[] args) {
+		String qrPath = "E://itchat4j";
+		MsgHandler msgHandler = new MsgHandler();
+		Wechat wechat = new Wechat(msgHandler, qrPath);
+		wechat.start();
+	}
+
+}
+```
+
