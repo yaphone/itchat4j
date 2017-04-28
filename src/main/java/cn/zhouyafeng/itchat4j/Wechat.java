@@ -40,6 +40,7 @@ public class Wechat {
 			public void run() {
 				while (true) {
 					if (core.getMsgList().size() > 0) {
+						// System.out.println(core.getMsgList().get(0));
 						if (((JSONObject) core.getMsgList().get(0)).getString("Content").length() > 0) {
 							JSONObject msg = (JSONObject) core.getMsgList().get(0);
 							if (msg.getString("Type") != null) {
@@ -61,11 +62,11 @@ public class Wechat {
 											((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
 								}
 							}
-							core.getMsgList().remove(0);
 						}
+						core.getMsgList().remove(0);
 					}
 					try {
-						TimeUnit.SECONDS.sleep(1);
+						TimeUnit.MILLISECONDS.sleep(1000);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
