@@ -279,5 +279,7 @@ public class WechatService implements IWechatServiceFace {
 
 本项目长期更新、维护，功能不断扩展与完善中，欢迎star。
 
-如果有什么问题或者建议都可以在Issue中提出来，也可以加入QQ群讨论：636365179
+项目使用过程中遇到问题，欢迎随时反馈。
+
+任何问题或者建议都可以在Issue中提出来，也可以加入QQ群讨论：636365179
 
