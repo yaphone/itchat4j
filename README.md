@@ -235,7 +235,7 @@ public class TulingRobot implements IMsgHandlerFace {
 }
 ```
 
-### Demo3 集成在SpringMVC应用中
+### Demo3 itchat4j集成在SpringMVC应用中
 
 这个示例要讲起来就比较困难了，因为SpringMVC本身就是一个复杂的东西，先在这里挖个坑吧。其实在SpringMVC中集成与上面两个示例并没有太大的不同，我的个人博客是基于SpringMVC的，我已经将集成在这个项目里了，这样我就可以通过微信来更新我的博客了。详细的就不多说了，大家先看看这个项目结构吧。
 
