@@ -2,7 +2,7 @@
 
  
 
-### 项目地址：[itchat4j](https://github.com/yaphone/itchat4j)，该项目长期维护更新，欢迎star, fork, pull/request, issue。
+### 项目地址：[itchat4j](https://github.com/yaphone/itchat4j)，该项目长期维护更新，欢迎star、fork、 pull requests、 issue。
 
 ### 来源
 
@@ -239,7 +239,7 @@ public class TulingRobot implements IMsgHandlerFace {
 
 这个示例要讲起来就比较困难了，因为SpringMVC本身就是一个复杂的东西，先在这里挖个坑吧。其实在SpringMVC中集成与上面两个示例并没有太大的不同，我的个人博客是基于SpringMVC的，我已经将集成在这个项目里了，这样我就可以通过微信来更新我的博客了。详细的就不多说了，大家先看看这个项目结构吧。
 
-![itchat4j集成在Blog项目中](http://oj5vdtyuu.bkt.clouddn.com/itchat4j%E9%9B%86%E6%88%90%E5%9C%A8blog%E9%A1%B9%E7%9B%AE%E4%B8%AD.png)
+![itchat4j集成在Blog项目中](http://oj5vdtyuu.bkt.clouddn.com/itchat4j%E9%9B%86%E6%88%90%E5%9C%A8blog%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BF%AE%E6%94%B9.jpg)
 
 其中`MsgHandler`就是我处理微信消息的逻辑，略复杂，就不贴代码了。`WechatService`就是将`MsgHandler`“注入”到`Wechat`类中，与上面两个示例的作用是一样的，贴一下`WechatService`的代码：
 
@@ -271,11 +271,13 @@ public class WechatService implements IWechatServiceFace {
 
 ## 类似项目
 
-[itchat](https://github.com/littlecodersh/ItChat)优秀的、基于Python的微信个人号API。
+[itchat](https://github.com/littlecodersh/ItChat)优秀的、基于Python的微信个人号API，同时也是本项目的灵感之源。
 
 
 
 ## 问题和建议
 
-本项目长期更新、维护，如果有什么问题或者建议都可以在Issue中提出来，当然也可以加入我们新建的QQ群讨论：636365179
+本项目长期更新、维护，功能不断扩展与完善中，欢迎star。
+
+如果有什么问题或者建议都可以在Issue中提出来，也可以加入QQ群讨论：636365179
 
