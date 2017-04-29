@@ -87,7 +87,7 @@ public class MsgHandler implements IMsgHandlerFace {
 }
 ```
 
-由于没有关联源码，所以接口中的参数都变成了`arg0`这种，建议关联一下源码，源码可在release中下载，当然不关联也不会有啥影响，`arg0`其实是我们需要处理的消息体，为了更直观，建议把`arg0`修改为`msg`，msg是fastjson的JSONObject类型，这个其实不用关心，我们只需要知道如何来获取需要的消息就可以了，下面的Demo中有示例。然后我们来写处理逻辑。
+由于没有关联源码，所以接口中的参数都变成了`arg0`这种，建议关联一下源码，源码可在[release](https://github.com/yaphone/itchat4j/releases)中下载，当然不关联也不会有啥影响，`arg0`其实是我们需要处理的消息体，为了更直观，建议把`arg0`修改为`msg`，msg是fastjson的JSONObject类型，这个其实不用关心，我们只需要知道如何来获取需要的消息就可以了，下面的Demo中有示例。然后我们来写处理逻辑。
 
 在`textMsgHandler`中，通过`msg.getString("Text")`就可以获取收到的文本信息，然后作进一步处理，比如接入图灵机器人、消息自动回复等，我们需要在这个方法中返回一个字符串，即是需要回复给好友的消息，在SimpleDemo这个示例中，我们直接回复收到的原文本消息。
 
