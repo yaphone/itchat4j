@@ -39,35 +39,31 @@ public class Wechat {
 
 			public void run() {
 				while (true) {
-					try {
-						if (core.getMsgList().size() > 0) {
-							// System.out.println(core.getMsgList().get(0));
-							if (((JSONObject) core.getMsgList().get(0)).getString("Content").length() > 0) {
-								JSONObject msg = (JSONObject) core.getMsgList().get(0);
-								if (msg.getString("Type") != null) {
-									if (msg.getString("Type").equals(MsgType.TEXT)) {
-										String result = msgHandler.textMsgHandle(msg);
-										Message.send(result,
-												((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
-									} else if (msg.getString("Type").equals(MsgType.PIC)) {
-										String result = msgHandler.picMsgHandle(msg);
-										Message.send(result,
-												((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
-									} else if (msg.getString("Type").equals(MsgType.VOICE)) {
-										String result = msgHandler.voiceMsgHandle(msg);
-										Message.send(result,
-												((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
-									} else if (msg.getString("Type").equals(MsgType.VIEDO)) {
-										String result = msgHandler.viedoMsgHandle(msg);
-										Message.send(result,
-												((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
-									}
+					if (core.getMsgList().size() > 0) {
+						// System.out.println(core.getMsgList().get(0));
+						if (((JSONObject) core.getMsgList().get(0)).getString("Content").length() > 0) {
+							JSONObject msg = (JSONObject) core.getMsgList().get(0);
+							if (msg.getString("Type") != null) {
+								if (msg.getString("Type").equals(MsgType.TEXT)) {
+									String result = msgHandler.textMsgHandle(msg);
+									Message.send(result,
+											((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
+								} else if (msg.getString("Type").equals(MsgType.PIC)) {
+									String result = msgHandler.picMsgHandle(msg);
+									Message.send(result,
+											((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
+								} else if (msg.getString("Type").equals(MsgType.VOICE)) {
+									String result = msgHandler.voiceMsgHandle(msg);
+									Message.send(result,
+											((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
+								} else if (msg.getString("Type").equals(MsgType.VIEDO)) {
+									String result = msgHandler.viedoMsgHandle(msg);
+									Message.send(result,
+											((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
 								}
 							}
-							core.getMsgList().remove(0);
 						}
-					} catch (Exception e) {
-						logger.info(e.getMessage());
+						core.getMsgList().remove(0);
 					}
 					try {
 						TimeUnit.MILLISECONDS.sleep(1000);
