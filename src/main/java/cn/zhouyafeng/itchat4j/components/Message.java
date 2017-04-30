@@ -76,6 +76,7 @@ public class Message {
 			} else if (m.getInteger("MsgType") == 37) {// friends
 
 			} else if (m.getInteger("MsgType") == 42) { // name card
+				m.put("Type", MsgType.NAMECARD);
 
 			} else if (m.getInteger("MsgType") == 43 || m.getInteger("MsgType") == 62) {// tiny
 				m.put("Type", MsgType.VIEDO);

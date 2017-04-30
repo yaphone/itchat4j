@@ -80,4 +80,9 @@ public class TulingRobot implements IMsgHandlerFace {
 		wechat.start();
 	}
 
+	public String nameCardMsgHandle(JSONObject msg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

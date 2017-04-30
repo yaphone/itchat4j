@@ -21,7 +21,7 @@ public interface IMsgHandlerFace {
 	public String textMsgHandle(JSONObject msg);
 
 	/**
-	 * 处理图片信息
+	 * 处理图片消息
 	 * 
 	 * @author https://github.com/yaphone
 	 * @date 2017年4月21日 下午11:07:06
@@ -31,7 +31,7 @@ public interface IMsgHandlerFace {
 	public String picMsgHandle(JSONObject msg);
 
 	/**
-	 * 处理声音信息
+	 * 处理声音消息
 	 * 
 	 * @author https://github.com/yaphone
 	 * @date 2017年4月22日 上午12:09:44
@@ -41,7 +41,7 @@ public interface IMsgHandlerFace {
 	public String voiceMsgHandle(JSONObject msg);
 
 	/**
-	 * 处理小视频信息
+	 * 处理小视频消息
 	 * 
 	 * @author https://github.com/yaphone
 	 * @date 2017年4月23日 下午12:19:50
@@ -49,5 +49,15 @@ public interface IMsgHandlerFace {
 	 * @return
 	 */
 	public String viedoMsgHandle(JSONObject msg);
+
+	/**
+	 * 处理明片消息
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月1日 上午12:50:50
+	 * @param msg
+	 * @return
+	 */
+	public String nameCardMsgHandle(JSONObject msg);
 
 }

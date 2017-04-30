@@ -54,4 +54,12 @@ public class SimpleDemo implements IMsgHandlerFace {
 		wechat.start();
 	}
 
+	public String nameCardMsgHandle(JSONObject msg) {
+		String city = msg.getString("City");
+		String nickName = msg.getString("NickName");
+		String province = msg.getString("Province");
+		String result = city + " " + nickName + " " + province;
+		return "收到名片消息" + result;
+	}
+
 }
