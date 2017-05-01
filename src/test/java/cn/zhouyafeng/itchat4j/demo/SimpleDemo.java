@@ -22,11 +22,13 @@ import cn.zhouyafeng.itchat4j.utils.MsgType;
 public class SimpleDemo implements IMsgHandlerFace {
 
 	public String textMsgHandle(JSONObject msg) {
+		System.out.println(msg);
 		String text = msg.getString("Text");
 		return text;
 	}
 
 	public String picMsgHandle(JSONObject msg) {
+		System.out.println(msg);
 		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
 		String picPath = "D://itchat4j/pic" + File.separator + fileName + ".jpg";
 		DownloadTools.getDownloadFn(msg, MsgType.PIC, picPath);
@@ -34,6 +36,7 @@ public class SimpleDemo implements IMsgHandlerFace {
 	}
 
 	public String voiceMsgHandle(JSONObject msg) {
+		System.out.println(msg);
 		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
 		String voicePath = "D://itchat4j/voice" + File.separator + fileName + ".mp3";
 		DownloadTools.getDownloadFn(msg, MsgType.VOICE, voicePath);
@@ -46,6 +49,10 @@ public class SimpleDemo implements IMsgHandlerFace {
 		String viedoPath = "D://itchat4j/viedo" + File.separator + fileName + ".mp4";
 		DownloadTools.getDownloadFn(msg, MsgType.VIEDO, viedoPath);
 		return "视频保存成功";
+	}
+
+	public String nameCardMsgHandle(JSONObject msg) {
+		return "收到名片消息";
 	}
 
 	public static void main(String[] args) {

@@ -60,6 +60,10 @@ public class Wechat {
 									String result = msgHandler.viedoMsgHandle(msg);
 									Message.send(result,
 											((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
+								} else if (msg.getString("Type").equals(MsgType.NAMECARD)) {
+									String result = msgHandler.nameCardMsgHandle(msg);
+									Message.send(result,
+											((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
 								}
 							}
 						}

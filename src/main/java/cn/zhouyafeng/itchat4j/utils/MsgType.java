@@ -15,7 +15,9 @@ public class MsgType {
 	public static String PIC = "Pic";
 	// 语音信息
 	public static String VOICE = "Voice";
-	// 小视频
+	// 小视频消息
 	public static String VIEDO = "Video";
+	// name card 明片消息
+	public static String NAMECARD = "NameCard";
 
 }

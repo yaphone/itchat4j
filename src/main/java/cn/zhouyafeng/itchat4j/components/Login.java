@@ -141,7 +141,11 @@ public class Login {
 			out.write(bytes);
 			out.flush();
 			out.close();
-			// Tools.printQr(qrPath); //打开登陆二维码图片
+			try {
+				Tools.printQr(qrPath); // 打开登陆二维码图片
+			} catch (Exception e) {
+				logger.info(e.getMessage());
+			}
 
 		} catch (Exception e) {
 			logger.info(e.getMessage());
