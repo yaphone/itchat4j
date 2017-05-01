@@ -21,12 +21,14 @@ import cn.zhouyafeng.itchat4j.utils.MsgType;
  */
 public class SimpleDemo implements IMsgHandlerFace {
 
+	@Override
 	public String textMsgHandle(JSONObject msg) {
 		System.out.println(msg);
 		String text = msg.getString("Text");
 		return text;
 	}
 
+	@Override
 	public String picMsgHandle(JSONObject msg) {
 		System.out.println(msg);
 		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
@@ -35,6 +37,7 @@ public class SimpleDemo implements IMsgHandlerFace {
 		return "图片保存成功";
 	}
 
+	@Override
 	public String voiceMsgHandle(JSONObject msg) {
 		System.out.println(msg);
 		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
@@ -43,6 +46,7 @@ public class SimpleDemo implements IMsgHandlerFace {
 		return "声音保存成功";
 	}
 
+	@Override
 	public String viedoMsgHandle(JSONObject msg) {
 		System.out.println(msg);
 		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
@@ -51,6 +55,7 @@ public class SimpleDemo implements IMsgHandlerFace {
 		return "视频保存成功";
 	}
 
+	@Override
 	public String nameCardMsgHandle(JSONObject msg) {
 		return "收到名片消息";
 	}
