@@ -36,7 +36,7 @@ public class Storage {
 	private List<JSONObject> memberList = new ArrayList<JSONObject>();
 	private List<JSONObject> mpList = new ArrayList<JSONObject>();
 	private List<Object> chatroomList = new ArrayList<Object>();
-	private List<Object> msgList = new ArrayList<Object>();
+	private List<JSONObject> msgList = new ArrayList<JSONObject>(); // 消息列表
 	private String lastInputUserName;
 
 	public String getUserName() {
@@ -87,11 +87,11 @@ public class Storage {
 		this.chatroomList = chatroomList;
 	}
 
-	public List<Object> getMsgList() {
+	public List<JSONObject> getMsgList() {
 		return msgList;
 	}
 
-	public void setMsgList(List<Object> msgList) {
+	public void setMsgList(List<JSONObject> msgList) {
 		this.msgList = msgList;
 	}
 
