@@ -1,9 +1,7 @@
 package cn.zhouyafeng.itchat4j.components;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -43,7 +41,6 @@ public class Message {
 	 */
 	public static JSONArray produceMsg(JSONArray msgList) {
 		JSONArray result = new JSONArray();
-		List<Integer> srl = Arrays.asList(40, 43, 50, 52, 53, 9999);
 		for (int i = 0; i < msgList.size(); i++) {
 			JSONObject msg = new JSONObject();
 			JSONObject m = msgList.getJSONObject(i);
@@ -53,7 +50,7 @@ public class Message {
 			} else {
 				Tools.msgFormatter(m, "Content");
 			}
-			if (m.getInteger("MsgType") == 1) { // words
+			if (m.getInteger("MsgType") == 1) { // words 文本消息
 				if (m.getString("Url").length() != 0) {
 					String regEx = "(.+?\\(.+?\\))";
 					Matcher matcher = Tools.getMatcher(regEx, m.getString("Content"));
@@ -69,24 +66,24 @@ public class Message {
 				}
 				m.put("Type", msg.getString("Type"));
 				m.put("Text", msg.getString("Text"));
-			} else if (m.getInteger("MsgType") == 3 || m.getInteger("MsgType") == 47) { // picture
+			} else if (m.getInteger("MsgType") == 3 || m.getInteger("MsgType") == 47) { // 图片消息
 				m.put("Type", MsgType.PIC);
-			} else if (m.getInteger("MsgType") == 34) { // voice
+			} else if (m.getInteger("MsgType") == 34) { // 语音消息
 				m.put("Type", MsgType.VOICE);
-			} else if (m.getInteger("MsgType") == 37) {// friends
+			} else if (m.getInteger("MsgType") == 37) {// friends 好友确认消息
 
-			} else if (m.getInteger("MsgType") == 42) { // name card
+			} else if (m.getInteger("MsgType") == 42) { // 共享名片
 				m.put("Type", MsgType.NAMECARD);
 
-			} else if (m.getInteger("MsgType") == 43 || m.getInteger("MsgType") == 62) {// tiny
+			} else if (m.getInteger("MsgType") == 43 || m.getInteger("MsgType") == 62) {// viedo
 				m.put("Type", MsgType.VIEDO);
-			} else if (m.getInteger("MsgType") == 49) { // sharing
+			} else if (m.getInteger("MsgType") == 49) { // sharing 分享链接
 
-			} else if (m.getInteger("MsgType") == 51) {// phone init
+			} else if (m.getInteger("MsgType") == 51) {// phone init 微信初始化消息
 
-			} else if (m.getInteger("MsgType") == 10000) {//
+			} else if (m.getInteger("MsgType") == 10000) {// 系统消息
 
-			} else if (m.getInteger("MsgType") == 10002) {
+			} else if (m.getInteger("MsgType") == 10002) { // 撤回消息
 
 			} else {
 				logger.info("Useless msg");
