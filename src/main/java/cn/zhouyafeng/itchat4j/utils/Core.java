@@ -39,7 +39,7 @@ public class Core {
 	List<JSONObject> memberList = storageClass.getMemberList();
 	List<JSONObject> mpList = storageClass.getMpList();
 	List<Object> chatroomList = storageClass.getChatroomList();
-	List<Object> msgList = storageClass.getMsgList();
+	List<JSONObject> msgList = storageClass.getMsgList();
 	Map<String, Object> loginInfo = new HashMap<String, Object>();
 	CloseableHttpClient httpClient = HttpClients.createDefault();
 	MyHttpClient myHttpClient = new MyHttpClient();
@@ -95,14 +95,6 @@ public class Core {
 
 	public void setChatroomList(List<Object> chatroomList) {
 		this.chatroomList = chatroomList;
-	}
-
-	public List<Object> getMsgList() {
-		return msgList;
-	}
-
-	public void setMsgList(List<Object> msgList) {
-		this.msgList = msgList;
 	}
 
 	public Map<String, Object> getLoginInfo() {
@@ -167,6 +159,14 @@ public class Core {
 
 	public void setMyHttpClient(MyHttpClient myHttpClient) {
 		this.myHttpClient = myHttpClient;
+	}
+
+	public List<JSONObject> getMsgList() {
+		return msgList;
+	}
+
+	public void setMsgList(List<JSONObject> msgList) {
+		this.msgList = msgList;
 	}
 
 }

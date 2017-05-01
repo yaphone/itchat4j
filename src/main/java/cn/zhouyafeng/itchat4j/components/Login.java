@@ -369,6 +369,7 @@ public class Login {
 		new Thread(new Runnable() {
 			int retryCount = 0;
 
+			@Override
 			public void run() {
 				while (core.isAlive()) {
 					try {
