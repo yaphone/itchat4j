@@ -22,7 +22,7 @@
 - 集成在你的个人应用（SpringMVC、Serverlet、GUI）中，为应用提供更强的服务能力。
 - 部署在你的服务器上，将监控信息、日志发送到你的微信号。
 - 微信机器人，专业陪聊工具
-- 控制智能家居、智能硬件等具有开放接口的设备
+- 控制树莓派、智能家居、智能硬件等具有开放接口的设备
 - Anything you want ...
 
 
@@ -44,6 +44,278 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
 ![微信机器人](http://oj5vdtyuu.bkt.clouddn.com/%E5%BE%AE%E4%BF%A1%E6%9C%BA%E5%99%A8%E4%BA%BA.jpg)
 
 ![控制台收到的消息](http://oj5vdtyuu.bkt.clouddn.com/%E6%8E%A7%E5%88%B6%E5%8F%B0%E6%94%B6%E5%88%B0%E7%9A%84%E6%B6%88%E6%81%AF.png)
+
+
+
+## 消息格式
+
+这里简要介绍一下`msg`各种消息，msg均为`json`格式的数据，可使用各自工具进行解析，在itchat4j中我通过alibaba的`fastjosn`工具库进行了解析，每种`msg`均为`fastjson`的标准`JSONObject`对象，后续处理起来非常方便，例如获取文本消息的消息内容：`msg.getString("Text")`，获取名片消息的被推荐人昵称：`msg.getJSONObject("RecommendInfo").getString("NickName")`。
+
+### 1.文本消息
+
+```Json
+{
+    "SubMsgType": 0,
+    "VoiceLength": 0,
+    "FileName": "",
+    "ImgHeight": 0,
+    "ToUserName": "@d3619cbf5466d79dde9f67dc274eb74a",
+    "HasProductId": 0,
+    "ImgStatus": 1,
+    "Url": "",
+    "ImgWidth": 0,
+    "ForwardFlag": 0,
+    "Status": 3,
+    "Ticket": "",
+    "RecommendInfo": {
+        "Ticket": "",
+        "UserName": "",
+        "Sex": 0,
+        "AttrStatus": 0,
+        "City": "",
+        "NickName": "",
+        "Scene": 0,
+        "Province": "",
+        "Content": "",
+        "Alias": "",
+        "Signature": "",
+        "OpCode": 0,
+        "QQNum": 0,
+        "VerifyFlag": 0
+    },
+    "CreateTime": 1493608238,
+    "NewMsgId": 4407501800256700000,
+    "Text": "你好",
+    "MsgType": 1,
+    "MsgId": "4407501800256700015",
+    "StatusNotifyCode": 0,
+    "AppInfo": {
+        "Type": 0,
+        "AppID": ""
+    },
+    "AppMsgType": 0,
+    "Type": "Text",
+    "PlayLength": 0,
+    "MediaId": "",
+    "Content": "你好",
+    "StatusNotifyUserName": "",
+    "FromUserName": "@d3619cbf5466d79dde9f67dc274eb74a",
+    "OriContent": "",
+    "FileSize": ""
+}
+```
+
+### 图片消息
+
+```json
+{
+    "SubMsgType": 0,
+    "VoiceLength": 0,
+    "FileName": "",
+    "ImgHeight": 120,
+    "ToUserName": "@d3619cbf5466d79dde9f67dc274eb74a",
+    "HasProductId": 0,
+    "ImgStatus": 2,
+    "Url": "",
+    "ImgWidth": 89,
+    "ForwardFlag": 0,
+    "Status": 3,
+    "Ticket": "",
+    "RecommendInfo": {
+        "Ticket": "",
+        "UserName": "",
+        "Sex": 0,
+        "AttrStatus": 0,
+        "City": "",
+        "NickName": "",
+        "Scene": 0,
+        "Province": "",
+        "Content": "",
+        "Alias": "",
+        "Signature": "",
+        "OpCode": 0,
+        "QQNum": 0,
+        "VerifyFlag": 0
+    },
+    "CreateTime": 1493608302,
+    "NewMsgId": 8194991329533970000,
+    "MsgType": 3,
+    "MsgId": "8194991329533970381",
+    "StatusNotifyCode": 0,
+    "AppInfo": {
+        "Type": 0,
+        "AppID": ""
+    },
+    "AppMsgType": 0,
+    "Type": "Pic",
+    "PlayLength": 0,
+    "MediaId": "",
+    "Content": "&lt;?xml version=\"1.0\"?&gt;\n&lt;msg&gt;\n\t&lt;img aeskey=\"e9c981d695c5461b8daceadbb2b75c93\" encryver=\"0\" cdnthumbaeskey=\"e9c981d695c5461b8daceadbb2b75c93\" cdnthumburl=\"3043020100043c303a0201000204577f6a2c02030f48810204c8b28cb602045906a76e04187a7966616e646c7a7a313737355f313439333630383330310201000201000400\" cdnthumblength=\"4146\" cdnthumbheight=\"120\" cdnthumbwidth=\"89\" cdnmidheight=\"0\" cdnmidwidth=\"0\" cdnhdheight=\"0\" cdnhdwidth=\"0\" cdnmidimgurl=\"3043020100043c303a0201000204577f6a2c02030f48810204c8b28cb602045906a76e04187a7966616e646c7a7a313737355f313439333630383330310201000201000400\" length=\"52523\" md5=\"442f7391e62b12f90a4121e331d3a1e2\" /&gt;\n&lt;/msg&gt;\n",
+    "StatusNotifyUserName": "",
+    "FromUserName": "@d3619cbf5466d79dde9f67dc274eb74a",
+    "OriContent": "",
+    "FileSize": ""
+}
+```
+
+### 语音消息
+
+```Json
+{
+    "SubMsgType": 0,
+    "VoiceLength": 2340,
+    "FileName": "",
+    "ImgHeight": 0,
+    "ToUserName": "@d3619cbf5466d79dde9f67dc274eb74a",
+    "HasProductId": 0,
+    "ImgStatus": 1,
+    "Url": "",
+    "ImgWidth": 0,
+    "ForwardFlag": 0,
+    "Status": 3,
+    "Ticket": "",
+    "RecommendInfo": {
+        "Ticket": "",
+        "UserName": "",
+        "Sex": 0,
+        "AttrStatus": 0,
+        "City": "",
+        "NickName": "",
+        "Scene": 0,
+        "Province": "",
+        "Content": "",
+        "Alias": "",
+        "Signature": "",
+        "OpCode": 0,
+        "QQNum": 0,
+        "VerifyFlag": 0
+    },
+    "CreateTime": 1493608374,
+    "NewMsgId": 3310053492051352000,
+    "MsgType": 34,
+    "MsgId": "3310053492051352100",
+    "StatusNotifyCode": 0,
+    "AppInfo": {
+        "Type": 0,
+        "AppID": ""
+    },
+    "AppMsgType": 0,
+    "Type": "Voice",
+    "PlayLength": 0,
+    "MediaId": "",
+    "Content": "&lt;msg&gt;&lt;voicemsg endflag=\"1\" cancelflag=\"0\" forwardflag=\"0\" voiceformat=\"4\" voicelength=\"2340\" length=\"3898\" bufid=\"289997841361207642\" clientmsgid=\"490b0778a4b4b3ba804b98b8f43017aezyfandlzz1777_1493608371\" fromusername=\"zyfandlzz\" /&gt;&lt;/msg&gt;",
+    "StatusNotifyUserName": "",
+    "FromUserName": "@d3619cbf5466d79dde9f67dc274eb74a",
+    "OriContent": "",
+    "FileSize": ""
+}
+```
+
+### 小视频消息
+
+```Json
+{
+    "SubMsgType": 0,
+    "VoiceLength": 0,
+    "FileName": "",
+    "ImgHeight": 540,
+    "ToUserName": "@d3619cbf5466d79dde9f67dc274eb74a",
+    "HasProductId": 0,
+    "ImgStatus": 1,
+    "Url": "",
+    "ImgWidth": 944,
+    "ForwardFlag": 0,
+    "Status": 3,
+    "Ticket": "",
+    "RecommendInfo": {
+        "Ticket": "",
+        "UserName": "",
+        "Sex": 0,
+        "AttrStatus": 0,
+        "City": "",
+        "NickName": "",
+        "Scene": 0,
+        "Province": "",
+        "Content": "",
+        "Alias": "",
+        "Signature": "",
+        "OpCode": 0,
+        "QQNum": 0,
+        "VerifyFlag": 0
+    },
+    "CreateTime": 1493608481,
+    "NewMsgId": 4036056799205341700,
+    "MsgType": 43,
+    "MsgId": "4036056799205341630",
+    "StatusNotifyCode": 0,
+    "AppInfo": {
+        "Type": 0,
+        "AppID": ""
+    },
+    "AppMsgType": 0,
+    "Type": "Video",
+    "PlayLength": 2,
+    "MediaId": "",
+    "Content": "&lt;?xml version=\"1.0\"?&gt;\n&lt;msg&gt;\n\t&lt;videomsg aeskey=\"5f355e9a1df64dc2a924e68fb2d53d69\" cdnthumbaeskey=\"5f355e9a1df64dc2a924e68fb2d53d69\" cdnvideourl=\"3043020100043c303a0201000204577f6a2c02032dcd0102040f0a96b602045906a81f04187a7966616e646c7a7a313738315f313439333630383437380201000201000400\" cdnthumburl=\"3043020100043c303a0201000204577f6a2c02032dcd0102040f0a96b602045906a81f04187a7966616e646c7a7a313738315f313439333630383437380201000201000400\" length=\"311854\" playlength=\"2\" cdnthumblength=\"23032\" cdnthumbwidth=\"944\" cdnthumbheight=\"540\" fromusername=\"zyfandlzz\" md5=\"94d985a231c2fbde6b2ece72a300b78d\" newmd5=\"e17fcce9058e2d962d877cb0f1e586a3\" isad=\"0\" /&gt;\n&lt;/msg&gt;\n",
+    "StatusNotifyUserName": "",
+    "FromUserName": "@d3619cbf5466d79dde9f67dc274eb74a",
+    "OriContent": "",
+    "FileSize": ""
+}
+```
+
+### 名片消息
+
+```Json
+{
+    "SubMsgType": 0,
+    "VoiceLength": 0,
+    "FileName": "",
+    "ImgHeight": 0,
+    "ToUserName": "@77335068a746b7d6317dc41491d00f03",
+    "HasProductId": 0,
+    "ImgStatus": 1,
+    "Url": "",
+    "ImgWidth": 0,
+    "ForwardFlag": 0,
+    "Status": 3,
+    "Ticket": "",
+    "RecommendInfo": {
+        "Ticket": "",
+        "UserName": "@d8c8f3e3f29504be95e1a3fb6498b4639b74bed0593d0defe08e3d595a71c0c8",
+        "Sex": 2,
+        "AttrStatus": 102465,
+        "City": "中国",
+        "NickName": "yaphone",
+        "Scene": 17,
+        "Province": "重庆",
+        "Content": "",
+        "Alias": "",
+        "Signature": "",
+        "OpCode": 0,
+        "QQNum": 0,
+        "VerifyFlag": 0
+    },
+    "CreateTime": 1493608772,
+    "NewMsgId": 4995521505909924000,
+    "MsgType": 42,
+    "MsgId": "4995521505909923458",
+    "StatusNotifyCode": 0,
+    "AppInfo": {
+        "Type": 0,
+        "AppID": ""
+    },
+    "AppMsgType": 0,
+    "Type": "NameCard",
+    "PlayLength": 0,
+    "MediaId": "",
+    "Content": "&lt;?xml version=\"1.0\"?&gt;\n&lt;msg bigheadimgurl=\"http://wx.qlogo.cn/mmhead/ver_1/X4zCLRffvrLu9W1Oufm608VxsFjnvFOXgeyMDhPKAUH92Ck24PcySMKMpCJySy4icERXbUae8CA9zuia638l9KIPXYIbqWK9DXSM6jjAYFtTk/0\" smallheadimgurl=\"http://wx.qlogo.cn/mmhead/ver_1/X4zCLRffvrLu9W1Oufm608VxsFjnvFOXgeyMDhPKAUH92Ck24PcySMKMpCJySy4icERXbUae8CA9zuia638l9KIPXYIbqWK9DXSM6jjAYFtTk/132\" username=\"wxid_a6p74rz9ovbz21\" nickname=\"yaphone\"  shortpy=\"\" alias=\"\" imagestatus=\"3\" scene=\"17\" province=\"重庆\" city=\"中国\" sign=\"\" sex=\"2\" certflag=\"0\" certinfo=\"\" brandIconUrl=\"\" brandHomeUrl=\"\" brandSubscriptConfigUrl=\"\" brandFlags=\"0\" regionCode=\"CN_Chongqing_South Bank\" /&gt;\n",
+    "StatusNotifyUserName": "",
+    "FromUserName": "@77335068a746b7d6317dc41491d00f03",
+    "OriContent": "",
+    "FileSize": ""
+}
+```
 
 
 
