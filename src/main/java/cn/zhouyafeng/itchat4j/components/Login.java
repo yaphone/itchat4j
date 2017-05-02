@@ -91,6 +91,7 @@ public class Login {
 		Tools.clearScreen();
 		logger.info(String.format("Login successfully as %s", core.getStorageClass().getNickName()));
 		startReceiving();
+		webWxGetContact();
 		return 0;
 	}
 
@@ -500,6 +501,36 @@ public class Login {
 		}
 		return result;
 
+	}
+
+	/**
+	 * <p>
+	 * 获取联系人信息，成功返回true，失败返回false
+	 * </p>
+	 * <p>
+	 * get all contacts: people, group, public user, special user
+	 * </p>
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月3日 上午12:28:51
+	 * @return
+	 */
+	boolean webWxGetContact() {
+		String result = "";
+		String url = String.format("%s/webwxgetcontact", core.getLoginInfo().get("url"));
+		List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+		params.add(new BasicNameValuePair("pass_ticket", (String) core.getLoginInfo().get("pass_ticket")));
+		params.add(new BasicNameValuePair("skey", (String) core.getLoginInfo().get("skey")));
+		params.add(new BasicNameValuePair("r", String.valueOf(String.valueOf(new Date().getTime()))));
+		HttpEntity entity = myHttpClient.doGet(url, params, true, null);
+		try {
+			result = EntityUtils.toString(entity, "UTF-8");
+		} catch (Exception e) {
+			logger.info(e.getMessage());
+		}
+		JSONObject fullFriendsJsonList = JSON.parseObject(result);
+		System.out.println(fullFriendsJsonList.get("MemberCount"));
+		return true;
 	}
 
 }

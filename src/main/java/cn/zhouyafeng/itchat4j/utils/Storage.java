@@ -33,10 +33,16 @@ public class Storage {
 
 	private String userName;
 	private String nickName;
-	private List<JSONObject> memberList = new ArrayList<JSONObject>();
-	private List<JSONObject> mpList = new ArrayList<JSONObject>();
-	private List<Object> chatroomList = new ArrayList<Object>();
-	private List<JSONObject> msgList = new ArrayList<JSONObject>(); // 消息列表
+	private List<JSONObject> msgList = new ArrayList<JSONObject>();
+
+	private List<JSONObject> userSelfList = new ArrayList<JSONObject>(); // 登陆账号自身信息
+	private List<JSONObject> memberList = new ArrayList<JSONObject>(); // 好友+群聊+公众号+特殊账号
+	private List<JSONObject> contactList = new ArrayList<JSONObject>();// 好友
+	private List<JSONObject> groupList = new ArrayList<JSONObject>(); // 群
+	private List<JSONObject> groupMemeberList = new ArrayList<JSONObject>(); // 群聊成员字典
+	private List<JSONObject> publicUsersList = new ArrayList<JSONObject>();// 公众号／服务号
+	private List<JSONObject> specialUsersList = new ArrayList<JSONObject>();// 特殊账号
+
 	private String lastInputUserName;
 
 	public String getUserName() {
@@ -71,20 +77,52 @@ public class Storage {
 		this.memberList = memberList;
 	}
 
-	public List<JSONObject> getMpList() {
-		return mpList;
+	public List<JSONObject> getUserSelfList() {
+		return userSelfList;
 	}
 
-	public void setMpList(List<JSONObject> mpList) {
-		this.mpList = mpList;
+	public void setUserSelfList(List<JSONObject> userSelfList) {
+		this.userSelfList = userSelfList;
 	}
 
-	public List<Object> getChatroomList() {
-		return chatroomList;
+	public List<JSONObject> getContactList() {
+		return contactList;
 	}
 
-	public void setChatroomList(List<Object> chatroomList) {
-		this.chatroomList = chatroomList;
+	public void setContactList(List<JSONObject> contactList) {
+		this.contactList = contactList;
+	}
+
+	public List<JSONObject> getGroupList() {
+		return groupList;
+	}
+
+	public void setGroupList(List<JSONObject> groupList) {
+		this.groupList = groupList;
+	}
+
+	public List<JSONObject> getGroupMemeberList() {
+		return groupMemeberList;
+	}
+
+	public void setGroupMemeberList(List<JSONObject> groupMemeberList) {
+		this.groupMemeberList = groupMemeberList;
+	}
+
+	public List<JSONObject> getPublicUsersList() {
+		return publicUsersList;
+	}
+
+	public void setPublicUsersList(List<JSONObject> publicUsersList) {
+		this.publicUsersList = publicUsersList;
+	}
+
+	public List<JSONObject> getSpecialUsersList() {
+		return specialUsersList;
+	}
+
+	public void setSpecialUsersList(List<JSONObject> specialUsersList) {
+		this.specialUsersList = specialUsersList;
 	}
 
 	public List<JSONObject> getMsgList() {
