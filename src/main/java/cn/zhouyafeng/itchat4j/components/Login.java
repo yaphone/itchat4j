@@ -91,6 +91,7 @@ public class Login {
 		Tools.clearScreen();
 		logger.info(String.format("Login successfully as %s", core.getStorageClass().getNickName()));
 		startReceiving();
+		webWxGetContact();
 		return 0;
 	}
 
@@ -335,7 +336,7 @@ public class Login {
 			core.getLoginInfo().put("synckey", synckey.substring(0, synckey.length() - 1));// 1_656161336|2_656161626|3_656161313|11_656159955|13_656120033|201_1492273724|1000_1492265953|1001_1492250432|1004_1491805192
 			core.getStorageClass().setUserName((obj.getJSONObject("User")).getString("UserName"));
 			core.getStorageClass().setNickName((obj.getJSONObject("User")).getString("NickName"));
-
+			core.getUserSelfList().add(obj.getJSONObject("User"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -500,6 +501,53 @@ public class Login {
 		}
 		return result;
 
+	}
+
+	/**
+	 * <p>
+	 * 获取联系人信息，成功返回true，失败返回false
+	 * </p>
+	 * <p>
+	 * get all contacts: people, group, public user, special user
+	 * </p>
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月3日 上午12:28:51
+	 * @return
+	 */
+	boolean webWxGetContact() {
+		String result = "";
+		String url = String.format("%s/webwxgetcontact", core.getLoginInfo().get("url"));
+		List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+		params.add(new BasicNameValuePair("pass_ticket", (String) core.getLoginInfo().get("pass_ticket")));
+		params.add(new BasicNameValuePair("skey", (String) core.getLoginInfo().get("skey")));
+		params.add(new BasicNameValuePair("r", String.valueOf(String.valueOf(new Date().getTime()))));
+		HttpEntity entity = myHttpClient.doGet(url, params, true, null);
+		try {
+			result = EntityUtils.toString(entity, "UTF-8");
+		} catch (Exception e) {
+			logger.info(e.getMessage());
+		}
+		JSONObject fullFriendsJsonList = JSON.parseObject(result);
+		core.setMemberCount(fullFriendsJsonList.getInteger(("MemberCount")));
+		JSONArray memberJsonArray = fullFriendsJsonList.getJSONArray("MemberList");
+		for (int i = 0; i < memberJsonArray.size(); i++) {
+			core.getMemberList().add(memberJsonArray.getJSONObject(i));
+		}
+		for (JSONObject o : core.getMemberList()) {
+			if ((o.getInteger("VerifyFlag") & 8) != 0) { // 公众号/服务号
+				core.getPublicUsersList().add(o);
+			} else if (Config.API_SPECIAL_USER.contains(o.getString("UserName"))) { // 特殊账号
+				core.getSpecialUsersList().add(o);
+			} else if (o.getString("UserName").indexOf("@@") != -1) { // 群聊
+				core.getGroupList().add(o);
+			} else if (o.getString("UserName").equals(core.getUserSelfList().get(0).getString("UserName"))) { // 自己
+				core.getContactList().remove(o);
+			} else { // 普通联系人
+				core.getContactList().add(o);
+			}
+		}
+		return true;
 	}
 
 }
