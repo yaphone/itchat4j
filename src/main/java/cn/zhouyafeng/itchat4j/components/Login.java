@@ -336,7 +336,7 @@ public class Login {
 			core.getLoginInfo().put("synckey", synckey.substring(0, synckey.length() - 1));// 1_656161336|2_656161626|3_656161313|11_656159955|13_656120033|201_1492273724|1000_1492265953|1001_1492250432|1004_1491805192
 			core.getStorageClass().setUserName((obj.getJSONObject("User")).getString("UserName"));
 			core.getStorageClass().setNickName((obj.getJSONObject("User")).getString("NickName"));
-
+			core.getUserSelfList().add(obj.getJSONObject("User"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -536,8 +536,15 @@ public class Login {
 		}
 		for (JSONObject o : core.getMemberList()) {
 			if ((o.getInteger("VerifyFlag") & 8) != 0) { // 公众号/服务号
-				core.getPublicUsersList().remove(o);
 				core.getPublicUsersList().add(o);
+			} else if (Config.API_SPECIAL_USER.contains(o.getString("UserName"))) { // 特殊账号
+				core.getSpecialUsersList().add(o);
+			} else if (o.getString("UserName").indexOf("@@") != -1) { // 群聊
+				core.getGroupList().add(o);
+			} else if (o.getString("UserName").equals(core.getUserSelfList().get(0).getString("UserName"))) { // 自己
+				core.getContactList().remove(o);
+			} else { // 普通联系人
+				core.getContactList().add(o);
 			}
 		}
 		return true;
