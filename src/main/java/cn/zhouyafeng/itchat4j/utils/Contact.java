@@ -83,7 +83,7 @@ public class Contact {
 			// utils.emoji_formatter(friend, 'NickName')
 			// if 'DisplayName' in friend:
 			// utils.emoji_formatter(friend, 'DisplayName')
-			core.memberList.add(friend);
+			core.getMemberList().add(friend);
 		}
 	}
 }

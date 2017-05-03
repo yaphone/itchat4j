@@ -36,15 +36,16 @@ public class Core {
 
 	boolean alive = false;
 	Storage storageClass = Storage.getInstance();
+	private int memberCount = 0;
 
-	List<JSONObject> userSelfList = storageClass.getUserSelfList();
-	List<JSONObject> memberList = storageClass.getMemberList();
-	List<JSONObject> contactList = storageClass.getContactList();
-	List<JSONObject> groupList = storageClass.getGroupList();
-	List<JSONObject> groupMemeberList = storageClass.getGroupList();
-	List<JSONObject> publicUsersList = storageClass.getPublicUsersList();
-	List<JSONObject> specialUsersList = storageClass.getSpecialUsersList();
-	List<JSONObject> msgList = storageClass.getMsgList();
+	private List<JSONObject> userSelfList = storageClass.getUserSelfList();
+	private List<JSONObject> memberList = storageClass.getMemberList();
+	private List<JSONObject> contactList = storageClass.getContactList();
+	private List<JSONObject> groupList = storageClass.getGroupList();
+	private List<JSONObject> groupMemeberList = storageClass.getGroupList();
+	private List<JSONObject> publicUsersList = storageClass.getPublicUsersList();
+	private List<JSONObject> specialUsersList = storageClass.getSpecialUsersList();
+	private List<JSONObject> msgList = storageClass.getMsgList();
 
 	Map<String, Object> loginInfo = new HashMap<String, Object>();
 	CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -113,6 +114,14 @@ public class Core {
 
 	public Map<String, Object> getFunctionDict() {
 		return functionDict;
+	}
+
+	public int getMemberCount() {
+		return memberCount;
+	}
+
+	public void setMemberCount(int memberCount) {
+		this.memberCount = memberCount;
 	}
 
 	public void setFunctionDict(Map<String, Object> functionDict) {

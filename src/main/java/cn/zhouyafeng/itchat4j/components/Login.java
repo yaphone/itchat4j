@@ -529,7 +529,17 @@ public class Login {
 			logger.info(e.getMessage());
 		}
 		JSONObject fullFriendsJsonList = JSON.parseObject(result);
-		System.out.println(fullFriendsJsonList.get("MemberCount"));
+		core.setMemberCount(fullFriendsJsonList.getInteger(("MemberCount")));
+		JSONArray memberJsonArray = fullFriendsJsonList.getJSONArray("MemberList");
+		for (int i = 0; i < memberJsonArray.size(); i++) {
+			core.getMemberList().add(memberJsonArray.getJSONObject(i));
+		}
+		for (JSONObject o : core.getMemberList()) {
+			if ((o.getInteger("VerifyFlag") & 8) != 0) { // 公众号/服务号
+				core.getPublicUsersList().remove(o);
+				core.getPublicUsersList().add(o);
+			}
+		}
 		return true;
 	}
 
