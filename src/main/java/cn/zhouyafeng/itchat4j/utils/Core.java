@@ -36,10 +36,17 @@ public class Core {
 
 	boolean alive = false;
 	Storage storageClass = Storage.getInstance();
-	List<JSONObject> memberList = storageClass.getMemberList();
-	List<JSONObject> mpList = storageClass.getMpList();
-	List<Object> chatroomList = storageClass.getChatroomList();
-	List<Object> msgList = storageClass.getMsgList();
+	private int memberCount = 0;
+
+	private List<JSONObject> userSelfList = storageClass.getUserSelfList();
+	private List<JSONObject> memberList = storageClass.getMemberList();
+	private List<JSONObject> contactList = storageClass.getContactList();
+	private List<JSONObject> groupList = storageClass.getGroupList();
+	private List<JSONObject> groupMemeberList = storageClass.getGroupList();
+	private List<JSONObject> publicUsersList = storageClass.getPublicUsersList();
+	private List<JSONObject> specialUsersList = storageClass.getSpecialUsersList();
+	private List<JSONObject> msgList = storageClass.getMsgList();
+
 	Map<String, Object> loginInfo = new HashMap<String, Object>();
 	CloseableHttpClient httpClient = HttpClients.createDefault();
 	MyHttpClient myHttpClient = new MyHttpClient();
@@ -81,30 +88,6 @@ public class Core {
 		this.memberList = memberList;
 	}
 
-	public List<JSONObject> getMpList() {
-		return mpList;
-	}
-
-	public void setMpList(List<JSONObject> mpList) {
-		this.mpList = mpList;
-	}
-
-	public List<Object> getChatroomList() {
-		return chatroomList;
-	}
-
-	public void setChatroomList(List<Object> chatroomList) {
-		this.chatroomList = chatroomList;
-	}
-
-	public List<Object> getMsgList() {
-		return msgList;
-	}
-
-	public void setMsgList(List<Object> msgList) {
-		this.msgList = msgList;
-	}
-
 	public Map<String, Object> getLoginInfo() {
 		return loginInfo;
 	}
@@ -131,6 +114,14 @@ public class Core {
 
 	public Map<String, Object> getFunctionDict() {
 		return functionDict;
+	}
+
+	public int getMemberCount() {
+		return memberCount;
+	}
+
+	public void setMemberCount(int memberCount) {
+		this.memberCount = memberCount;
 	}
 
 	public void setFunctionDict(Map<String, Object> functionDict) {
@@ -165,8 +156,64 @@ public class Core {
 		return myHttpClient;
 	}
 
+	public List<JSONObject> getMsgList() {
+		return msgList;
+	}
+
+	public void setMsgList(List<JSONObject> msgList) {
+		this.msgList = msgList;
+	}
+
 	public void setMyHttpClient(MyHttpClient myHttpClient) {
 		this.myHttpClient = myHttpClient;
+	}
+
+	public List<JSONObject> getUserSelfList() {
+		return userSelfList;
+	}
+
+	public void setUserSelfList(List<JSONObject> userSelfList) {
+		this.userSelfList = userSelfList;
+	}
+
+	public List<JSONObject> getContactList() {
+		return contactList;
+	}
+
+	public void setContactList(List<JSONObject> contactList) {
+		this.contactList = contactList;
+	}
+
+	public List<JSONObject> getGroupList() {
+		return groupList;
+	}
+
+	public void setGroupList(List<JSONObject> groupList) {
+		this.groupList = groupList;
+	}
+
+	public List<JSONObject> getGroupMemeberList() {
+		return groupMemeberList;
+	}
+
+	public void setGroupMemeberList(List<JSONObject> groupMemeberList) {
+		this.groupMemeberList = groupMemeberList;
+	}
+
+	public List<JSONObject> getPublicUsersList() {
+		return publicUsersList;
+	}
+
+	public void setPublicUsersList(List<JSONObject> publicUsersList) {
+		this.publicUsersList = publicUsersList;
+	}
+
+	public List<JSONObject> getSpecialUsersList() {
+		return specialUsersList;
+	}
+
+	public void setSpecialUsersList(List<JSONObject> specialUsersList) {
+		this.specialUsersList = specialUsersList;
 	}
 
 }

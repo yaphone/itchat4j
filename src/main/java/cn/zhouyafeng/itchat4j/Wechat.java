@@ -5,8 +5,8 @@ import java.util.logging.Logger;
 
 import com.alibaba.fastjson.JSONObject;
 
+import cn.zhouyafeng.itchat4j.api.MessageTools;
 import cn.zhouyafeng.itchat4j.components.Login;
-import cn.zhouyafeng.itchat4j.components.Message;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.Core;
 import cn.zhouyafeng.itchat4j.utils.MsgType;
@@ -37,29 +37,29 @@ public class Wechat {
 	public void start() {
 		new Thread(new Runnable() {
 
+			@Override
 			public void run() {
 				while (true) {
-					if (core.getMsgList().size() > 0) {
+					if (core.getMsgList().size() > 0 && core.getMsgList().get(0).getString("Content") != null) {
 						// System.out.println(core.getMsgList().get(0));
-						if (((JSONObject) core.getMsgList().get(0)).getString("Content").length() > 0) {
-							JSONObject msg = (JSONObject) core.getMsgList().get(0);
+						if (core.getMsgList().get(0).getString("Content").length() > 0) {
+							JSONObject msg = core.getMsgList().get(0);
 							if (msg.getString("Type") != null) {
 								if (msg.getString("Type").equals(MsgType.TEXT)) {
 									String result = msgHandler.textMsgHandle(msg);
-									Message.send(result,
-											((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
+									MessageTools.send(result, core.getMsgList().get(0).getString("FromUserName"), "");
 								} else if (msg.getString("Type").equals(MsgType.PIC)) {
 									String result = msgHandler.picMsgHandle(msg);
-									Message.send(result,
-											((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
+									MessageTools.send(result, core.getMsgList().get(0).getString("FromUserName"), "");
 								} else if (msg.getString("Type").equals(MsgType.VOICE)) {
 									String result = msgHandler.voiceMsgHandle(msg);
-									Message.send(result,
-											((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
+									MessageTools.send(result, core.getMsgList().get(0).getString("FromUserName"), "");
 								} else if (msg.getString("Type").equals(MsgType.VIEDO)) {
 									String result = msgHandler.viedoMsgHandle(msg);
-									Message.send(result,
-											((JSONObject) core.getMsgList().get(0)).getString("FromUserName"), "");
+									MessageTools.send(result, core.getMsgList().get(0).getString("FromUserName"), "");
+								} else if (msg.getString("Type").equals(MsgType.NAMECARD)) {
+									String result = msgHandler.nameCardMsgHandle(msg);
+									MessageTools.send(result, core.getMsgList().get(0).getString("FromUserName"), "");
 								}
 							}
 						}

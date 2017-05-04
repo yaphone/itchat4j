@@ -23,11 +23,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.zhouyafeng.itchat4j.api.MessageTools;
+import cn.zhouyafeng.itchat4j.tools.CommonTool;
 import cn.zhouyafeng.itchat4j.utils.Config;
 import cn.zhouyafeng.itchat4j.utils.Contact;
 import cn.zhouyafeng.itchat4j.utils.Core;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
-import cn.zhouyafeng.itchat4j.utils.Tools;
 
 public class Login {
 	private static Logger logger = Logger.getLogger("Wechat");
@@ -43,6 +44,14 @@ public class Login {
 
 	}
 
+	/**
+	 * 登陆
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月5日 上午12:04:35
+	 * @param qrPath
+	 * @return
+	 */
 	public int login(String qrPath) {
 		if (core.isAlive()) { // 已登陆
 			logger.warning("itchat has already logged in.");
@@ -88,9 +97,10 @@ public class Login {
 		this.webInit();
 		this.showMobileLogin();
 		contact.getContact(true);
-		Tools.clearScreen();
+		CommonTool.clearScreen();
 		logger.info(String.format("Login successfully as %s", core.getStorageClass().getNickName()));
 		startReceiving();
+		webWxGetContact();
 		return 0;
 	}
 
@@ -114,7 +124,7 @@ public class Login {
 			logger.info(e.getMessage());
 		}
 		String regEx = "window.QRLogin.code = (\\d+); window.QRLogin.uuid = \"(\\S+?)\";";
-		Matcher matcher = Tools.getMatcher(regEx, result);
+		Matcher matcher = CommonTool.getMatcher(regEx, result);
 		if (matcher.find()) {
 			if ((matcher.group(1).equals("200"))) {
 				core.setUuid(matcher.group(2));//
@@ -141,7 +151,11 @@ public class Login {
 			out.write(bytes);
 			out.flush();
 			out.close();
-			// Tools.printQr(qrPath); //打开登陆二维码图片
+			try {
+				CommonTool.printQr(qrPath); // 打开登陆二维码图片
+			} catch (Exception e) {
+				logger.info(e.getMessage());
+			}
 
 		} catch (Exception e) {
 			logger.info(e.getMessage());
@@ -175,7 +189,7 @@ public class Login {
 			logger.info(e.getMessage());
 		}
 		String regEx = "window.code=(\\d+)";
-		Matcher matcher = Tools.getMatcher(regEx, result);
+		Matcher matcher = CommonTool.getMatcher(regEx, result);
 		if (matcher.find()) {
 			if (matcher.group(1).equals("200")) { // 已登陆
 				processLoginInfo(result);
@@ -196,7 +210,7 @@ public class Login {
 	 */
 	public void processLoginInfo(String loginContent) {
 		String regEx = "window.redirect_uri=\"(\\S+)\";";
-		Matcher matcher = Tools.getMatcher(regEx, loginContent);
+		Matcher matcher = CommonTool.getMatcher(regEx, loginContent);
 		if (matcher.find()) {
 			String originalUrl = matcher.group(1);
 			String url = originalUrl.substring(0, originalUrl.lastIndexOf('/')); // https://wx2.qq.com/cgi-bin/mmwebwx-bin
@@ -233,7 +247,7 @@ public class Login {
 				logger.info(e.getMessage());
 				return;
 			}
-			Document doc = Tools.xmlParser(text);
+			Document doc = CommonTool.xmlParser(text);
 			Map<String, Map<String, String>> BaseRequest = new HashMap<String, Map<String, String>>();
 			Map<String, String> baseRequest = new HashMap<String, String>();
 			if (doc != null) {
@@ -319,7 +333,7 @@ public class Login {
 			obj = JSON.parseObject(result);
 			// TODO utils.emoji_formatter(dic['User'], 'NickName')
 			core.getLoginInfo().put("InviteStartCount", obj.getInteger("InviteStartCount"));
-			core.getLoginInfo().put("User", Tools.structFriendInfo(obj.getJSONObject("User"))); // 为userObj添加新字段
+			core.getLoginInfo().put("User", CommonTool.structFriendInfo(obj.getJSONObject("User"))); // 为userObj添加新字段
 			core.getLoginInfo().put("SyncKey", obj.getJSONObject("SyncKey"));
 			JSONArray syncArray = obj.getJSONObject("SyncKey").getJSONArray("List");
 			StringBuilder sb = new StringBuilder();
@@ -331,7 +345,7 @@ public class Login {
 			core.getLoginInfo().put("synckey", synckey.substring(0, synckey.length() - 1));// 1_656161336|2_656161626|3_656161313|11_656159955|13_656120033|201_1492273724|1000_1492265953|1001_1492250432|1004_1491805192
 			core.getStorageClass().setUserName((obj.getJSONObject("User")).getString("UserName"));
 			core.getStorageClass().setNickName((obj.getJSONObject("User")).getString("NickName"));
-
+			core.getUserSelfList().add(obj.getJSONObject("User"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -365,6 +379,7 @@ public class Login {
 		new Thread(new Runnable() {
 			int retryCount = 0;
 
+			@Override
 			public void run() {
 				while (core.isAlive()) {
 					try {
@@ -375,24 +390,14 @@ public class Login {
 							continue;
 						} else {
 							JSONArray msgList = new JSONArray();
-							JSONArray contactList = new JSONArray();
 							JSONObject msgObj = getMsg();
 							if (msgObj != null) {
 								msgList = msgObj.getJSONArray("AddMsgList");
-								contactList = msgObj.getJSONArray("ModContactList");
-								msgList = Message.produceMsg(msgList);
+								msgList = MessageTools.produceMsg(msgList);
 								for (int j = 0; j < msgList.size(); j++) {
 									core.getMsgList().add(msgList.getJSONObject(j));
 								}
-								JSONArray chatroomList = new JSONArray();
-								JSONArray otherList = new JSONArray();
-								for (int k = 0; k < contactList.size(); k++) {
-									if (contactList.getString(k).contains("@@")) {
-										chatroomList.add(contactList.getString(k));
-									} else {
-										otherList.add(contactList.getString(k));
-									}
-								}
+
 								// TODO chatroomMsg =
 								// update_local_chatrooms(self, chatroomList)
 								// TODO self.msgList.put(chatroomMsg)
@@ -445,9 +450,12 @@ public class Login {
 		params.add(new BasicNameValuePair("_", String.valueOf(new Date().getTime())));
 		try {
 			HttpEntity entity = myHttpClient.doGet(url, params, true, null);
+			if (entity == null) {
+				return "0";
+			}
 			String text = EntityUtils.toString(entity);
 			String regEx = "window.synccheck=\\{retcode:\"(\\d+)\",selector:\"(\\d+)\"\\}";
-			Matcher matcher = Tools.getMatcher(regEx, text);
+			Matcher matcher = CommonTool.getMatcher(regEx, text);
 			if (!matcher.find() || matcher.group(1).equals("2")) {
 				logger.info(String.format("Unexpected sync check result: %s", text));
 			} else {
@@ -495,6 +503,53 @@ public class Login {
 		}
 		return result;
 
+	}
+
+	/**
+	 * <p>
+	 * 获取联系人信息，成功返回true，失败返回false
+	 * </p>
+	 * <p>
+	 * get all contacts: people, group, public user, special user
+	 * </p>
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月3日 上午12:28:51
+	 * @return
+	 */
+	boolean webWxGetContact() {
+		String result = "";
+		String url = String.format("%s/webwxgetcontact", core.getLoginInfo().get("url"));
+		List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+		params.add(new BasicNameValuePair("pass_ticket", (String) core.getLoginInfo().get("pass_ticket")));
+		params.add(new BasicNameValuePair("skey", (String) core.getLoginInfo().get("skey")));
+		params.add(new BasicNameValuePair("r", String.valueOf(String.valueOf(new Date().getTime()))));
+		HttpEntity entity = myHttpClient.doGet(url, params, true, null);
+		try {
+			result = EntityUtils.toString(entity, "UTF-8");
+		} catch (Exception e) {
+			logger.info(e.getMessage());
+		}
+		JSONObject fullFriendsJsonList = JSON.parseObject(result);
+		core.setMemberCount(fullFriendsJsonList.getInteger(("MemberCount")));
+		JSONArray memberJsonArray = fullFriendsJsonList.getJSONArray("MemberList");
+		for (int i = 0; i < memberJsonArray.size(); i++) {
+			core.getMemberList().add(memberJsonArray.getJSONObject(i));
+		}
+		for (JSONObject o : core.getMemberList()) {
+			if ((o.getInteger("VerifyFlag") & 8) != 0) { // 公众号/服务号
+				core.getPublicUsersList().add(o);
+			} else if (Config.API_SPECIAL_USER.contains(o.getString("UserName"))) { // 特殊账号
+				core.getSpecialUsersList().add(o);
+			} else if (o.getString("UserName").indexOf("@@") != -1) { // 群聊
+				core.getGroupList().add(o);
+			} else if (o.getString("UserName").equals(core.getUserSelfList().get(0).getString("UserName"))) { // 自己
+				core.getContactList().remove(o);
+			} else { // 普通联系人
+				core.getContactList().add(o);
+			}
+		}
+		return true;
 	}
 
 }

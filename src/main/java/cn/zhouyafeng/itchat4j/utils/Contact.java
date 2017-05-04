@@ -22,9 +22,6 @@ public class Contact {
 	CloseableHttpClient httpClient = core.getHttpClient();
 
 	public List<Object> getContact(boolean update) {
-		if (!update) {
-			return core.chatroomList;
-		}
 		String url = String.format("%s/webwxgetcontact?r=%s&seq=0&skey=%s", core.loginInfo.get("url"),
 				String.valueOf(new Date().getTime()), core.loginInfo.get("skey"));
 		HttpGet httpGet = new HttpGet(url);
@@ -86,7 +83,7 @@ public class Contact {
 			// utils.emoji_formatter(friend, 'NickName')
 			// if 'DisplayName' in friend:
 			// utils.emoji_formatter(friend, 'DisplayName')
-			core.memberList.add(friend);
+			core.getMemberList().add(friend);
 		}
 	}
 }

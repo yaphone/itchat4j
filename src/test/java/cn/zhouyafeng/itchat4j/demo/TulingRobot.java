@@ -27,11 +27,11 @@ import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
  *
  */
 public class TulingRobot implements IMsgHandlerFace {
-
 	MyHttpClient myHttpClient = new MyHttpClient();
 	String apiKey = "597b34bea4ec4c85a775c469c84b6817";
 	Logger logger = Logger.getLogger("TulingRobot");
 
+	@Override
 	public String textMsgHandle(JSONObject msg) {
 		String result = "";
 		String text = msg.getString("Text");
@@ -56,10 +56,12 @@ public class TulingRobot implements IMsgHandlerFace {
 		return result;
 	}
 
+	@Override
 	public String picMsgHandle(JSONObject msg) {
 		return "收到图片";
 	}
 
+	@Override
 	public String voiceMsgHandle(JSONObject msg) {
 		String fileName = String.valueOf(new Date().getTime());
 		String voicePath = "D://itchat4j/voice" + File.separator + fileName + ".mp3";
@@ -67,6 +69,7 @@ public class TulingRobot implements IMsgHandlerFace {
 		return "收到语音";
 	}
 
+	@Override
 	public String viedoMsgHandle(JSONObject msg) {
 		String fileName = String.valueOf(new Date().getTime());
 		String viedoPath = "D://itchat4j/viedo" + File.separator + fileName + ".mp4";
@@ -78,6 +81,12 @@ public class TulingRobot implements IMsgHandlerFace {
 		IMsgHandlerFace msgHandler = new TulingRobot();
 		Wechat wechat = new Wechat(msgHandler, "D://itchat4j/login");
 		wechat.start();
+	}
+
+	@Override
+	public String nameCardMsgHandle(JSONObject msg) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
