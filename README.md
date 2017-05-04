@@ -38,7 +38,7 @@
 
 
 
-### WechatTools类
+### WechatTools
 
 <br>
 
@@ -48,7 +48,7 @@
 
 
 
-### MessageTools类
+### MessageTools
 
 <br>
 
