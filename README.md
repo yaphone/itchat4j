@@ -4,7 +4,7 @@
 
 ### 项目地址：[itchat4j](https://github.com/yaphone/itchat4j)，该项目长期维护更新，欢迎star、fork、 pull requests、 issue。
 
-## 示例项目点击此处请[到此处下载](https://github.com/yaphone/itchat4jdemo)。
+## 示例项目程序[点击此处下载](https://github.com/yaphone/itchat4jdemo)。
 
 ### 来源
 
