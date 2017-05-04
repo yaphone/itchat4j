@@ -27,6 +27,35 @@
 
 
 
+
+## API说明
+
+*项目在不断更新中，API会有变动，请以具体代码为准*
+
+目前在`package cn.zhouyafeng.itchat4j.api`包中有两个静态类，即`MessageTools`和`WechatTools`，目前这两个类对外暴露的方法有：
+
+
+
+### WechatTools类
+
+<br>
+
+| API  | List<String> getContactList() |
+| ---- | ----------------------------- |
+| 接口说明 | 获取好友昵称列表。                     |
+
+
+
+### MessageTools类
+
+<br>
+
+| API  | boolean sendMsgByNickName(String text, String nickName) |
+| :--- | ---------------------------------------- |
+| 接口说明 | 此方法根据用户昵称发送文本消息，注意，用户需在你的好友列表里，否则发送失败，如果你的好友列表里有存在昵称一样的多个用户，则只会给第一个匹配的好友发送消息。成功发送消息时返回true，失败返回false |
+
+
+
 ## 如何使用
 
 *项目在不断更新中，导入后的项目结构会有变动*

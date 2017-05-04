@@ -1,4 +1,4 @@
-package cn.zhouyafeng.itchat4j.utils;
+package cn.zhouyafeng.itchat4j.tools;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -20,15 +20,18 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.vdurmont.emoji.EmojiParser;
 
+import cn.zhouyafeng.itchat4j.utils.Config;
+import cn.zhouyafeng.itchat4j.utils.OsName;
+
 /**
- * 工具类
+ * 常用工具类
  * 
  * @author https://github.com/yaphone
  * @date 创建时间：2017年4月8日 下午10:59:55
  * @version 1.0
  *
  */
-public class Tools {
+public class CommonTool {
 
 	public static boolean printQr(String qrPath) {
 
@@ -183,7 +186,7 @@ public class Tools {
 	 * @param k
 	 */
 	public static void emojiFormatter(JSONObject d, String k) {
-		Matcher matcher = Tools.getMatcher("<span class=\"emoji emoji(.{1,10})\"></span>", d.getString(k));
+		Matcher matcher = getMatcher("<span class=\"emoji emoji(.{1,10})\"></span>", d.getString(k));
 		StringBuilder sb = new StringBuilder();
 		String content = d.getString(k);
 		int lastStart = 0;

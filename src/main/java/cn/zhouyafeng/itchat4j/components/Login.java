@@ -23,11 +23,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.zhouyafeng.itchat4j.api.MessageTools;
+import cn.zhouyafeng.itchat4j.tools.CommonTool;
 import cn.zhouyafeng.itchat4j.utils.Config;
 import cn.zhouyafeng.itchat4j.utils.Contact;
 import cn.zhouyafeng.itchat4j.utils.Core;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
-import cn.zhouyafeng.itchat4j.utils.Tools;
 
 public class Login {
 	private static Logger logger = Logger.getLogger("Wechat");
@@ -43,6 +44,14 @@ public class Login {
 
 	}
 
+	/**
+	 * 登陆
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月5日 上午12:04:35
+	 * @param qrPath
+	 * @return
+	 */
 	public int login(String qrPath) {
 		if (core.isAlive()) { // 已登陆
 			logger.warning("itchat has already logged in.");
@@ -88,7 +97,7 @@ public class Login {
 		this.webInit();
 		this.showMobileLogin();
 		contact.getContact(true);
-		Tools.clearScreen();
+		CommonTool.clearScreen();
 		logger.info(String.format("Login successfully as %s", core.getStorageClass().getNickName()));
 		startReceiving();
 		webWxGetContact();
@@ -115,7 +124,7 @@ public class Login {
 			logger.info(e.getMessage());
 		}
 		String regEx = "window.QRLogin.code = (\\d+); window.QRLogin.uuid = \"(\\S+?)\";";
-		Matcher matcher = Tools.getMatcher(regEx, result);
+		Matcher matcher = CommonTool.getMatcher(regEx, result);
 		if (matcher.find()) {
 			if ((matcher.group(1).equals("200"))) {
 				core.setUuid(matcher.group(2));//
@@ -143,7 +152,7 @@ public class Login {
 			out.flush();
 			out.close();
 			try {
-				Tools.printQr(qrPath); // 打开登陆二维码图片
+				CommonTool.printQr(qrPath); // 打开登陆二维码图片
 			} catch (Exception e) {
 				logger.info(e.getMessage());
 			}
@@ -180,7 +189,7 @@ public class Login {
 			logger.info(e.getMessage());
 		}
 		String regEx = "window.code=(\\d+)";
-		Matcher matcher = Tools.getMatcher(regEx, result);
+		Matcher matcher = CommonTool.getMatcher(regEx, result);
 		if (matcher.find()) {
 			if (matcher.group(1).equals("200")) { // 已登陆
 				processLoginInfo(result);
@@ -201,7 +210,7 @@ public class Login {
 	 */
 	public void processLoginInfo(String loginContent) {
 		String regEx = "window.redirect_uri=\"(\\S+)\";";
-		Matcher matcher = Tools.getMatcher(regEx, loginContent);
+		Matcher matcher = CommonTool.getMatcher(regEx, loginContent);
 		if (matcher.find()) {
 			String originalUrl = matcher.group(1);
 			String url = originalUrl.substring(0, originalUrl.lastIndexOf('/')); // https://wx2.qq.com/cgi-bin/mmwebwx-bin
@@ -238,7 +247,7 @@ public class Login {
 				logger.info(e.getMessage());
 				return;
 			}
-			Document doc = Tools.xmlParser(text);
+			Document doc = CommonTool.xmlParser(text);
 			Map<String, Map<String, String>> BaseRequest = new HashMap<String, Map<String, String>>();
 			Map<String, String> baseRequest = new HashMap<String, String>();
 			if (doc != null) {
@@ -324,7 +333,7 @@ public class Login {
 			obj = JSON.parseObject(result);
 			// TODO utils.emoji_formatter(dic['User'], 'NickName')
 			core.getLoginInfo().put("InviteStartCount", obj.getInteger("InviteStartCount"));
-			core.getLoginInfo().put("User", Tools.structFriendInfo(obj.getJSONObject("User"))); // 为userObj添加新字段
+			core.getLoginInfo().put("User", CommonTool.structFriendInfo(obj.getJSONObject("User"))); // 为userObj添加新字段
 			core.getLoginInfo().put("SyncKey", obj.getJSONObject("SyncKey"));
 			JSONArray syncArray = obj.getJSONObject("SyncKey").getJSONArray("List");
 			StringBuilder sb = new StringBuilder();
@@ -381,24 +390,14 @@ public class Login {
 							continue;
 						} else {
 							JSONArray msgList = new JSONArray();
-							JSONArray contactList = new JSONArray();
 							JSONObject msgObj = getMsg();
 							if (msgObj != null) {
 								msgList = msgObj.getJSONArray("AddMsgList");
-								contactList = msgObj.getJSONArray("ModContactList");
-								msgList = Message.produceMsg(msgList);
+								msgList = MessageTools.produceMsg(msgList);
 								for (int j = 0; j < msgList.size(); j++) {
 									core.getMsgList().add(msgList.getJSONObject(j));
 								}
-								JSONArray chatroomList = new JSONArray();
-								JSONArray otherList = new JSONArray();
-								for (int k = 0; k < contactList.size(); k++) {
-									if (contactList.getString(k).contains("@@")) {
-										chatroomList.add(contactList.getString(k));
-									} else {
-										otherList.add(contactList.getString(k));
-									}
-								}
+
 								// TODO chatroomMsg =
 								// update_local_chatrooms(self, chatroomList)
 								// TODO self.msgList.put(chatroomMsg)
@@ -453,7 +452,7 @@ public class Login {
 			HttpEntity entity = myHttpClient.doGet(url, params, true, null);
 			String text = EntityUtils.toString(entity);
 			String regEx = "window.synccheck=\\{retcode:\"(\\d+)\",selector:\"(\\d+)\"\\}";
-			Matcher matcher = Tools.getMatcher(regEx, text);
+			Matcher matcher = CommonTool.getMatcher(regEx, text);
 			if (!matcher.find() || matcher.group(1).equals("2")) {
 				logger.info(String.format("Unexpected sync check result: %s", text));
 			} else {
