@@ -450,6 +450,9 @@ public class Login {
 		params.add(new BasicNameValuePair("_", String.valueOf(new Date().getTime())));
 		try {
 			HttpEntity entity = myHttpClient.doGet(url, params, true, null);
+			if (entity == null) {
+				return "0";
+			}
 			String text = EntityUtils.toString(entity);
 			String regEx = "window.synccheck=\\{retcode:\"(\\d+)\",selector:\"(\\d+)\"\\}";
 			Matcher matcher = CommonTool.getMatcher(regEx, text);
