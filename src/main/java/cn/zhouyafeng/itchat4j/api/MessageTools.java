@@ -1,4 +1,4 @@
-package cn.zhouyafeng.itchat4j.components;
+package cn.zhouyafeng.itchat4j.api;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -13,10 +13,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.zhouyafeng.itchat4j.tools.CommonTool;
 import cn.zhouyafeng.itchat4j.utils.Core;
 import cn.zhouyafeng.itchat4j.utils.MsgType;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
-import cn.zhouyafeng.itchat4j.utils.Tools;
 
 /**
  * 消息处理类
@@ -26,7 +26,7 @@ import cn.zhouyafeng.itchat4j.utils.Tools;
  * @version 1.0
  *
  */
-public class Message {
+public class MessageTools {
 	private static Logger logger = Logger.getLogger("Message");
 	private static Core core = Core.getInstance();
 	private static MyHttpClient myHttpClient = core.getMyHttpClient();
@@ -48,12 +48,12 @@ public class Message {
 				produceGroupChat(core, m);
 				m.remove("Content");
 			} else {
-				Tools.msgFormatter(m, "Content");
+				CommonTool.msgFormatter(m, "Content");
 			}
 			if (m.getInteger("MsgType") == 1) { // words 文本消息
 				if (m.getString("Url").length() != 0) {
 					String regEx = "(.+?\\(.+?\\))";
-					Matcher matcher = Tools.getMatcher(regEx, m.getString("Content"));
+					Matcher matcher = CommonTool.getMatcher(regEx, m.getString("Content"));
 					String data = "Map";
 					if (matcher.find()) {
 						data = matcher.group(1);
@@ -102,9 +102,35 @@ public class Message {
 		sendMsg(msg, toUserName);
 	}
 
-	public static void sendMsg(String msg, String toUserName) {
-		logger.info(String.format("Request to send a text message to %s: %s", toUserName, msg));
-		sendRawMsg(1, msg, toUserName);
+	/**
+	 * 根据UserName发送文本消息
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月4日 下午11:17:38
+	 * @param msg
+	 * @param toUserName
+	 */
+	public static void sendMsg(String text, String toUserName) {
+		logger.info(String.format("Request to send a text message to %s: %s", toUserName, text));
+		sendRawMsg(1, text, toUserName);
+	}
+
+	/**
+	 * 根据NickName发送文本消息
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月4日 下午11:17:38
+	 * @param msg
+	 * @param toUserName
+	 */
+	public static boolean sendMsgByNickName(String text, String nickName) {
+		if (nickName != null) {
+			String toUserName = WechatTools.getUserNameByNickName(nickName);
+			sendRawMsg(1, text, toUserName);
+			return true;
+		}
+		return false;
+
 	}
 
 	/**
