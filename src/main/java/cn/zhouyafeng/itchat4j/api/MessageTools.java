@@ -44,13 +44,20 @@ public class MessageTools {
 		for (int i = 0; i < msgList.size(); i++) {
 			JSONObject msg = new JSONObject();
 			JSONObject m = msgList.getJSONObject(i);
-			if (m.getString("FromUserName").contains("@@") || m.getString("ToUserName").contains("@@")) {
-				produceGroupChat(core, m);
-				m.remove("Content");
+			if (m.getString("FromUserName").contains("@@") || m.getString("ToUserName").contains("@@")) { // 群聊消息
+				// produceGroupChat(core, m);
+				// m.remove("Content");
+				if (m.getString("FromUserName").contains("@@")
+						&& !core.getGroupStrList().contains(m.getString("FromUserName"))) {
+					core.getGroupStrList().add((m.getString("FromUserName")));
+				} else if (m.getString("ToUserName").contains("@@")
+						&& !core.getGroupStrList().contains(m.getString("ToUserName"))) {
+					core.getGroupStrList().add((m.getString("ToUserName")));
+				}
 			} else {
 				CommonTool.msgFormatter(m, "Content");
 			}
-			if (m.getInteger("MsgType") == 1) { // words 文本消息
+			if (m.getInteger("MsgType") == MsgType.MSGTYPE_TEXT) { // words 文本消息
 				if (m.getString("Url").length() != 0) {
 					String regEx = "(.+?\\(.+?\\))";
 					Matcher matcher = CommonTool.getMatcher(regEx, m.getString("Content"));
@@ -66,16 +73,18 @@ public class MessageTools {
 				}
 				m.put("Type", msg.getString("Type"));
 				m.put("Text", msg.getString("Text"));
-			} else if (m.getInteger("MsgType") == 3 || m.getInteger("MsgType") == 47) { // 图片消息
+			} else if (m.getInteger("MsgType") == MsgType.MSGTYPE_IMAGE
+					|| m.getInteger("MsgType") == MsgType.MSGTYPE_EMOTICON) { // 图片消息
 				m.put("Type", MsgType.PIC);
-			} else if (m.getInteger("MsgType") == 34) { // 语音消息
+			} else if (m.getInteger("MsgType") == MsgType.MSGTYPE_VOICE) { // 语音消息
 				m.put("Type", MsgType.VOICE);
 			} else if (m.getInteger("MsgType") == 37) {// friends 好友确认消息
 
 			} else if (m.getInteger("MsgType") == 42) { // 共享名片
 				m.put("Type", MsgType.NAMECARD);
 
-			} else if (m.getInteger("MsgType") == 43 || m.getInteger("MsgType") == 62) {// viedo
+			} else if (m.getInteger("MsgType") == MsgType.MSGTYPE_VIDEO
+					|| m.getInteger("MsgType") == MsgType.MSGTYPE_MICROVIDEO) {// viedo
 				m.put("Type", MsgType.VIEDO);
 			} else if (m.getInteger("MsgType") == 49) { // sharing 分享链接
 
@@ -88,15 +97,10 @@ public class MessageTools {
 			} else {
 				logger.info("Useless msg");
 			}
-
 			result.add(m);
 		}
 		return result;
 	}
-
-	public static void produceGroupChat(Core core, JSONObject m) {
-		// TODO
-	};
 
 	public static void send(String msg, String toUserName, String mediaId) {
 		sendMsg(msg, toUserName);

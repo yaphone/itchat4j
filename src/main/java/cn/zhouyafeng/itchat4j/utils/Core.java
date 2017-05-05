@@ -1,5 +1,6 @@
 package cn.zhouyafeng.itchat4j.utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,8 @@ public class Core {
 	private List<JSONObject> publicUsersList = storageClass.getPublicUsersList();
 	private List<JSONObject> specialUsersList = storageClass.getSpecialUsersList();
 	private List<JSONObject> msgList = storageClass.getMsgList();
+
+	private List<String> groupStrList = new ArrayList<String>(); // 群聊，以String格式保存群的userName，如@@37da24fee2114e9475729b942d130190ffddb669411228651da3e8a8933603c8
 
 	Map<String, Object> loginInfo = new HashMap<String, Object>();
 	CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -102,6 +105,14 @@ public class Core {
 
 	public void setHttpClient(CloseableHttpClient httpClient) {
 		this.httpClient = httpClient;
+	}
+
+	public List<String> getGroupStrList() {
+		return groupStrList;
+	}
+
+	public void setGroupStrList(List<String> groupStrList) {
+		this.groupStrList = groupStrList;
 	}
 
 	public String getUuid() {

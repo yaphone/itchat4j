@@ -46,6 +46,16 @@ public class CommonTool {
 				}
 			}
 			break;
+		case MAC:
+			if (Config.getOsName().equals(OsName.MAC)) {
+				Runtime runtime = Runtime.getRuntime();
+				try {
+					runtime.exec("open " + qrPath);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			break;
 
 		default:
 			break;

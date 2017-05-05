@@ -60,6 +60,8 @@ public class Config {
 			return OsName.WINDOWS;
 		} else if (os.indexOf(OsName.LINUX.toString()) >= 0) {
 			return OsName.LINUX;
+		} else if (os.indexOf(OsName.MAC.toString()) >= 0) {
+			return OsName.MAC;
 		}
 		return OsName.OTHER;
 	}
