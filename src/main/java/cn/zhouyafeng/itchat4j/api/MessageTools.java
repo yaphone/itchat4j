@@ -44,6 +44,7 @@ public class MessageTools {
 		for (int i = 0; i < msgList.size(); i++) {
 			JSONObject msg = new JSONObject();
 			JSONObject m = msgList.getJSONObject(i);
+			m.put("groupMsg", false);// 是否是群消息
 			if (m.getString("FromUserName").contains("@@") || m.getString("ToUserName").contains("@@")) { // 群聊消息
 				// produceGroupChat(core, m);
 				// m.remove("Content");
@@ -58,6 +59,7 @@ public class MessageTools {
 				if (m.getString("Content").contains("<br/>")) {
 					String content = m.getString("Content").substring(m.getString("Content").indexOf("<br/>") + 5);
 					m.put("Content", content);
+					m.put("groupMsg", true);
 				}
 			} else {
 				CommonTool.msgFormatter(m, "Content");

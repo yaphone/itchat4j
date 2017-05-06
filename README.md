@@ -92,7 +92,7 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
 
 ## 消息格式
 
-这里简要介绍一下`msg`各种消息，msg均为`json`格式的数据，可使用各自工具进行解析，在itchat4j中我通过alibaba的`fastjosn`工具库进行了解析，每种`msg`均为`fastjson`的标准`JSONObject`对象，后续处理起来非常方便，例如获取文本消息的消息内容：`msg.getString("Text")`，获取名片消息的被推荐人昵称：`msg.getJSONObject("RecommendInfo").getString("NickName")`。
+这里简要介绍一下`msg`各种消息，msg均为`json`格式的数据，可使用各自工具进行解析，在itchat4j中我通过alibaba的`fastjosn`工具库进行了解析，每种`msg`均为`fastjson`的标准`JSONObject`对象，后续处理起来非常方便，例如获取文本消息的消息内容：`msg.getString("Text")`，获取名片消息的被推荐人昵称：`msg.getJSONObject("RecommendInfo").getString("NickName")`。有时候可能不需要处理群消息，因此在构造`msg`消息体里我添加了一个判断是否群消息的字段`groupMsg`，可通过`msg.getBooleanValue("groupMsg")`获取字段的值，如果是群消息，返回true，如果非群消息，返回false。
 
 ### 1.文本消息
 
@@ -102,7 +102,7 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
     "VoiceLength": 0,
     "FileName": "",
     "ImgHeight": 0,
-    "ToUserName": "@d3619cbf5466d79dde9f67dc274eb74a",
+    "ToUserName": "@58b8651e056f8937f7a4eaa386be0c16d2583a0fdb5741b874cedffe3e13e723",
     "HasProductId": 0,
     "ImgStatus": 1,
     "Url": "",
@@ -126,11 +126,12 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
         "QQNum": 0,
         "VerifyFlag": 0
     },
-    "CreateTime": 1493608238,
-    "NewMsgId": 4407501800256700000,
+    "CreateTime": 1494079411,
+    "NewMsgId": 6942811558026846000,
     "Text": "你好",
     "MsgType": 1,
-    "MsgId": "4407501800256700015",
+    "groupMsg": false,
+    "MsgId": "6942811558026845859",
     "StatusNotifyCode": 0,
     "AppInfo": {
         "Type": 0,
@@ -142,7 +143,7 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
     "MediaId": "",
     "Content": "你好",
     "StatusNotifyUserName": "",
-    "FromUserName": "@d3619cbf5466d79dde9f67dc274eb74a",
+    "FromUserName": "@a257b99314d8313862cd44ab02fe0f81",
     "OriContent": "",
     "FileSize": ""
 }
@@ -156,11 +157,11 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
     "VoiceLength": 0,
     "FileName": "",
     "ImgHeight": 120,
-    "ToUserName": "@d3619cbf5466d79dde9f67dc274eb74a",
+    "ToUserName": "@58b8651e056f8937f7a4eaa386be0c16d2583a0fdb5741b874cedffe3e13e723",
     "HasProductId": 0,
     "ImgStatus": 2,
     "Url": "",
-    "ImgWidth": 89,
+    "ImgWidth": 90,
     "ForwardFlag": 0,
     "Status": 3,
     "Ticket": "",
@@ -180,10 +181,11 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
         "QQNum": 0,
         "VerifyFlag": 0
     },
-    "CreateTime": 1493608302,
-    "NewMsgId": 8194991329533970000,
+    "CreateTime": 1494079495,
+    "NewMsgId": 6081337643309445000,
     "MsgType": 3,
-    "MsgId": "8194991329533970381",
+    "groupMsg": false,
+    "MsgId": "6081337643309445027",
     "StatusNotifyCode": 0,
     "AppInfo": {
         "Type": 0,
@@ -193,9 +195,9 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
     "Type": "Pic",
     "PlayLength": 0,
     "MediaId": "",
-    "Content": "&lt;?xml version=\"1.0\"?&gt;\n&lt;msg&gt;\n\t&lt;img aeskey=\"e9c981d695c5461b8daceadbb2b75c93\" encryver=\"0\" cdnthumbaeskey=\"e9c981d695c5461b8daceadbb2b75c93\" cdnthumburl=\"3043020100043c303a0201000204577f6a2c02030f48810204c8b28cb602045906a76e04187a7966616e646c7a7a313737355f313439333630383330310201000201000400\" cdnthumblength=\"4146\" cdnthumbheight=\"120\" cdnthumbwidth=\"89\" cdnmidheight=\"0\" cdnmidwidth=\"0\" cdnhdheight=\"0\" cdnhdwidth=\"0\" cdnmidimgurl=\"3043020100043c303a0201000204577f6a2c02030f48810204c8b28cb602045906a76e04187a7966616e646c7a7a313737355f313439333630383330310201000201000400\" length=\"52523\" md5=\"442f7391e62b12f90a4121e331d3a1e2\" /&gt;\n&lt;/msg&gt;\n",
+    "Content": "&lt;?xml version=\"1.0\"?&gt;\n&lt;msg&gt;\n\t&lt;img aeskey=\"2384ec2f417e4066a23522635d76b86a\" encryver=\"0\" cdnthumbaeskey=\"2384ec2f417e4066a23522635d76b86a\" cdnthumburl=\"3050020100044930470201000204577f6a2c02030f48810204a5b88cb60204590cac9e0425617570696d675f633337313936633333656466343463635f313439343030323834363430340201000201000400\" cdnthumblength=\"12204\" cdnthumbheight=\"120\" cdnthumbwidth=\"90\" cdnmidheight=\"0\" cdnmidwidth=\"0\" cdnhdheight=\"0\" cdnhdwidth=\"0\" cdnmidimgurl=\"3050020100044930470201000204577f6a2c02030f48810204a5b88cb60204590cac9e0425617570696d675f633337313936633333656466343463635f313439343030323834363430340201000201000400\" length=\"139120\" md5=\"5a774ad813f40fb3ca81349d82101423\" /&gt;\n&lt;/msg&gt;\n",
     "StatusNotifyUserName": "",
-    "FromUserName": "@d3619cbf5466d79dde9f67dc274eb74a",
+    "FromUserName": "@a257b99314d8313862cd44ab02fe0f81",
     "OriContent": "",
     "FileSize": ""
 }
@@ -206,10 +208,10 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
 ```Json
 {
     "SubMsgType": 0,
-    "VoiceLength": 2340,
+    "VoiceLength": 2112,
     "FileName": "",
     "ImgHeight": 0,
-    "ToUserName": "@d3619cbf5466d79dde9f67dc274eb74a",
+    "ToUserName": "@58b8651e056f8937f7a4eaa386be0c16d2583a0fdb5741b874cedffe3e13e723",
     "HasProductId": 0,
     "ImgStatus": 1,
     "Url": "",
@@ -233,10 +235,11 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
         "QQNum": 0,
         "VerifyFlag": 0
     },
-    "CreateTime": 1493608374,
-    "NewMsgId": 3310053492051352000,
+    "CreateTime": 1494079534,
+    "NewMsgId": 1038534170192835800,
     "MsgType": 34,
-    "MsgId": "3310053492051352100",
+    "groupMsg": false,
+    "MsgId": "1038534170192835842",
     "StatusNotifyCode": 0,
     "AppInfo": {
         "Type": 0,
@@ -246,9 +249,9 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
     "Type": "Voice",
     "PlayLength": 0,
     "MediaId": "",
-    "Content": "&lt;msg&gt;&lt;voicemsg endflag=\"1\" cancelflag=\"0\" forwardflag=\"0\" voiceformat=\"4\" voicelength=\"2340\" length=\"3898\" bufid=\"289997841361207642\" clientmsgid=\"490b0778a4b4b3ba804b98b8f43017aezyfandlzz1777_1493608371\" fromusername=\"zyfandlzz\" /&gt;&lt;/msg&gt;",
+    "Content": "&lt;msg&gt;&lt;voicemsg endflag=\"1\" cancelflag=\"0\" forwardflag=\"0\" voiceformat=\"4\" voicelength=\"2112\" length=\"4051\" bufid=\"291965468715843925\" clientmsgid=\"41393631336234386239346262373200302205050617d9115824727105\" fromusername=\"zyfandlzz\" /&gt;&lt;/msg&gt;",
     "StatusNotifyUserName": "",
-    "FromUserName": "@d3619cbf5466d79dde9f67dc274eb74a",
+    "FromUserName": "@a257b99314d8313862cd44ab02fe0f81",
     "OriContent": "",
     "FileSize": ""
 }
@@ -262,11 +265,11 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
     "VoiceLength": 0,
     "FileName": "",
     "ImgHeight": 540,
-    "ToUserName": "@d3619cbf5466d79dde9f67dc274eb74a",
+    "ToUserName": "@58b8651e056f8937f7a4eaa386be0c16d2583a0fdb5741b874cedffe3e13e723",
     "HasProductId": 0,
     "ImgStatus": 1,
     "Url": "",
-    "ImgWidth": 944,
+    "ImgWidth": 960,
     "ForwardFlag": 0,
     "Status": 3,
     "Ticket": "",
@@ -286,10 +289,11 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
         "QQNum": 0,
         "VerifyFlag": 0
     },
-    "CreateTime": 1493608481,
-    "NewMsgId": 4036056799205341700,
+    "CreateTime": 1494079644,
+    "NewMsgId": 1478649195821152000,
     "MsgType": 43,
-    "MsgId": "4036056799205341630",
+    "groupMsg": false,
+    "MsgId": "1478649195821152019",
     "StatusNotifyCode": 0,
     "AppInfo": {
         "Type": 0,
@@ -299,9 +303,9 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
     "Type": "Video",
     "PlayLength": 2,
     "MediaId": "",
-    "Content": "&lt;?xml version=\"1.0\"?&gt;\n&lt;msg&gt;\n\t&lt;videomsg aeskey=\"5f355e9a1df64dc2a924e68fb2d53d69\" cdnthumbaeskey=\"5f355e9a1df64dc2a924e68fb2d53d69\" cdnvideourl=\"3043020100043c303a0201000204577f6a2c02032dcd0102040f0a96b602045906a81f04187a7966616e646c7a7a313738315f313439333630383437380201000201000400\" cdnthumburl=\"3043020100043c303a0201000204577f6a2c02032dcd0102040f0a96b602045906a81f04187a7966616e646c7a7a313738315f313439333630383437380201000201000400\" length=\"311854\" playlength=\"2\" cdnthumblength=\"23032\" cdnthumbwidth=\"944\" cdnthumbheight=\"540\" fromusername=\"zyfandlzz\" md5=\"94d985a231c2fbde6b2ece72a300b78d\" newmd5=\"e17fcce9058e2d962d877cb0f1e586a3\" isad=\"0\" /&gt;\n&lt;/msg&gt;\n",
+    "Content": "&lt;?xml version=\"1.0\"?&gt;\n&lt;msg&gt;\n\t&lt;videomsg aeskey=\"d9770f7f38f04888a96f95faa548dbd8\" cdnthumbaeskey=\"d9770f7f38f04888a96f95faa548dbd8\" cdnvideourl=\"30680201000461305f0201000204577f6a2c02032dcd0102041e0a96b60204590dd89c043d617570766964656f5f313530306338303339326430363161645f313439343037393634325f3232303731353036303531373331653863316435333233300201000201000400\" cdnthumburl=\"30680201000461305f0201000204577f6a2c02032dcd0102041e0a96b60204590dd89c043d617570766964656f5f313530306338303339326430363161645f313439343037393634325f3232303731353036303531373331653863316435333233300201000201000400\" length=\"328666\" playlength=\"2\" cdnthumblength=\"10398\" cdnthumbwidth=\"960\" cdnthumbheight=\"540\" fromusername=\"zyfandlzz\" md5=\"555c3efc0e065ba83c3fed942fea81b5\" newmd5=\"33389ec240de3e125f9f319c011781dd\" isad=\"0\" /&gt;\n&lt;/msg&gt;\n",
     "StatusNotifyUserName": "",
-    "FromUserName": "@d3619cbf5466d79dde9f67dc274eb74a",
+    "FromUserName": "@a257b99314d8313862cd44ab02fe0f81",
     "OriContent": "",
     "FileSize": ""
 }
@@ -315,7 +319,7 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
     "VoiceLength": 0,
     "FileName": "",
     "ImgHeight": 0,
-    "ToUserName": "@77335068a746b7d6317dc41491d00f03",
+    "ToUserName": "@58b8651e056f8937f7a4eaa386be0c16d2583a0fdb5741b874cedffe3e13e723",
     "HasProductId": 0,
     "ImgStatus": 1,
     "Url": "",
@@ -325,13 +329,13 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
     "Ticket": "",
     "RecommendInfo": {
         "Ticket": "",
-        "UserName": "@d8c8f3e3f29504be95e1a3fb6498b4639b74bed0593d0defe08e3d595a71c0c8",
-        "Sex": 2,
-        "AttrStatus": 102465,
-        "City": "中国",
-        "NickName": "yaphone",
+        "UserName": "@173bd4ce01b725f327c221a06017260734d4607001d1dc82ba6b99c1ef77fb92",
+        "Sex": 0,
+        "AttrStatus": 32,
+        "City": "",
+        "NickName": "LittleCoder机器人",
         "Scene": 17,
-        "Province": "重庆",
+        "Province": "",
         "Content": "",
         "Alias": "",
         "Signature": "",
@@ -339,10 +343,11 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
         "QQNum": 0,
         "VerifyFlag": 0
     },
-    "CreateTime": 1493608772,
-    "NewMsgId": 4995521505909924000,
+    "CreateTime": 1494079592,
+    "NewMsgId": 6687290426846395000,
     "MsgType": 42,
-    "MsgId": "4995521505909923458",
+    "groupMsg": false,
+    "MsgId": "6687290426846395587",
     "StatusNotifyCode": 0,
     "AppInfo": {
         "Type": 0,
@@ -352,9 +357,9 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
     "Type": "NameCard",
     "PlayLength": 0,
     "MediaId": "",
-    "Content": "&lt;?xml version=\"1.0\"?&gt;\n&lt;msg bigheadimgurl=\"http://wx.qlogo.cn/mmhead/ver_1/X4zCLRffvrLu9W1Oufm608VxsFjnvFOXgeyMDhPKAUH92Ck24PcySMKMpCJySy4icERXbUae8CA9zuia638l9KIPXYIbqWK9DXSM6jjAYFtTk/0\" smallheadimgurl=\"http://wx.qlogo.cn/mmhead/ver_1/X4zCLRffvrLu9W1Oufm608VxsFjnvFOXgeyMDhPKAUH92Ck24PcySMKMpCJySy4icERXbUae8CA9zuia638l9KIPXYIbqWK9DXSM6jjAYFtTk/132\" username=\"wxid_a6p74rz9ovbz21\" nickname=\"yaphone\"  shortpy=\"\" alias=\"\" imagestatus=\"3\" scene=\"17\" province=\"重庆\" city=\"中国\" sign=\"\" sex=\"2\" certflag=\"0\" certinfo=\"\" brandIconUrl=\"\" brandHomeUrl=\"\" brandSubscriptConfigUrl=\"\" brandFlags=\"0\" regionCode=\"CN_Chongqing_South Bank\" /&gt;\n",
+    "Content": "&lt;?xml version=\"1.0\"?&gt;\n&lt;msg bigheadimgurl=\"http://wx.qlogo.cn/mmhead/ver_1/ajX7IquRvt16WXDJYrYsBuGy5HoicQ1ibNbLKKHu744ic2WnxSaRtEQCgibSP8S2MdyIsqTWsKUUEZydsias9UR55nSQE7n6ibXChx4DQZQf5xh0M/0\" smallheadimgurl=\"http://wx.qlogo.cn/mmhead/ver_1/ajX7IquRvt16WXDJYrYsBuGy5HoicQ1ibNbLKKHu744ic2WnxSaRtEQCgibSP8S2MdyIsqTWsKUUEZydsias9UR55nSQE7n6ibXChx4DQZQf5xh0M/132\" username=\"v1_183ca2ddb6369f35d74ea56046fcdf33d3a769352d9e125b44d26c18c0063ff537f6d66ea415db7648605aabf65b7b98@stranger\" nickname=\"LittleCoder机器人\"  shortpy=\"LITTLECODERJQR\" alias=\"\" imagestatus=\"3\" scene=\"17\" province=\"\" city=\"\" sign=\"\" sex=\"0\" certflag=\"0\" certinfo=\"\" brandIconUrl=\"\" brandHomeUrl=\"\" brandSubscriptConfigUrl=\"\" brandFlags=\"0\" regionCode=\"\" antispamticket=\"v2_6b780d55a1b949e161126df27729c85fd8b136d673ec7de475b0b5d811737502657129df8f19cd705cd90dc74bc12c09@stranger\" /&gt;\n",
     "StatusNotifyUserName": "",
-    "FromUserName": "@77335068a746b7d6317dc41491d00f03",
+    "FromUserName": "@a257b99314d8313862cd44ab02fe0f81",
     "OriContent": "",
     "FileSize": ""
 }
