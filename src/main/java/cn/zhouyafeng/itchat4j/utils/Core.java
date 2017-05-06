@@ -48,7 +48,7 @@ public class Core {
 	private List<JSONObject> specialUsersList = storageClass.getSpecialUsersList();
 	private List<JSONObject> msgList = storageClass.getMsgList();
 
-	private List<String> groupStrList = new ArrayList<String>(); // 群聊，以String格式保存群的userName，如@@37da24fee2114e9475729b942d130190ffddb669411228651da3e8a8933603c8
+	private List<String> groupIdList = new ArrayList<String>(); // 群聊，以String格式保存群的userName，如@@37da24fee2114e9475729b942d130190ffddb669411228651da3e8a8933603c8
 
 	Map<String, Object> loginInfo = new HashMap<String, Object>();
 	CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -107,12 +107,12 @@ public class Core {
 		this.httpClient = httpClient;
 	}
 
-	public List<String> getGroupStrList() {
-		return groupStrList;
+	public List<String> getGroupIdList() {
+		return groupIdList;
 	}
 
-	public void setGroupStrList(List<String> groupStrList) {
-		this.groupStrList = groupStrList;
+	public void setGroupIdList(List<String> groupIdList) {
+		this.groupIdList = groupIdList;
 	}
 
 	public String getUuid() {

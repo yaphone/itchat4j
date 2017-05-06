@@ -48,11 +48,16 @@ public class MessageTools {
 				// produceGroupChat(core, m);
 				// m.remove("Content");
 				if (m.getString("FromUserName").contains("@@")
-						&& !core.getGroupStrList().contains(m.getString("FromUserName"))) {
-					core.getGroupStrList().add((m.getString("FromUserName")));
+						&& !core.getGroupIdList().contains(m.getString("FromUserName"))) {
+					core.getGroupIdList().add((m.getString("FromUserName")));
 				} else if (m.getString("ToUserName").contains("@@")
-						&& !core.getGroupStrList().contains(m.getString("ToUserName"))) {
-					core.getGroupStrList().add((m.getString("ToUserName")));
+						&& !core.getGroupIdList().contains(m.getString("ToUserName"))) {
+					core.getGroupIdList().add((m.getString("ToUserName")));
+				}
+				// 群消息与普通消息不同的是在其消息体（Content）中会包含发送者id及":<br/>"消息，这里需要处理一下，去掉多余信息，只保留消息内容
+				if (m.getString("Content").contains("<br/>")) {
+					String content = m.getString("Content").substring(m.getString("Content").indexOf("<br/>") + 5);
+					m.put("Content", content);
 				}
 			} else {
 				CommonTool.msgFormatter(m, "Content");
@@ -117,6 +122,18 @@ public class MessageTools {
 	public static void sendMsg(String text, String toUserName) {
 		logger.info(String.format("Request to send a text message to %s: %s", toUserName, text));
 		sendRawMsg(1, text, toUserName);
+	}
+
+	/**
+	 * 根据ID发送文本消息
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月6日 上午11:45:51
+	 * @param text
+	 * @param id
+	 */
+	public static void sendMsgById(String text, String id) {
+		sendMsg(text, id);
 	}
 
 	/**

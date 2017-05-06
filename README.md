@@ -34,27 +34,41 @@
 
 *项目在不断更新中，API会有变动，请以具体代码为准*
 
-目前在`package cn.zhouyafeng.itchat4j.api`包中有两个静态类，即`MessageTools`和`WechatTools`，目前这两个类对外暴露的方法有：
+目前在`package cn.zhouyafeng.itchat4j.api`包中有两个静态类，即`MessageTools`和`WechatTools`，目前对外暴露的方法有：
+
+####  1.获取好友列表  WechatTools.getContactList()
 
 
 
-### WechatTools
+此方法会返回好友昵称列表，其函数声明为：
 
-<br>
+```
+public static List<String> getContactList()
+```
 
-| API  | List<String>  getContactList() |
-| ---- | ------------------------------ |
-| 接口说明 | 获取好友昵称列表。                      |
+#### 2.获取群列表 WechatTools.getGroupIdList()
 
+群列表与好友列表不同，在登陆后群列表其实是空的，只有主动发送消息或者收到一条群消息时，才能获取到这个群的信息，群列表会记录这个群的id，其格式为`@@d052d34b9c9228830363013ee53deb461404f80ea353dbdd8fc9391cbf5f1c46`。调用此方法会返回已知的群列表。其声明函数为：
 
+```
+public static List<String> getGroupIdList()
+```
 
-### MessageTools
+#### 3. 根据好友昵称发送文本消息，MessageTools.sendMsgByNickName(String text, String nickName)
 
-<br>
+此方法根据用户昵称发送文本消息，注意，用户需在你的好友列表里，否则发送失败，如果你的好友列表里有存在昵称一样的多个用户，则只会给第一个匹配的好友发送消息。方法接受两个参数，`text`为要发送的文本消息，`nickName`为要发送消息的好友昵称，成功发送时返回true，失败返回false。其函数声明为：
 
-| API  | boolean sendMsgByNickName(String text, String nickName) |
-| :--- | ---------------------------------------- |
-| 接口说明 | 此方法根据用户昵称发送文本消息，注意，用户需在你的好友列表里，否则发送失败，如果你的好友列表里有存在昵称一样的多个用户，则只会给第一个匹配的好友发送消息。成功发送消息时返回true，失败返回false |
+```
+public static boolean sendMsgByNickName(String text, String nickName)
+```
+
+#### 4.根据ID发送文本消息 MessageTools.sendMsgById(String text, String id)
+
+根据ID发送文本消息，ID格式为`@@d052d34b9c9228830363013ee53deb461404f80ea353dbdd8fc9391cbf5f1c46`，建议给好友发送消息时使用`MessageTools.sendMsgByNickName(String text, String nickName)`。由于无法获取群昵称，因此可调用此方法向群发送消息。其函数声明为：
+
+```
+public static void sendMsgById(String text, String id)
+```
 
 
 

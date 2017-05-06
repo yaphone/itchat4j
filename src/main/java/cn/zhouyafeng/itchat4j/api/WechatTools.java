@@ -96,4 +96,8 @@ public class WechatTools {
 		return groupList;
 	}
 
+	public static List<String> getGroupIdList() {
+		return core.getGroupIdList();
+	}
+
 }

@@ -51,7 +51,7 @@ public interface IMsgHandlerFace {
 	public String viedoMsgHandle(JSONObject msg);
 
 	/**
-	 * 处理明片消息
+	 * 处理名片消息
 	 * 
 	 * @author https://github.com/yaphone
 	 * @date 2017年5月1日 上午12:50:50
