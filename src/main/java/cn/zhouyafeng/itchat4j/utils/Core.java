@@ -160,6 +160,14 @@ public class Core {
 		this.myHttpClient = myHttpClient;
 	}
 
+	public List<String> getGroupIdList() {
+		return groupIdList;
+	}
+
+	public void setGroupIdList(List<String> groupIdList) {
+		this.groupIdList = groupIdList;
+	}
+
 	public List<JSONObject> getUserSelfList() {
 		return userSelfList;
 	}
