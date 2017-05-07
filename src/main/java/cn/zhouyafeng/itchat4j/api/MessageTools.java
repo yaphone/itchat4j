@@ -264,7 +264,7 @@ public class MessageTools {
 	 * @return
 	 */
 	private static boolean webWxSendMsgImg(String userId, String mediaId) {
-		String url = String.format("%s/webwxstatusnotify?lang=zh_CN&pass_ticket=%s", core.getLoginInfo().get("url"),
+		String url = String.format("%s/webwxsendmsgimg?fun=async&f=json&pass_ticket=%s", core.getLoginInfo().get("url"),
 				core.getLoginInfo().get("pass_ticket"));
 		Map<String, Object> msgMap = new HashMap<String, Object>();
 		msgMap.put("Type", 3);
