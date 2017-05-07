@@ -19,7 +19,7 @@ import com.alibaba.fastjson.JSONObject;
 public class Contact {
 	Logger logger = Logger.getLogger("Contact");
 	Core core = Core.getInstance();
-	CloseableHttpClient httpClient = core.getHttpClient();
+	CloseableHttpClient httpClient = MyHttpClient.getHttpClient();
 
 	public List<Object> getContact(boolean update) {
 		String url = String.format("%s/webwxgetcontact?r=%s&seq=0&skey=%s", core.loginInfo.get("url"),

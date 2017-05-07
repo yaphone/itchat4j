@@ -4,9 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-
 import com.alibaba.fastjson.JSONObject;
 
 /**
@@ -48,8 +45,8 @@ public class Core {
 	private List<JSONObject> msgList = storageClass.getMsgList();
 
 	Map<String, Object> loginInfo = new HashMap<String, Object>();
-	CloseableHttpClient httpClient = HttpClients.createDefault();
-	MyHttpClient myHttpClient = new MyHttpClient();
+	// CloseableHttpClient httpClient = HttpClients.createDefault();
+	MyHttpClient myHttpClient = MyHttpClient.getInstance();
 	String uuid = null;
 
 	Map<String, Object> functionDict = new HashMap<String, Object>() {
@@ -94,14 +91,6 @@ public class Core {
 
 	public void setLoginInfo(Map<String, Object> loginInfo) {
 		this.loginInfo = loginInfo;
-	}
-
-	public CloseableHttpClient getHttpClient() {
-		return httpClient;
-	}
-
-	public void setHttpClient(CloseableHttpClient httpClient) {
-		this.httpClient = httpClient;
 	}
 
 	public String getUuid() {
