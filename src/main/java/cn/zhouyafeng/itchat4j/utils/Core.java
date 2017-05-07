@@ -5,9 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-
 import com.alibaba.fastjson.JSONObject;
 
 /**
@@ -51,8 +48,8 @@ public class Core {
 	private List<String> groupIdList = new ArrayList<String>(); // 群聊，以String格式保存群的userName，如@@37da24fee2114e9475729b942d130190ffddb669411228651da3e8a8933603c8
 
 	Map<String, Object> loginInfo = new HashMap<String, Object>();
-	CloseableHttpClient httpClient = HttpClients.createDefault();
-	MyHttpClient myHttpClient = new MyHttpClient();
+	// CloseableHttpClient httpClient = HttpClients.createDefault();
+	MyHttpClient myHttpClient = MyHttpClient.getInstance();
 	String uuid = null;
 
 	Map<String, Object> functionDict = new HashMap<String, Object>() {
@@ -97,22 +94,6 @@ public class Core {
 
 	public void setLoginInfo(Map<String, Object> loginInfo) {
 		this.loginInfo = loginInfo;
-	}
-
-	public CloseableHttpClient getHttpClient() {
-		return httpClient;
-	}
-
-	public void setHttpClient(CloseableHttpClient httpClient) {
-		this.httpClient = httpClient;
-	}
-
-	public List<String> getGroupIdList() {
-		return groupIdList;
-	}
-
-	public void setGroupIdList(List<String> groupIdList) {
-		this.groupIdList = groupIdList;
 	}
 
 	public String getUuid() {

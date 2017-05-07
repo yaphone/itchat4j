@@ -1,12 +1,20 @@
 package cn.zhouyafeng.itchat4j.api;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
+import javax.activation.MimetypesFileTypeMap;
+
 import org.apache.http.HttpEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.util.EntityUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -149,8 +157,10 @@ public class MessageTools {
 	public static boolean sendMsgByNickName(String text, String nickName) {
 		if (nickName != null) {
 			String toUserName = WechatTools.getUserNameByNickName(nickName);
-			sendRawMsg(1, text, toUserName);
-			return true;
+			if (toUserName != null) {
+				sendRawMsg(1, text, toUserName);
+				return true;
+			}
 		}
 		return false;
 
@@ -189,7 +199,173 @@ public class MessageTools {
 		} catch (Exception e) {
 			logger.info(e.getMessage());
 		}
+	}
 
+	/**
+	 * 上传多媒体文件到 微信服务器，目前应该支持3种类型:
+	 * <p>
+	 * 1. pic 直接显示，包含图片，表情
+	 * </p>
+	 * <p>
+	 * 2.video
+	 * </p>
+	 * <p>
+	 * 3.doc 显示为文件，包含PDF等
+	 * </p>
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月7日 上午12:41:13
+	 * @param filePath
+	 * @return
+	 */
+	private static String uploadMediaToServer(String filePath) {
+		File f = new File(filePath);
+		if (!f.exists() && f.isFile()) {
+			logger.info("file is not exist");
+			return null;
+		}
+		String url = (String) core.getLoginInfo().get("fileUrl") + "/webwxuploadmedia?f=json";
+		String mimeType = new MimetypesFileTypeMap().getContentType(f);
+		String mediaType = "";
+		if (mimeType == null) {
+			mimeType = "text/plain";
+		} else {
+			mediaType = mimeType.split("/")[0].equals("image") ? "pic" : "doc";
+		}
+		String lastModifieDate = new SimpleDateFormat("yyyy MM dd HH:mm:ss").format(new Date());
+		long fileSize = f.length();
+		String passTicket = (String) core.getLoginInfo().get("pass_ticket");
+		String clientMediaId = String.valueOf(new Date().getTime())
+				+ String.valueOf(new Random().nextLong()).substring(0, 4);
+		String webwxDataTicket = MyHttpClient.getCookie("webwx_data_ticket");
+		if (webwxDataTicket == null) {
+			logger.info("get cookie webwx_data_ticket error");
+			return null;
+		}
+
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		@SuppressWarnings("unchecked")
+		Map<String, Map<String, String>> baseRequestMap = (Map<String, Map<String, String>>) core.getLoginInfo()
+				.get("baseRequest");
+		paramMap.put("BaseRequest", baseRequestMap.get("BaseRequest"));
+		paramMap.put("ClientMediaId", clientMediaId);
+		paramMap.put("TotalLen", fileSize);
+		paramMap.put("StartPos", 0);
+		paramMap.put("DataLen", fileSize);
+		paramMap.put("MediaType", 4);
+
+		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+		builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+		builder.addTextBody("id", "WU_FILE_0", ContentType.TEXT_PLAIN);
+		builder.addTextBody("name", filePath, ContentType.TEXT_PLAIN);
+		builder.addTextBody("type", mimeType, ContentType.TEXT_PLAIN);
+		builder.addTextBody("lastModifieDate", lastModifieDate, ContentType.TEXT_PLAIN);
+		builder.addTextBody("size", String.valueOf(fileSize), ContentType.TEXT_PLAIN);
+		builder.addTextBody("mediatype", mediaType, ContentType.TEXT_PLAIN);
+		builder.addTextBody("uploadmediarequest", JSON.toJSONString(paramMap), ContentType.TEXT_PLAIN);
+		builder.addTextBody("webwx_data_ticket", webwxDataTicket, ContentType.TEXT_PLAIN);
+		builder.addTextBody("pass_ticket", passTicket, ContentType.TEXT_PLAIN);
+		builder.addBinaryBody("filename", f, ContentType.create(mimeType), filePath);
+		HttpEntity reqEntity = builder.build();
+		HttpEntity entity = myHttpClient.doPostFile(url, reqEntity);
+		if (entity != null) {
+			try {
+				String result = EntityUtils.toString(entity, "UTF-8");
+				return JSON.parseObject(result).getString("MediaId");
+			} catch (Exception e) {
+				logger.info(e.getMessage());
+			}
+
+		}
+		return null;
+	}
+
+	/**
+	 * 根据NickName发送图片消息
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月7日 下午10:32:45
+	 * @param nackName
+	 * @return
+	 */
+	public static boolean sendPicMsgByNickName(String nickName, String filePath) {
+		if (nickName != null) {
+			String toUserName = WechatTools.getUserNameByNickName(nickName);
+			if (toUserName != null) {
+				return sendPicMsgByUserId(toUserName, filePath);
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 根据用户id发送图片消息
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月7日 下午10:34:24
+	 * @param nickName
+	 * @param filePath
+	 * @return
+	 */
+	public static boolean sendPicMsgByUserId(String userId, String filePath) {
+		String mediaId = uploadMediaToServer(filePath);
+		if (mediaId != null) {
+			return webWxSendMsgImg(userId, mediaId);
+		}
+		return false;
+	}
+
+	/**
+	 * 发送图片消息，内部调用
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月7日 下午10:38:55
+	 * @return
+	 */
+	private static boolean webWxSendMsgImg(String userId, String mediaId) {
+		String url = String.format("%s/webwxsendmsgimg?fun=async&f=json&pass_ticket=%s", core.getLoginInfo().get("url"),
+				core.getLoginInfo().get("pass_ticket"));
+		Map<String, Object> msgMap = new HashMap<String, Object>();
+		msgMap.put("Type", 3);
+		msgMap.put("MediaId", mediaId);
+		msgMap.put("FromUserName", core.getUserSelfList().get(0).getString("UserName"));
+		msgMap.put("ToUserName", userId);
+		String clientMsgId = String.valueOf(new Date().getTime())
+				+ String.valueOf(new Random().nextLong()).substring(1, 5);
+		msgMap.put("LocalID", clientMsgId);
+		msgMap.put("ClientMsgId", clientMsgId);
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		@SuppressWarnings("unchecked")
+		Map<String, Map<String, String>> baseRequestMap = (Map<String, Map<String, String>>) core.getLoginInfo()
+				.get("baseRequest");
+		paramMap.put("BaseRequest", baseRequestMap.get("BaseRequest"));
+		paramMap.put("Msg", msgMap);
+		String paramStr = JSON.toJSONString(paramMap);
+		HttpEntity entity = myHttpClient.doPost(url, paramStr);
+		if (entity != null) {
+			try {
+				String result = EntityUtils.toString(entity, "UTF-8");
+				return JSON.parseObject(result).getJSONObject("BaseResponse").getInteger("Ret") == 0;
+			} catch (Exception e) {
+				logger.info(e.getMessage());
+			}
+		}
+		return false;
+
+	}
+
+	/**
+	 * 根据用户id发送文件
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月7日 下午11:57:36
+	 * @param userId
+	 * @param filePath
+	 * @return
+	 */
+	public static boolean sednFileMsgByUserId(String userId, String filePath) {
+		return false;
 	}
 
 }

@@ -23,6 +23,10 @@ public class SimpleDemo implements IMsgHandlerFace {
 
 	@Override
 	public String textMsgHandle(JSONObject msg) {
+		// String filePath = "D:/itchat4j/pic/test.jpg";
+		// String userId = msg.getString("FromUserName");
+		// MessageTools.sendPicMsgByNickName("yaphone", filePath);
+		// MessageTools.sendPicMsgByUserId(userId, filePath);
 		String text = msg.getString("Text");
 		return text;
 	}

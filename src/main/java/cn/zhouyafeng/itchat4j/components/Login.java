@@ -262,7 +262,7 @@ public class Login {
 				baseRequest.put("Uin", (String) core.getLoginInfo().get("wxuin"));
 				core.getLoginInfo().put("pass_ticket",
 						doc.getElementsByTagName("pass_ticket").item(0).getFirstChild().getNodeValue());
-				baseRequest.put("DeviceID", (String) core.getLoginInfo().get("pass_ticket"));
+				baseRequest.put("DeviceID", (String) core.getLoginInfo().get("deviceid"));
 				BaseRequest.put("BaseRequest", baseRequest);
 				core.getLoginInfo().put("baseRequest", BaseRequest);
 			}
