@@ -134,8 +134,10 @@ public class MessageTools {
 	public static boolean sendMsgByNickName(String text, String nickName) {
 		if (nickName != null) {
 			String toUserName = WechatTools.getUserNameByNickName(nickName);
-			sendRawMsg(1, text, toUserName);
-			return true;
+			if (toUserName != null) {
+				sendRawMsg(1, text, toUserName);
+				return true;
+			}
 		}
 		return false;
 
@@ -257,6 +259,41 @@ public class MessageTools {
 	}
 
 	/**
+	 * 根据NickName发送图片消息
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月7日 下午10:32:45
+	 * @param nackName
+	 * @return
+	 */
+	public static boolean sendPicMsgByNickName(String nickName, String filePath) {
+		if (nickName != null) {
+			String toUserName = WechatTools.getUserNameByNickName(nickName);
+			if (toUserName != null) {
+				return sendPicMsgByUserId(toUserName, filePath);
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 根据用户id发送图片消息
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月7日 下午10:34:24
+	 * @param nickName
+	 * @param filePath
+	 * @return
+	 */
+	public static boolean sendPicMsgByUserId(String userId, String filePath) {
+		String mediaId = uploadMediaToServer(filePath);
+		if (mediaId != null) {
+			return webWxSendMsgImg(userId, mediaId);
+		}
+		return false;
+	}
+
+	/**
 	 * 发送图片消息，内部调用
 	 * 
 	 * @author https://github.com/yaphone
@@ -282,46 +319,29 @@ public class MessageTools {
 		paramMap.put("BaseRequest", baseRequestMap.get("BaseRequest"));
 		paramMap.put("Msg", msgMap);
 		String paramStr = JSON.toJSONString(paramMap);
-		System.out.println(url);
-		System.out.println(paramStr);
 		HttpEntity entity = myHttpClient.doPost(url, paramStr);
 		if (entity != null) {
 			try {
-				System.out.println(EntityUtils.toString(entity, "UTF-8"));
+				String result = EntityUtils.toString(entity, "UTF-8");
+				return JSON.parseObject(result).getJSONObject("BaseResponse").getInteger("Ret") == 0;
 			} catch (Exception e) {
 				logger.info(e.getMessage());
 			}
 		}
-		return true;
-
-	}
-
-	/**
-	 * 根据昵称发送图片消息
-	 * 
-	 * @author https://github.com/yaphone
-	 * @date 2017年5月7日 下午10:32:45
-	 * @param nackName
-	 * @return
-	 */
-	public static boolean sendPicMsgByNickName(String nickName, String filePath) {
 		return false;
+
 	}
 
 	/**
-	 * 根据用户id发送图片消息
+	 * 根据用户id发送文件
 	 * 
 	 * @author https://github.com/yaphone
-	 * @date 2017年5月7日 下午10:34:24
-	 * @param nickName
+	 * @date 2017年5月7日 下午11:57:36
+	 * @param userId
 	 * @param filePath
 	 * @return
 	 */
-	public static boolean sendPicMsgByUserId(String userId, String filePath) {
-		String mediaId = uploadMediaToServer(filePath);
-		if (mediaId != null) {
-			return webWxSendMsgImg(userId, mediaId);
-		}
+	public static boolean sednFileMsgByUserId(String userId, String filePath) {
 		return false;
 	}
 
