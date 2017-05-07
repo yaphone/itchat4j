@@ -52,13 +52,27 @@ public class MessageTools {
 		for (int i = 0; i < msgList.size(); i++) {
 			JSONObject msg = new JSONObject();
 			JSONObject m = msgList.getJSONObject(i);
-			if (m.getString("FromUserName").contains("@@") || m.getString("ToUserName").contains("@@")) {
-				produceGroupChat(core, m);
-				m.remove("Content");
+			m.put("groupMsg", false);// 是否是群消息
+			if (m.getString("FromUserName").contains("@@") || m.getString("ToUserName").contains("@@")) { // 群聊消息
+				// produceGroupChat(core, m);
+				// m.remove("Content");
+				if (m.getString("FromUserName").contains("@@")
+						&& !core.getGroupIdList().contains(m.getString("FromUserName"))) {
+					core.getGroupIdList().add((m.getString("FromUserName")));
+				} else if (m.getString("ToUserName").contains("@@")
+						&& !core.getGroupIdList().contains(m.getString("ToUserName"))) {
+					core.getGroupIdList().add((m.getString("ToUserName")));
+				}
+				// 群消息与普通消息不同的是在其消息体（Content）中会包含发送者id及":<br/>"消息，这里需要处理一下，去掉多余信息，只保留消息内容
+				if (m.getString("Content").contains("<br/>")) {
+					String content = m.getString("Content").substring(m.getString("Content").indexOf("<br/>") + 5);
+					m.put("Content", content);
+					m.put("groupMsg", true);
+				}
 			} else {
 				CommonTool.msgFormatter(m, "Content");
 			}
-			if (m.getInteger("MsgType") == 1) { // words 文本消息
+			if (m.getInteger("MsgType") == MsgType.MSGTYPE_TEXT) { // words 文本消息
 				if (m.getString("Url").length() != 0) {
 					String regEx = "(.+?\\(.+?\\))";
 					Matcher matcher = CommonTool.getMatcher(regEx, m.getString("Content"));
@@ -74,16 +88,18 @@ public class MessageTools {
 				}
 				m.put("Type", msg.getString("Type"));
 				m.put("Text", msg.getString("Text"));
-			} else if (m.getInteger("MsgType") == 3 || m.getInteger("MsgType") == 47) { // 图片消息
+			} else if (m.getInteger("MsgType") == MsgType.MSGTYPE_IMAGE
+					|| m.getInteger("MsgType") == MsgType.MSGTYPE_EMOTICON) { // 图片消息
 				m.put("Type", MsgType.PIC);
-			} else if (m.getInteger("MsgType") == 34) { // 语音消息
+			} else if (m.getInteger("MsgType") == MsgType.MSGTYPE_VOICE) { // 语音消息
 				m.put("Type", MsgType.VOICE);
 			} else if (m.getInteger("MsgType") == 37) {// friends 好友确认消息
 
 			} else if (m.getInteger("MsgType") == 42) { // 共享名片
 				m.put("Type", MsgType.NAMECARD);
 
-			} else if (m.getInteger("MsgType") == 43 || m.getInteger("MsgType") == 62) {// viedo
+			} else if (m.getInteger("MsgType") == MsgType.MSGTYPE_VIDEO
+					|| m.getInteger("MsgType") == MsgType.MSGTYPE_MICROVIDEO) {// viedo
 				m.put("Type", MsgType.VIEDO);
 			} else if (m.getInteger("MsgType") == 49) { // sharing 分享链接
 
@@ -96,15 +112,10 @@ public class MessageTools {
 			} else {
 				logger.info("Useless msg");
 			}
-
 			result.add(m);
 		}
 		return result;
 	}
-
-	public static void produceGroupChat(Core core, JSONObject m) {
-		// TODO
-	};
 
 	public static void send(String msg, String toUserName, String mediaId) {
 		sendMsg(msg, toUserName);
@@ -121,6 +132,18 @@ public class MessageTools {
 	public static void sendMsg(String text, String toUserName) {
 		logger.info(String.format("Request to send a text message to %s: %s", toUserName, text));
 		sendRawMsg(1, text, toUserName);
+	}
+
+	/**
+	 * 根据ID发送文本消息
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月6日 上午11:45:51
+	 * @param text
+	 * @param id
+	 */
+	public static void sendMsgById(String text, String id) {
+		sendMsg(text, id);
 	}
 
 	/**

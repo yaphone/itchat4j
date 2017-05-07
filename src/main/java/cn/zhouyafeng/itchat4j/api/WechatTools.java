@@ -81,4 +81,23 @@ public class WechatTools {
 		return contactList;
 	}
 
+	/**
+	 * 返回群列表
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月5日 下午9:55:21
+	 * @return
+	 */
+	public static List<String> getGroupList() {
+		List<String> groupList = new ArrayList<String>();
+		for (JSONObject o : core.getGroupList()) {
+			groupList.add(o.getString("Name"));
+		}
+		return groupList;
+	}
+
+	public static List<String> getGroupIdList() {
+		return core.getGroupIdList();
+	}
+
 }
