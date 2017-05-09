@@ -376,10 +376,58 @@ public class MessageTools {
 		data.put("totallen", "");
 		data.put("attachid", "");
 		data.put("type", "6"); // APPMSGTYPE_ATTACH
-		data.put("fileext", title.split(".")[1]); // 文件后缀
+		data.put("fileext", title.split("\\.")[1]); // 文件后缀
 		JSONObject responseObj = uploadMediaToServer(filePath);
 		if (responseObj != null) {
+			data.put("totallen", responseObj.getString("StartPos"));
+			data.put("attachid", responseObj.getString("MediaId"));
+		} else {
+			logger.info("sednFileMsgByUserId error");
+		}
+		return webWxSendAppMsg(userId, data);
+	}
 
+	/**
+	 * 内部调用
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月10日 上午12:21:28
+	 * @param userId
+	 * @param data
+	 * @return
+	 */
+	private static boolean webWxSendAppMsg(String userId, Map<String, String> data) {
+		String url = String.format("%s/webwxsendappmsg?fun=async&f=json&pass_ticket=%s", core.getLoginInfo().get("url"),
+				core.getLoginInfo().get("pass_ticket"));
+		String clientMsgId = String.valueOf(new Date().getTime())
+				+ String.valueOf(new Random().nextLong()).substring(1, 5);
+		String content = "<appmsg appid='wxeb7ec651dd0aefa9' sdkver=''><title>" + data.get("title")
+				+ "</title><des></des><action></action><type>6</type><content></content><url></url><lowurl></lowurl>"
+				+ "<appattach><totallen>" + data.get("totallen") + "</totallen><attachid>" + data.get("attachid")
+				+ "</attachid><fileext>" + data.get("fileext") + "</fileext></appattach><extinfo></extinfo></appmsg>";
+		Map<String, Object> msgMap = new HashMap<String, Object>();
+		msgMap.put("Type", data.get("type"));
+		msgMap.put("Content", content);
+		msgMap.put("FromUserName", core.getUserSelfList().get(0).getString("UserName"));
+		msgMap.put("ToUserName", userId);
+		msgMap.put("LocalID", clientMsgId);
+		msgMap.put("ClientMsgId", clientMsgId);
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		@SuppressWarnings("unchecked")
+		Map<String, Map<String, String>> baseRequestMap = (Map<String, Map<String, String>>) core.getLoginInfo()
+				.get("baseRequest");
+		paramMap.put("BaseRequest", baseRequestMap.get("BaseRequest"));
+		paramMap.put("Msg", msgMap);
+		paramMap.put("Scene", 0);
+		String paramStr = JSON.toJSONString(paramMap);
+		HttpEntity entity = myHttpClient.doPost(url, paramStr);
+		if (entity != null) {
+			try {
+				String result = EntityUtils.toString(entity, "UTF-8");
+				return JSON.parseObject(result).getJSONObject("BaseResponse").getInteger("Ret") == 0;
+			} catch (Exception e) {
+				logger.info(e.getMessage());
+			}
 		}
 		return false;
 	}

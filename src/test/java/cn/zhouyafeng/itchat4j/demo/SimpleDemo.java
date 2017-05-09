@@ -7,7 +7,6 @@ import java.util.Date;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.zhouyafeng.itchat4j.Wechat;
-import cn.zhouyafeng.itchat4j.api.MessageTools;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.DownloadTools;
 import cn.zhouyafeng.itchat4j.utils.MsgType;
@@ -24,9 +23,9 @@ public class SimpleDemo implements IMsgHandlerFace {
 
 	@Override
 	public String textMsgHandle(JSONObject msg) {
-		String filePath = "D:/itchat4j/pic/test.jpg";
+		// String filePath = "D:/itchat4j/pic/test3.docx";
 		// String userId = msg.getString("FromUserName");
-		MessageTools.sendPicMsgByNickName("yaphone", filePath);
+		// MessageTools.sendPicMsgByNickName("yaphone", filePath);
 		// MessageTools.sendPicMsgByUserId(userId, filePath);
 		// MessageTools.sednFileMsgByUserId(msg.getString("FromUserName"),
 		// filePath);
