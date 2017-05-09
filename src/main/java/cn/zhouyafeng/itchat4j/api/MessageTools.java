@@ -22,6 +22,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.zhouyafeng.itchat4j.tools.CommonTool;
+import cn.zhouyafeng.itchat4j.utils.Constant;
 import cn.zhouyafeng.itchat4j.utils.Core;
 import cn.zhouyafeng.itchat4j.utils.MsgType;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
@@ -218,7 +219,7 @@ public class MessageTools {
 	 * @param filePath
 	 * @return
 	 */
-	private static String uploadMediaToServer(String filePath) {
+	private static JSONObject uploadMediaToServer(String filePath) {
 		File f = new File(filePath);
 		if (!f.exists() && f.isFile()) {
 			logger.info("file is not exist");
@@ -272,7 +273,7 @@ public class MessageTools {
 		if (entity != null) {
 			try {
 				String result = EntityUtils.toString(entity, "UTF-8");
-				return JSON.parseObject(result).getString("MediaId");
+				return JSON.parseObject(result);
 			} catch (Exception e) {
 				logger.info(e.getMessage());
 			}
@@ -309,9 +310,12 @@ public class MessageTools {
 	 * @return
 	 */
 	public static boolean sendPicMsgByUserId(String userId, String filePath) {
-		String mediaId = uploadMediaToServer(filePath);
-		if (mediaId != null) {
-			return webWxSendMsgImg(userId, mediaId);
+		JSONObject responseObj = uploadMediaToServer(filePath);
+		if (responseObj != null) {
+			String mediaId = responseObj.getString("MediaId");
+			if (mediaId != null) {
+				return webWxSendMsgImg(userId, mediaId);
+			}
 		}
 		return false;
 	}
@@ -365,6 +369,18 @@ public class MessageTools {
 	 * @return
 	 */
 	public static boolean sednFileMsgByUserId(String userId, String filePath) {
+		String title = new File(filePath).getName();
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("appid", Constant.API_WXAPPID);
+		data.put("title", title);
+		data.put("totallen", "");
+		data.put("attachid", "");
+		data.put("type", "6"); // APPMSGTYPE_ATTACH
+		data.put("fileext", title.split(".")[1]); // 文件后缀
+		JSONObject responseObj = uploadMediaToServer(filePath);
+		if (responseObj != null) {
+
+		}
 		return false;
 	}
 
