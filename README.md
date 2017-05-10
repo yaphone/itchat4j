@@ -72,7 +72,7 @@ public static void sendMsgById(String text, String id)
 
 #### 5.根据好友昵称发送图片消息，MessageTools.sendPicMsgByNickName(String nickName, String filePath)
 
-些方法根据好友昵称发送图片消息，`filePath`为图片文件路径，如`D:/itchat4j/pic/test.jpg`，成功返回true，失败返回false。其函数声明为：
+此方法根据好友昵称发送图片消息，`filePath`为图片文件路径，如`D:/itchat4j/pic/test.jpg`，成功返回true，失败返回false。其函数声明为：
 
 ```
 public static boolean sendPicMsgByNickName(String nickName, String filePath)
@@ -80,10 +80,26 @@ public static boolean sendPicMsgByNickName(String nickName, String filePath)
 
 #### 6.根据ID发送图片消息，MessageTools.sendPicMsgByUserId(String userId, String filePath)
 
-些方法根据好友ID发送图片消息，filePath`为图片文件路径，如`D:/itchat4j/pic/test.jpg`，成功返回true，失败返回false。其函数声明为：
+此方法根据好友ID发送图片消息，filePath`为图片文件路径，如`D:/itchat4j/pic/test.jpg`，成功返回true，失败返回false。其函数声明为：
 
 ```
 public static boolean sendPicMsgByUserId(String userId, String filePath)
+```
+
+#### 7.根据好友昵称发送文件消息，MessageTools.sendFileMsgByNickName(String nickName, String filePath)
+
+此方法根据好友昵称发送文件消息，文件可以为多种类型，如txt、PDF、小视频、语音、excel、docx等，发送时请保证文件后缀名正确。成功返回true，失败返回false。其函数声明为：
+
+```
+public static boolean sendPicFileByNickName(String nickName, String filePath)
+```
+
+#### 8.根据ID发送文件消息，MessageTools.sendFileMsgByNickName(String nickName, String filePath)
+
+此方法根据好友昵称发送文件消息，成功返回true，失败返回false。其函数声明为：
+
+```
+public static boolean sendFileMsgByUserId(String userId, String filePath)
 ```
 
 

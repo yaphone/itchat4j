@@ -291,11 +291,9 @@ public class MessageTools {
 	 * @return
 	 */
 	public static boolean sendPicMsgByNickName(String nickName, String filePath) {
-		if (nickName != null) {
-			String toUserName = WechatTools.getUserNameByNickName(nickName);
-			if (toUserName != null) {
-				return sendPicMsgByUserId(toUserName, filePath);
-			}
+		String toUserName = WechatTools.getUserNameByNickName(nickName);
+		if (toUserName != null) {
+			return sendPicMsgByUserId(toUserName, filePath);
 		}
 		return false;
 	}
@@ -368,7 +366,7 @@ public class MessageTools {
 	 * @param filePath
 	 * @return
 	 */
-	public static boolean sednFileMsgByUserId(String userId, String filePath) {
+	public static boolean sendFileMsgByUserId(String userId, String filePath) {
 		String title = new File(filePath).getName();
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("appid", Constant.API_WXAPPID);
@@ -385,6 +383,23 @@ public class MessageTools {
 			logger.info("sednFileMsgByUserId error");
 		}
 		return webWxSendAppMsg(userId, data);
+	}
+
+	/**
+	 * 根据用户昵称发送文件消息
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月10日 下午10:59:27
+	 * @param nickName
+	 * @param filePath
+	 * @return
+	 */
+	public static boolean sendFileMsgByNickName(String nickName, String filePath) {
+		String toUserName = WechatTools.getUserNameByNickName(nickName);
+		if (toUserName != null) {
+			return sendFileMsgByUserId(toUserName, filePath);
+		}
+		return false;
 	}
 
 	/**
