@@ -102,16 +102,11 @@ public static boolean sendPicFileByNickName(String nickName, String filePath)
 public static boolean sendFileMsgByUserId(String userId, String filePath)
 ```
 
-
-
 ## TODO List 即将支持/正在开发
 
-- 根据用户昵称发送文件消息（PDF、WORD、EXCEL等）
+- 根据userId获取用户的详细信息
+- 获取群成员列表
 
-
-- 根据用户ID发送文件消息（PDF、WORD、EXCEL等）
-
-  ​
 
 ## 如何使用
 
@@ -636,7 +631,7 @@ public class WechatService implements IWechatServiceFace {
 
 [itchat](https://github.com/littlecodersh/ItChat) ：优秀的、基于Python的微信个人号API，同时也是本项目的灵感之源。
 
-
+[WeixinBot](https://github.com/Urinx/WeixinBot): 网页版微信API，包含终端版微信及微信机器人
 
 ## 问题和建议
 
