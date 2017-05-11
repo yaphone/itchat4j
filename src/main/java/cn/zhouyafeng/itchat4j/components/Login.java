@@ -383,29 +383,50 @@ public class Login {
 			public void run() {
 				while (core.isAlive()) {
 					try {
-						String i = syncCheck();
-						if (i == null) {
-							core.setAlive(false);
-						} else if (i.equals("0")) {
+						Map<String, String> resultMap = syncCheck();
+						String retcode = resultMap.get("retcode");
+						String selector = resultMap.get("selector");
+						if (retcode.equals("9999")) {
 							continue;
-						} else {
-							JSONArray msgList = new JSONArray();
-							JSONObject msgObj = getMsg();
-							if (msgObj != null) {
-								msgList = msgObj.getJSONArray("AddMsgList");
-								msgList = MessageTools.produceMsg(msgList);
-								for (int j = 0; j < msgList.size(); j++) {
-									core.getMsgList().add(msgList.getJSONObject(j));
+						} else if (retcode.equals("1100")) { // 退出
+							logger.info("login out");
+							break;
+						} else if (retcode.equals("1101")) { // 其它地方登陆
+							logger.info("login otherwhere");
+							break;
+						} else if (retcode.equals("1102")) { // 移动端退出
+							logger.info("login quit on phone");
+							break;
+						} else if (retcode.equals("0")) {
+							if (selector.equals("2")) {
+								JSONObject msgObj = webWxSync();
+								if (msgObj != null) {
+									try {
+										JSONArray msgList = new JSONArray();
+										msgList = msgObj.getJSONArray("AddMsgList");
+										msgList = MessageTools.produceMsg(msgList);
+										for (int j = 0; j < msgList.size(); j++) {
+											core.getMsgList().add(msgList.getJSONObject(j));
+										}
+									} catch (Exception e) {
+										logger.info(e.getMessage());
+									}
+								} else if (selector.equals("7")) {
+									webWxSync();
+								} else if (selector.equals("4")) {
+									// 保存群聊到通讯录
+									// 修改群名称
+									// 新增或删除联系人
+									// 群聊成员数目变化
+									// TODO
+								} else if (selector.equals("3") || selector.equals("6")) {
+									break;
 								}
-
-								// TODO chatroomMsg =
-								// update_local_chatrooms(self, chatroomList)
-								// TODO self.msgList.put(chatroomMsg)
-								// TODO update_local_friends(self, otherList)
 							}
+						} else {
+							JSONObject obj = webWxSync();
+							logger.info(obj.toJSONString());
 						}
-						retryCount = 0;
-
 					} catch (Exception e) {
 						logger.info(e.getMessage());
 						retryCount += 1;
@@ -426,14 +447,15 @@ public class Login {
 	}
 
 	/**
-	 * 保活心跳
+	 * 检查是否有新消息 check whether there's a message
 	 * 
 	 * @author https://github.com/yaphone
 	 * @date 2017年4月16日 上午11:11:34
 	 * @return
+	 * 
 	 */
-	String syncCheck() {
-		String result = null;
+	private Map<String, String> syncCheck() {
+		Map<String, String> resultMap = new HashMap<String, String>();
 		String syncUrl = (String) core.getLoginInfo().get("syncUrl");
 		// String syncUrl = "https://webpush.wx2.qq.com/cgi-bin/mmwebwx-bin";
 		if (syncUrl == null || syncUrl.equals("")) {
@@ -451,7 +473,9 @@ public class Login {
 		try {
 			HttpEntity entity = myHttpClient.doGet(url, params, true, null);
 			if (entity == null) {
-				return "0";
+				resultMap.put("retcode", "9999");
+				resultMap.put("selector", "9999");
+				return resultMap;
 			}
 			String text = EntityUtils.toString(entity);
 			String regEx = "window.synccheck=\\{retcode:\"(\\d+)\",selector:\"(\\d+)\"\\}";
@@ -459,16 +483,24 @@ public class Login {
 			if (!matcher.find() || matcher.group(1).equals("2")) {
 				logger.info(String.format("Unexpected sync check result: %s", text));
 			} else {
-				result = matcher.group(2);
+				resultMap.put("retcode", matcher.group(1));
+				resultMap.put("selector", matcher.group(2));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return result;
+		return resultMap;
 	}
 
-	JSONObject getMsg() {
-		JSONObject result = new JSONObject();
+	/**
+	 * 同步消息 sync the messages
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月12日 上午12:24:55
+	 * @return
+	 */
+	JSONObject webWxSync() {
+		JSONObject result = null;
 		String url = String.format("%s/webwxsync?sid=%s&skey=%s&pass_ticket=%s", core.getLoginInfo().get("url"),
 				core.getLoginInfo().get("wxsid"), core.getLoginInfo().get("skey"),
 				core.getLoginInfo().get("pass_ticket"));

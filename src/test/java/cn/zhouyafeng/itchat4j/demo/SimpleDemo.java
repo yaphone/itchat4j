@@ -4,6 +4,8 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.log4j.Logger;
+
 import com.alibaba.fastjson.JSONObject;
 
 import cn.zhouyafeng.itchat4j.Wechat;
@@ -20,6 +22,7 @@ import cn.zhouyafeng.itchat4j.utils.MsgType;
  *
  */
 public class SimpleDemo implements IMsgHandlerFace {
+	Logger logger = Logger.getLogger(SimpleDemo.class);
 
 	@Override
 	public String textMsgHandle(JSONObject msg) {
@@ -31,6 +34,8 @@ public class SimpleDemo implements IMsgHandlerFace {
 		// MessageTools.sendFileMsgByNickName("yaphone", pngFilePath);
 		// MessageTools.sendFileMsgByNickName("yaphone", pdfFilePath);
 		// MessageTools.sendFileMsgByNickName("yaphone", txtFilePath);
+		logger.info("info" + msg.toJSONString());
+		logger.debug("info" + msg.toJSONString());
 		String text = msg.getString("Text");
 		return text;
 		// return null;
