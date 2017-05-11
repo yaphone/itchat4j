@@ -34,8 +34,9 @@ public class SimpleDemo implements IMsgHandlerFace {
 		// MessageTools.sendFileMsgByNickName("yaphone", pngFilePath);
 		// MessageTools.sendFileMsgByNickName("yaphone", pdfFilePath);
 		// MessageTools.sendFileMsgByNickName("yaphone", txtFilePath);
-		logger.info("info" + msg.toJSONString());
-		logger.debug("info" + msg.toJSONString());
+		// logger.info("info" + msg.toJSONString());
+		// System.out.println("*************");
+		logger.info("debug" + msg.toJSONString());
 		String text = msg.getString("Text");
 		return text;
 		// return null;
