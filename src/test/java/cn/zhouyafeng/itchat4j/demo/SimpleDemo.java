@@ -7,7 +7,6 @@ import java.util.Date;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.zhouyafeng.itchat4j.Wechat;
-import cn.zhouyafeng.itchat4j.api.MessageTools;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.DownloadTools;
 import cn.zhouyafeng.itchat4j.utils.MsgType;
@@ -24,17 +23,17 @@ public class SimpleDemo implements IMsgHandlerFace {
 
 	@Override
 	public String textMsgHandle(JSONObject msg) {
-		String docFilePath = "D:/itchat4j/pic/test.docx";
-		String pngFilePath = "D:/itchat4j/pic/test.png";
-		String pdfFilePath = "D:/itchat4j/pic/测试.pdf";
-		String txtFilePath = "D:/itchat4j/pic/test.txt";
-		MessageTools.sendFileMsgByNickName("yaphone", docFilePath);
-		MessageTools.sendFileMsgByNickName("yaphone", pngFilePath);
-		MessageTools.sendFileMsgByNickName("yaphone", pdfFilePath);
-		MessageTools.sendFileMsgByNickName("yaphone", txtFilePath);
-		// String text = msg.getString("Text");
-		// return text;
-		return null;
+		// String docFilePath = "D:/itchat4j/pic/test.docx";
+		// String pngFilePath = "D:/itchat4j/pic/test.png";
+		// String pdfFilePath = "D:/itchat4j/pic/测试.pdf";
+		// String txtFilePath = "D:/itchat4j/pic/test.txt";
+		// MessageTools.sendFileMsgByNickName("yaphone", docFilePath);
+		// MessageTools.sendFileMsgByNickName("yaphone", pngFilePath);
+		// MessageTools.sendFileMsgByNickName("yaphone", pdfFilePath);
+		// MessageTools.sendFileMsgByNickName("yaphone", txtFilePath);
+		String text = msg.getString("Text");
+		return text;
+		// return null;
 	}
 
 	@Override
