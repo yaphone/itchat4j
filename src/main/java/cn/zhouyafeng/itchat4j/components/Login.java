@@ -23,18 +23,16 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import cn.zhouyafeng.itchat4j.api.MessageTools;
-import cn.zhouyafeng.itchat4j.tools.CommonTool;
+import cn.zhouyafeng.itchat4j.core.MsgCenter;
 import cn.zhouyafeng.itchat4j.utils.Config;
-import cn.zhouyafeng.itchat4j.utils.Contact;
 import cn.zhouyafeng.itchat4j.utils.Core;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
+import cn.zhouyafeng.itchat4j.utils.tools.CommonTool;
 
 public class Login {
 	private static Logger logger = Logger.getLogger("Wechat");
 	private String baseUrl = Config.BASE_URL;
 	private boolean isLoginIn = false;
-	private Contact contact = new Contact();
 
 	private Core core = Core.getInstance();
 
@@ -96,9 +94,8 @@ public class Login {
 		}
 		this.webInit();
 		this.showMobileLogin();
-		contact.getContact(true);
 		CommonTool.clearScreen();
-		logger.info(String.format("Login successfully as %s", core.getStorageClass().getNickName()));
+		logger.info(String.format("Login successfully as %s", core.getNickName()));
 		startReceiving();
 		webWxGetContact();
 		return 0;
@@ -343,9 +340,9 @@ public class Login {
 			}
 			String synckey = sb.toString();
 			core.getLoginInfo().put("synckey", synckey.substring(0, synckey.length() - 1));// 1_656161336|2_656161626|3_656161313|11_656159955|13_656120033|201_1492273724|1000_1492265953|1001_1492250432|1004_1491805192
-			core.getStorageClass().setUserName((obj.getJSONObject("User")).getString("UserName"));
-			core.getStorageClass().setNickName((obj.getJSONObject("User")).getString("NickName"));
-			core.getUserSelfList().add(obj.getJSONObject("User"));
+			core.setUserName((obj.getJSONObject("User")).getString("UserName"));
+			core.setNickName((obj.getJSONObject("User")).getString("NickName"));
+			core.setUserSelf(obj.getJSONObject("User"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -362,8 +359,8 @@ public class Login {
 				.get("baseRequest");
 		paramMap.put("BaseRequest", baseRequestMap.get("BaseRequest"));
 		paramMap.put("Code", 3);
-		paramMap.put("FromUserName", core.getStorageClass().getUserName());
-		paramMap.put("ToUserName", core.getStorageClass().getUserName());
+		paramMap.put("FromUserName", core.getUserName());
+		paramMap.put("ToUserName", core.getUserName());
 		paramMap.put("ClientMsgId", String.valueOf(new Date().getTime()));
 		String paramStr = JSON.toJSONString(paramMap);
 		try {
@@ -404,7 +401,7 @@ public class Login {
 									try {
 										JSONArray msgList = new JSONArray();
 										msgList = msgObj.getJSONArray("AddMsgList");
-										msgList = MessageTools.produceMsg(msgList);
+										msgList = MsgCenter.produceMsg(msgList);
 										for (int j = 0; j < msgList.size(); j++) {
 											core.getMsgList().add(msgList.getJSONObject(j));
 										}
@@ -575,7 +572,7 @@ public class Login {
 				core.getSpecialUsersList().add(o);
 			} else if (o.getString("UserName").indexOf("@@") != -1) { // 群聊
 				core.getGroupList().add(o);
-			} else if (o.getString("UserName").equals(core.getUserSelfList().get(0).getString("UserName"))) { // 自己
+			} else if (o.getString("UserName").equals(core.getUserSelf().getString("UserName"))) { // 自己
 				core.getContactList().remove(o);
 			} else { // 普通联系人
 				core.getContactList().add(o);

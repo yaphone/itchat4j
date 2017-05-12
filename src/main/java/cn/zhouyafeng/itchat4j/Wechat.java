@@ -47,19 +47,24 @@ public class Wechat {
 							if (msg.getString("Type") != null) {
 								if (msg.getString("Type").equals(MsgType.TEXT)) {
 									String result = msgHandler.textMsgHandle(msg);
-									MessageTools.send(result, core.getMsgList().get(0).getString("FromUserName"), "");
+									MessageTools.sendMsgById(result,
+											core.getMsgList().get(0).getString("FromUserName"));
 								} else if (msg.getString("Type").equals(MsgType.PIC)) {
 									String result = msgHandler.picMsgHandle(msg);
-									MessageTools.send(result, core.getMsgList().get(0).getString("FromUserName"), "");
+									MessageTools.sendMsgById(result,
+											core.getMsgList().get(0).getString("FromUserName"));
 								} else if (msg.getString("Type").equals(MsgType.VOICE)) {
 									String result = msgHandler.voiceMsgHandle(msg);
-									MessageTools.send(result, core.getMsgList().get(0).getString("FromUserName"), "");
+									MessageTools.sendMsgById(result,
+											core.getMsgList().get(0).getString("FromUserName"));
 								} else if (msg.getString("Type").equals(MsgType.VIEDO)) {
 									String result = msgHandler.viedoMsgHandle(msg);
-									MessageTools.send(result, core.getMsgList().get(0).getString("FromUserName"), "");
+									MessageTools.sendMsgById(result,
+											core.getMsgList().get(0).getString("FromUserName"));
 								} else if (msg.getString("Type").equals(MsgType.NAMECARD)) {
 									String result = msgHandler.nameCardMsgHandle(msg);
-									MessageTools.send(result, core.getMsgList().get(0).getString("FromUserName"), "");
+									MessageTools.sendMsgById(result,
+											core.getMsgList().get(0).getString("FromUserName"));
 								}
 							}
 						}

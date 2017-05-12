@@ -33,32 +33,25 @@ public class Core {
 	}
 
 	boolean alive = false;
-	Storage storageClass = Storage.getInstance();
 	private int memberCount = 0;
 
-	private List<JSONObject> userSelfList = storageClass.getUserSelfList();
-	private List<JSONObject> memberList = storageClass.getMemberList();
-	private List<JSONObject> contactList = storageClass.getContactList();
-	private List<JSONObject> groupList = storageClass.getGroupList();
-	private List<JSONObject> groupMemeberList = storageClass.getGroupList();
-	private List<JSONObject> publicUsersList = storageClass.getPublicUsersList();
-	private List<JSONObject> specialUsersList = storageClass.getSpecialUsersList();
-	private List<JSONObject> msgList = storageClass.getMsgList();
+	private String userName;
+	private String nickName;
+	private List<JSONObject> msgList = new ArrayList<JSONObject>();
 
-	private List<String> groupIdList = new ArrayList<String>(); // 群聊，以String格式保存群的userName，如@@37da24fee2114e9475729b942d130190ffddb669411228651da3e8a8933603c8
+	private JSONObject userSelf; // 登陆账号自身信息
+	private List<JSONObject> memberList = new ArrayList<JSONObject>(); // 好友+群聊+公众号+特殊账号
+	private List<JSONObject> contactList = new ArrayList<JSONObject>();;// 好友
+	private List<JSONObject> groupList = new ArrayList<JSONObject>();; // 群
+	private List<JSONObject> groupMemeberList = new ArrayList<JSONObject>();; // 群聊成员字典
+	private List<JSONObject> publicUsersList = new ArrayList<JSONObject>();;// 公众号／服务号
+	private List<JSONObject> specialUsersList = new ArrayList<JSONObject>();;// 特殊账号
+	private List<String> groupIdList = new ArrayList<String>();
 
 	Map<String, Object> loginInfo = new HashMap<String, Object>();
 	// CloseableHttpClient httpClient = HttpClients.createDefault();
 	MyHttpClient myHttpClient = MyHttpClient.getInstance();
 	String uuid = null;
-
-	Map<String, Object> functionDict = new HashMap<String, Object>() {
-		{
-			put("FriendChat", new HashMap<Object, Object>());
-			put("GroupChat", new HashMap<Object, Object>());
-			put("MpChat", new HashMap<Object, Object>());
-		}
-	};
 
 	boolean useHotReload = false;
 	String hotReloadDir = "itchat.pkl";
@@ -70,14 +63,6 @@ public class Core {
 
 	public void setAlive(boolean alive) {
 		this.alive = alive;
-	}
-
-	public Storage getStorageClass() {
-		return storageClass;
-	}
-
-	public void setStorageClass(Storage storageClass) {
-		this.storageClass = storageClass;
 	}
 
 	public List<JSONObject> getMemberList() {
@@ -104,20 +89,12 @@ public class Core {
 		this.uuid = uuid;
 	}
 
-	public Map<String, Object> getFunctionDict() {
-		return functionDict;
-	}
-
 	public int getMemberCount() {
 		return memberCount;
 	}
 
 	public void setMemberCount(int memberCount) {
 		this.memberCount = memberCount;
-	}
-
-	public void setFunctionDict(Map<String, Object> functionDict) {
-		this.functionDict = functionDict;
 	}
 
 	public boolean isUseHotReload() {
@@ -168,14 +145,6 @@ public class Core {
 		this.groupIdList = groupIdList;
 	}
 
-	public List<JSONObject> getUserSelfList() {
-		return userSelfList;
-	}
-
-	public void setUserSelfList(List<JSONObject> userSelfList) {
-		this.userSelfList = userSelfList;
-	}
-
 	public List<JSONObject> getContactList() {
 		return contactList;
 	}
@@ -214,6 +183,30 @@ public class Core {
 
 	public void setSpecialUsersList(List<JSONObject> specialUsersList) {
 		this.specialUsersList = specialUsersList;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getNickName() {
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
+
+	public JSONObject getUserSelf() {
+		return userSelf;
+	}
+
+	public void setUserSelf(JSONObject userSelf) {
+		this.userSelf = userSelf;
 	}
 
 }

@@ -1,4 +1,4 @@
-package cn.zhouyafeng.itchat4j.tools;
+package cn.zhouyafeng.itchat4j.utils.tools;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.vdurmont.emoji.EmojiParser;
 
 import cn.zhouyafeng.itchat4j.utils.Config;
-import cn.zhouyafeng.itchat4j.utils.OsName;
+import cn.zhouyafeng.itchat4j.utils.enums.OsNameEnum;
 
 /**
  * 常用工具类
@@ -35,9 +35,9 @@ public class CommonTool {
 
 	public static boolean printQr(String qrPath) {
 
-		switch (Config.getOsName()) {
+		switch (Config.getOsNameEnum()) {
 		case WINDOWS:
-			if (Config.getOsName().equals(OsName.WINDOWS)) {
+			if (Config.getOsNameEnum().equals(OsNameEnum.WINDOWS)) {
 				Runtime runtime = Runtime.getRuntime();
 				try {
 					runtime.exec("cmd /c start " + qrPath);
@@ -47,7 +47,7 @@ public class CommonTool {
 			}
 			break;
 		case MAC:
-			if (Config.getOsName().equals(OsName.MAC)) {
+			if (Config.getOsNameEnum().equals(OsNameEnum.MAC)) {
 				Runtime runtime = Runtime.getRuntime();
 				try {
 					runtime.exec("open " + qrPath);
@@ -64,9 +64,9 @@ public class CommonTool {
 	}
 
 	public static boolean clearScreen() {
-		switch (Config.getOsName()) {
+		switch (Config.getOsNameEnum()) {
 		case WINDOWS:
-			if (Config.getOsName().equals(OsName.WINDOWS)) {
+			if (Config.getOsNameEnum().equals(OsNameEnum.WINDOWS)) {
 				Runtime runtime = Runtime.getRuntime();
 				try {
 					runtime.exec("cmd /c " + "cls");

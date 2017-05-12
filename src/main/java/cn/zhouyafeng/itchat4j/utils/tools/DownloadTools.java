@@ -1,4 +1,4 @@
-package cn.zhouyafeng.itchat4j.tools;
+package cn.zhouyafeng.itchat4j.utils.tools;
 
 import java.io.FileOutputStream;
 import java.io.OutputStream;
