@@ -6,8 +6,9 @@ import java.util.logging.Logger;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.zhouyafeng.itchat4j.api.MessageTools;
-import cn.zhouyafeng.itchat4j.components.Login;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
+import cn.zhouyafeng.itchat4j.service.ILoginService;
+import cn.zhouyafeng.itchat4j.service.impl.LoginServiceImpl;
 import cn.zhouyafeng.itchat4j.utils.Core;
 import cn.zhouyafeng.itchat4j.utils.MsgType;
 
@@ -29,7 +30,8 @@ public class Wechat {
 		System.setProperty("jsse.enableSNIExtension", "false"); // 防止SSL错误
 
 		this.msgHandler = msgHandler;
-		Login login = new Login();
+		// Login login = new Login();
+		ILoginService login = new LoginServiceImpl();
 		login.login(qrPath);
 
 	};
