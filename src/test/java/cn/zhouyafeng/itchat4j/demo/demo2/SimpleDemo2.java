@@ -13,7 +13,7 @@ import cn.zhouyafeng.itchat4j.Wechat2;
 import cn.zhouyafeng.itchat4j.api.MessageTools;
 import cn.zhouyafeng.itchat4j.api.WechatTools;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
-import cn.zhouyafeng.itchat4j.utils.MsgType;
+import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
 import cn.zhouyafeng.itchat4j.utils.tools.DownloadTools;
 
 /**
@@ -54,7 +54,7 @@ public class SimpleDemo2 implements IMsgHandlerFace {
 	public String picMsgHandle(JSONObject msg) {
 		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
 		String picPath = "D://itchat4j/pic" + File.separator + fileName + ".jpg";
-		DownloadTools.getDownloadFn(msg, MsgType.PIC, picPath);
+		DownloadTools.getDownloadFn(msg, MsgTypeEnum.PIC.getType(), picPath);
 		return "图片保存成功";
 	}
 
@@ -62,7 +62,7 @@ public class SimpleDemo2 implements IMsgHandlerFace {
 	public String voiceMsgHandle(JSONObject msg) {
 		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
 		String voicePath = "D://itchat4j/voice" + File.separator + fileName + ".mp3";
-		DownloadTools.getDownloadFn(msg, MsgType.VOICE, voicePath);
+		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VOICE.getType(), voicePath);
 		return "声音保存成功";
 	}
 
@@ -71,7 +71,7 @@ public class SimpleDemo2 implements IMsgHandlerFace {
 		System.out.println(msg);
 		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
 		String viedoPath = "D://itchat4j/viedo" + File.separator + fileName + ".mp4";
-		DownloadTools.getDownloadFn(msg, MsgType.VIEDO, viedoPath);
+		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VIEDO.getType(), viedoPath);
 		return "视频保存成功";
 	}
 

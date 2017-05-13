@@ -10,7 +10,7 @@ import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.service.ILoginService;
 import cn.zhouyafeng.itchat4j.service.impl.LoginServiceImpl;
 import cn.zhouyafeng.itchat4j.utils.Core;
-import cn.zhouyafeng.itchat4j.utils.MsgType;
+import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
 
 /**
  * 主类，初始化工作
@@ -46,23 +46,23 @@ public class Wechat {
 						if (core.getMsgList().get(0).getString("Content").length() > 0) {
 							JSONObject msg = core.getMsgList().get(0);
 							if (msg.getString("Type") != null) {
-								if (msg.getString("Type").equals(MsgType.TEXT)) {
+								if (msg.getString("Type").equals(MsgTypeEnum.TEXT.getType())) {
 									String result = msgHandler.textMsgHandle(msg);
 									MessageTools.sendMsgById(result,
 											core.getMsgList().get(0).getString("FromUserName"));
-								} else if (msg.getString("Type").equals(MsgType.PIC)) {
+								} else if (msg.getString("Type").equals(MsgTypeEnum.PIC.getType())) {
 									String result = msgHandler.picMsgHandle(msg);
 									MessageTools.sendMsgById(result,
 											core.getMsgList().get(0).getString("FromUserName"));
-								} else if (msg.getString("Type").equals(MsgType.VOICE)) {
+								} else if (msg.getString("Type").equals(MsgTypeEnum.VOICE.getType())) {
 									String result = msgHandler.voiceMsgHandle(msg);
 									MessageTools.sendMsgById(result,
 											core.getMsgList().get(0).getString("FromUserName"));
-								} else if (msg.getString("Type").equals(MsgType.VIEDO)) {
+								} else if (msg.getString("Type").equals(MsgTypeEnum.VIEDO.getType())) {
 									String result = msgHandler.viedoMsgHandle(msg);
 									MessageTools.sendMsgById(result,
 											core.getMsgList().get(0).getString("FromUserName"));
-								} else if (msg.getString("Type").equals(MsgType.NAMECARD)) {
+								} else if (msg.getString("Type").equals(MsgTypeEnum.NAMECARD.getType())) {
 									String result = msgHandler.nameCardMsgHandle(msg);
 									MessageTools.sendMsgById(result,
 											core.getMsgList().get(0).getString("FromUserName"));

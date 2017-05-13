@@ -29,15 +29,4 @@ public class MsgType {
 	public static final int MSGTYPE_SYS = 10000;
 	public static final int MSGTYPE_RECALLED = 10002;
 
-	// 文本信息
-	public static String TEXT = "Text";
-	// 图片信息
-	public static String PIC = "Pic";
-	// 语音信息
-	public static String VOICE = "Voice";
-	// 小视频消息
-	public static String VIEDO = "Video";
-	// name card 明片消息
-	public static String NAMECARD = "NameCard";
-
 }

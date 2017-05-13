@@ -13,6 +13,7 @@ import cn.zhouyafeng.itchat4j.api.MessageTools;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.Core;
 import cn.zhouyafeng.itchat4j.utils.MsgType;
+import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
 import cn.zhouyafeng.itchat4j.utils.tools.CommonTool;
 
 public class MsgCenter {
@@ -64,24 +65,24 @@ public class MsgCenter {
 					msg.put("Type", "Map");
 					msg.put("Text", data);
 				} else {
-					msg.put("Type", MsgType.TEXT);
+					msg.put("Type", MsgTypeEnum.TEXT);
 					msg.put("Text", m.getString("Content"));
 				}
 				m.put("Type", msg.getString("Type"));
 				m.put("Text", msg.getString("Text"));
 			} else if (m.getInteger("MsgType") == MsgType.MSGTYPE_IMAGE
 					|| m.getInteger("MsgType") == MsgType.MSGTYPE_EMOTICON) { // 图片消息
-				m.put("Type", MsgType.PIC);
+				m.put("Type", MsgTypeEnum.PIC.getType());
 			} else if (m.getInteger("MsgType") == MsgType.MSGTYPE_VOICE) { // 语音消息
-				m.put("Type", MsgType.VOICE);
+				m.put("Type", MsgTypeEnum.VOICE.getType());
 			} else if (m.getInteger("MsgType") == 37) {// friends 好友确认消息
 
 			} else if (m.getInteger("MsgType") == 42) { // 共享名片
-				m.put("Type", MsgType.NAMECARD);
+				m.put("Type", MsgTypeEnum.NAMECARD.getType());
 
 			} else if (m.getInteger("MsgType") == MsgType.MSGTYPE_VIDEO
 					|| m.getInteger("MsgType") == MsgType.MSGTYPE_MICROVIDEO) {// viedo
-				m.put("Type", MsgType.VIEDO);
+				m.put("Type", MsgTypeEnum.VIEDO.getType());
 			} else if (m.getInteger("MsgType") == 49) { // sharing 分享链接
 
 			} else if (m.getInteger("MsgType") == 51) {// phone init 微信初始化消息
@@ -105,19 +106,19 @@ public class MsgCenter {
 				if (core.getMsgList().get(0).getString("Content").length() > 0) {
 					JSONObject msg = core.getMsgList().get(0);
 					if (msg.getString("Type") != null) {
-						if (msg.getString("Type").equals(MsgType.TEXT)) {
+						if (msg.getString("Type").equals(MsgTypeEnum.TEXT.getType())) {
 							String result = msgHandler.textMsgHandle(msg);
 							MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
-						} else if (msg.getString("Type").equals(MsgType.PIC)) {
+						} else if (msg.getString("Type").equals(MsgTypeEnum.PIC.getType())) {
 							String result = msgHandler.picMsgHandle(msg);
 							MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
-						} else if (msg.getString("Type").equals(MsgType.VOICE)) {
+						} else if (msg.getString("Type").equals(MsgTypeEnum.VOICE.getType())) {
 							String result = msgHandler.voiceMsgHandle(msg);
 							MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
-						} else if (msg.getString("Type").equals(MsgType.VIEDO)) {
+						} else if (msg.getString("Type").equals(MsgTypeEnum.VIEDO.getType())) {
 							String result = msgHandler.viedoMsgHandle(msg);
 							MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
-						} else if (msg.getString("Type").equals(MsgType.NAMECARD)) {
+						} else if (msg.getString("Type").equals(MsgTypeEnum.NAMECARD.getType())) {
 							String result = msgHandler.nameCardMsgHandle(msg);
 							MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
 						}

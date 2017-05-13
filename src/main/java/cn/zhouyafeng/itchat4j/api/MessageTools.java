@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 import javax.activation.MimetypesFileTypeMap;
 
+import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
@@ -22,6 +23,7 @@ import com.alibaba.fastjson.JSONObject;
 import cn.zhouyafeng.itchat4j.utils.Config;
 import cn.zhouyafeng.itchat4j.utils.Core;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
+import cn.zhouyafeng.itchat4j.utils.enums.URLEnum;
 
 /**
  * 消息处理类
@@ -46,7 +48,7 @@ public class MessageTools {
 	 */
 	private static void sendMsg(String text, String toUserName) {
 		logger.info(String.format("Request to send a text message to %s: %s", toUserName, text));
-		sendRawMsg(1, text, toUserName);
+		webWxSendMsg(1, text, toUserName);
 	}
 
 	/**
@@ -73,7 +75,7 @@ public class MessageTools {
 		if (nickName != null) {
 			String toUserName = WechatTools.getUserNameByNickName(nickName);
 			if (toUserName != null) {
-				sendRawMsg(1, text, toUserName);
+				webWxSendMsg(1, text, toUserName);
 				return true;
 			}
 		}
@@ -90,14 +92,8 @@ public class MessageTools {
 	 * @param content
 	 * @param toUserName
 	 */
-	public static void sendRawMsg(int msgType, String content, String toUserName) {
-		String url = String.format("%s/webwxsendmsg", core.getLoginInfo().get("url"));
-
-		Map<String, Object> paramMap = new HashMap<String, Object>();
-		@SuppressWarnings("unchecked")
-		Map<String, Map<String, String>> baseRequestMap = (Map<String, Map<String, String>>) core.getLoginInfo()
-				.get("baseRequest");
-		paramMap.put("BaseRequest", baseRequestMap.get("BaseRequest"));
+	public static void webWxSendMsg(int msgType, String content, String toUserName) {
+		String url = String.format(URLEnum.WEB_WX_SEND_MSG.getUrl(), core.getLoginInfo().get("url"));
 		Map<String, Object> msgMap = new HashMap<String, Object>();
 		msgMap.put("Type", msgType);
 		msgMap.put("Content", content);
@@ -105,12 +101,13 @@ public class MessageTools {
 		msgMap.put("ToUserName", toUserName == null ? core.getUserName() : toUserName);
 		msgMap.put("LocalID", new Date().getTime() * 10);
 		msgMap.put("ClientMsgId", new Date().getTime() * 10);
+		Map<String, Object> paramMap = core.getParamMap();
 		paramMap.put("Msg", msgMap);
 		paramMap.put("Scene", 0);
 		try {
 			String paramStr = JSON.toJSONString(paramMap);
 			HttpEntity entity = myHttpClient.doPost(url, paramStr);
-			EntityUtils.toString(entity, "UTF-8");
+			EntityUtils.toString(entity, Consts.UTF_8);
 		} catch (Exception e) {
 			logger.info(e.getMessage());
 		}
@@ -133,13 +130,13 @@ public class MessageTools {
 	 * @param filePath
 	 * @return
 	 */
-	private static JSONObject uploadMediaToServer(String filePath) {
+	private static JSONObject webWxUploadMedia(String filePath) {
 		File f = new File(filePath);
 		if (!f.exists() && f.isFile()) {
 			logger.info("file is not exist");
 			return null;
 		}
-		String url = (String) core.getLoginInfo().get("fileUrl") + "/webwxuploadmedia?f=json";
+		String url = String.format(URLEnum.WEB_WX_UPLOAD_MEDIA.getUrl(), core.getLoginInfo().get("fileUrl"));
 		String mimeType = new MimetypesFileTypeMap().getContentType(f);
 		String mediaType = "";
 		if (mimeType == null) {
@@ -158,11 +155,8 @@ public class MessageTools {
 			return null;
 		}
 
-		Map<String, Object> paramMap = new HashMap<String, Object>();
-		@SuppressWarnings("unchecked")
-		Map<String, Map<String, String>> baseRequestMap = (Map<String, Map<String, String>>) core.getLoginInfo()
-				.get("baseRequest");
-		paramMap.put("BaseRequest", baseRequestMap.get("BaseRequest"));
+		Map<String, Object> paramMap = core.getParamMap();
+
 		paramMap.put("ClientMediaId", clientMediaId);
 		paramMap.put("TotalLen", fileSize);
 		paramMap.put("StartPos", 0);
@@ -186,7 +180,7 @@ public class MessageTools {
 		HttpEntity entity = myHttpClient.doPostFile(url, reqEntity);
 		if (entity != null) {
 			try {
-				String result = EntityUtils.toString(entity, "UTF-8");
+				String result = EntityUtils.toString(entity, Consts.UTF_8);
 				return JSON.parseObject(result);
 			} catch (Exception e) {
 				logger.info(e.getMessage());
@@ -222,7 +216,7 @@ public class MessageTools {
 	 * @return
 	 */
 	public static boolean sendPicMsgByUserId(String userId, String filePath) {
-		JSONObject responseObj = uploadMediaToServer(filePath);
+		JSONObject responseObj = webWxUploadMedia(filePath);
 		if (responseObj != null) {
 			String mediaId = responseObj.getString("MediaId");
 			if (mediaId != null) {
@@ -261,7 +255,7 @@ public class MessageTools {
 		HttpEntity entity = myHttpClient.doPost(url, paramStr);
 		if (entity != null) {
 			try {
-				String result = EntityUtils.toString(entity, "UTF-8");
+				String result = EntityUtils.toString(entity, Consts.UTF_8);
 				return JSON.parseObject(result).getJSONObject("BaseResponse").getInteger("Ret") == 0;
 			} catch (Exception e) {
 				logger.info(e.getMessage());
@@ -289,7 +283,7 @@ public class MessageTools {
 		data.put("attachid", "");
 		data.put("type", "6"); // APPMSGTYPE_ATTACH
 		data.put("fileext", title.split("\\.")[1]); // 文件后缀
-		JSONObject responseObj = uploadMediaToServer(filePath);
+		JSONObject responseObj = webWxUploadMedia(filePath);
 		if (responseObj != null) {
 			data.put("totallen", responseObj.getString("StartPos"));
 			data.put("attachid", responseObj.getString("MediaId"));
@@ -341,18 +335,23 @@ public class MessageTools {
 		msgMap.put("ToUserName", userId);
 		msgMap.put("LocalID", clientMsgId);
 		msgMap.put("ClientMsgId", clientMsgId);
-		Map<String, Object> paramMap = new HashMap<String, Object>();
-		@SuppressWarnings("unchecked")
-		Map<String, Map<String, String>> baseRequestMap = (Map<String, Map<String, String>>) core.getLoginInfo()
-				.get("baseRequest");
-		paramMap.put("BaseRequest", baseRequestMap.get("BaseRequest"));
+		/*
+		 * Map<String, Object> paramMap = new HashMap<String, Object>();
+		 * 
+		 * @SuppressWarnings("unchecked") Map<String, Map<String, String>>
+		 * baseRequestMap = (Map<String, Map<String, String>>)
+		 * core.getLoginInfo() .get("baseRequest"); paramMap.put("BaseRequest",
+		 * baseRequestMap.get("BaseRequest"));
+		 */
+
+		Map<String, Object> paramMap = core.getParamMap();
 		paramMap.put("Msg", msgMap);
 		paramMap.put("Scene", 0);
 		String paramStr = JSON.toJSONString(paramMap);
 		HttpEntity entity = myHttpClient.doPost(url, paramStr);
 		if (entity != null) {
 			try {
-				String result = EntityUtils.toString(entity, "UTF-8");
+				String result = EntityUtils.toString(entity, Consts.UTF_8);
 				return JSON.parseObject(result).getJSONObject("BaseResponse").getInteger("Ret") == 0;
 			} catch (Exception e) {
 				logger.info(e.getMessage());

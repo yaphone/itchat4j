@@ -15,8 +15,9 @@ import org.apache.http.util.EntityUtils;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.zhouyafeng.itchat4j.utils.Core;
-import cn.zhouyafeng.itchat4j.utils.MsgType;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
+import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
+import cn.zhouyafeng.itchat4j.utils.enums.URLEnum;
 
 /**
  * 下载工具类
@@ -45,13 +46,13 @@ public class DownloadTools {
 		Map<String, String> headerMap = new HashMap<String, String>();
 		List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
 		String url = "";
-		if (type.equals(MsgType.PIC)) {
-			url = String.format("%s/webwxgetmsgimg", (String) core.getLoginInfo().get("url"));
-		} else if (type.equals(MsgType.VOICE)) {
-			url = String.format("%s/webwxgetvoice", (String) core.getLoginInfo().get("url"));
-		} else if (type.equals(MsgType.VIEDO)) {
+		if (type.equals(MsgTypeEnum.PIC.getType())) {
+			url = String.format(URLEnum.WEB_WX_GET_MSG_IMG.getUrl(), core.getLoginInfo().get("url"));
+		} else if (type.equals(MsgTypeEnum.VOICE.getType())) {
+			url = String.format(URLEnum.WEB_WX_GET_VOICE.getUrl(), core.getLoginInfo().get("url"));
+		} else if (type.equals(MsgTypeEnum.VIEDO.getType())) {
 			headerMap.put("Range", "bytes=0-");
-			url = String.format("%s/webwxgetvideo", (String) core.getLoginInfo().get("url"));
+			url = String.format(URLEnum.WEB_WX_GET_VIEDO.getUrl(), core.getLoginInfo().get("url"));
 		}
 		params.add(new BasicNameValuePair("msgid", msg.getString("NewMsgId")));
 		params.add(new BasicNameValuePair("skey", (String) core.getLoginInfo().get("skey")));
