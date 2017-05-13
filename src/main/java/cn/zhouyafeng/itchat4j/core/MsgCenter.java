@@ -1,5 +1,6 @@
 package cn.zhouyafeng.itchat4j.core;
 
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 
 import org.slf4j.Logger;
@@ -8,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.zhouyafeng.itchat4j.api.MessageTools;
+import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.Core;
 import cn.zhouyafeng.itchat4j.utils.MsgType;
 import cn.zhouyafeng.itchat4j.utils.tools.CommonTool;
@@ -93,6 +96,41 @@ public class MsgCenter {
 			result.add(m);
 		}
 		return result;
+	}
+
+	public static void handleMsg(IMsgHandlerFace msgHandler) {
+		while (true) {
+			if (core.getMsgList().size() > 0 && core.getMsgList().get(0).getString("Content") != null) {
+				// System.out.println(core.getMsgList().get(0));
+				if (core.getMsgList().get(0).getString("Content").length() > 0) {
+					JSONObject msg = core.getMsgList().get(0);
+					if (msg.getString("Type") != null) {
+						if (msg.getString("Type").equals(MsgType.TEXT)) {
+							String result = msgHandler.textMsgHandle(msg);
+							MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+						} else if (msg.getString("Type").equals(MsgType.PIC)) {
+							String result = msgHandler.picMsgHandle(msg);
+							MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+						} else if (msg.getString("Type").equals(MsgType.VOICE)) {
+							String result = msgHandler.voiceMsgHandle(msg);
+							MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+						} else if (msg.getString("Type").equals(MsgType.VIEDO)) {
+							String result = msgHandler.viedoMsgHandle(msg);
+							MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+						} else if (msg.getString("Type").equals(MsgType.NAMECARD)) {
+							String result = msgHandler.nameCardMsgHandle(msg);
+							MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+						}
+					}
+				}
+				core.getMsgList().remove(0);
+			}
+			try {
+				TimeUnit.MILLISECONDS.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 }

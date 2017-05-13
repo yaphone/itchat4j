@@ -32,8 +32,7 @@ public class Wechat {
 		this.msgHandler = msgHandler;
 		// Login login = new Login();
 		ILoginService login = new LoginServiceImpl();
-		login.login(qrPath);
-
+		login.login();
 	};
 
 	public void start() {

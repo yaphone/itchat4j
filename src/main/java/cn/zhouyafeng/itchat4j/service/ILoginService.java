@@ -17,7 +17,7 @@ public interface ILoginService {
 	 * @date 2017年5月13日 上午12:14:07
 	 * @return
 	 */
-	boolean login(String qrPath);
+	boolean login();
 
 	/**
 	 * 获取UUID
@@ -63,5 +63,13 @@ public interface ILoginService {
 	 * @date 2017年5月13日 上午12:14:37
 	 */
 	void startReceiving();
+
+	/**
+	 * 获取微信联系人
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月13日 下午2:26:18
+	 */
+	void webWxGetContact();
 
 }

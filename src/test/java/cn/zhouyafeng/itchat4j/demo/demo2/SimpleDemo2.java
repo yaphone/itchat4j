@@ -1,44 +1,52 @@
-package cn.zhouyafeng.itchat4j.demo;
+package cn.zhouyafeng.itchat4j.demo.demo2;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
 
-import cn.zhouyafeng.itchat4j.Wechat;
+import cn.zhouyafeng.itchat4j.Wechat2;
+import cn.zhouyafeng.itchat4j.api.MessageTools;
+import cn.zhouyafeng.itchat4j.api.WechatTools;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.MsgType;
 import cn.zhouyafeng.itchat4j.utils.tools.DownloadTools;
 
 /**
- * 简单示例程序，收到文本信息自动回复原信息，收到图片、语音、小视频后根据路径自动保存
  * 
  * @author https://github.com/yaphone
- * @date 创建时间：2017年4月25日 上午12:18:09
+ * @date 创建时间：2017年5月13日 下午2:44:58
  * @version 1.0
  *
  */
-public class SimpleDemo implements IMsgHandlerFace {
-	Logger LOG = Logger.getLogger(SimpleDemo.class);
+public class SimpleDemo2 implements IMsgHandlerFace {
+
+	private static final Logger LOG = LoggerFactory.getLogger(SimpleDemo2.class);
 
 	@Override
 	public String textMsgHandle(JSONObject msg) {
-		// String docFilePath = "D:/itchat4j/pic/test.docx";
+		String docFilePath = "D:/itchat4j/pic/test.docx";
 		// String pngFilePath = "D:/itchat4j/pic/test.png";
 		// String pdfFilePath = "D:/itchat4j/pic/测试.pdf";
 		// String txtFilePath = "D:/itchat4j/pic/test.txt";
-		// MessageTools.sendFileMsgByNickName("yaphone", docFilePath);
+		MessageTools.sendFileMsgByUserId(msg.getString("FromUserName"), docFilePath);
 		// MessageTools.sendFileMsgByNickName("yaphone", pngFilePath);
 		// MessageTools.sendFileMsgByNickName("yaphone", pdfFilePath);
 		// MessageTools.sendFileMsgByNickName("yaphone", txtFilePath);
 		// logger.info("info" + msg.toJSONString());
 		// System.out.println("*************");
-		LOG.info("debug" + msg.toJSONString());
-		String text = msg.getString("Text");
-		return text;
+		if (!msg.getBoolean("groupMsg")) {
+			// MessageTools.sendFileMsgByUserId(msg.getString("FromUserName"),
+			// docFilePath);
+			LOG.info("联系人总数: " + WechatTools.getContactList().size());
+			String text = msg.getString("Text");
+			return text;
+		}
+		return null;
 		// return null;
 	}
 
@@ -73,9 +81,8 @@ public class SimpleDemo implements IMsgHandlerFace {
 	}
 
 	public static void main(String[] args) {
-		IMsgHandlerFace msgHandler = new SimpleDemo();
-		Wechat wechat = new Wechat(msgHandler, "D://itchat4j/login");
+		IMsgHandlerFace msgHandler = new SimpleDemo2();
+		Wechat2 wechat = new Wechat2(msgHandler, "D://itchat4j/login");
 		wechat.start();
 	}
-
 }

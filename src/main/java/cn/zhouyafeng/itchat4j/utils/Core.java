@@ -7,6 +7,8 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 
+import cn.zhouyafeng.itchat4j.utils.enums.parameters.BaseParaEnum;
+
 /**
  * 核心存储类，全局只保存一份，单例模式
  * 
@@ -56,6 +58,21 @@ public class Core {
 	boolean useHotReload = false;
 	String hotReloadDir = "itchat.pkl";
 	int receivingRetryCount = 5;
+
+	/**
+	 * 请求参数
+	 */
+	public Map<String, Object> getParamMap() {
+		return new HashMap<String, Object>(1) {
+			{
+				Map<String, String> map = new HashMap<String, String>();
+				for (BaseParaEnum baseRequest : BaseParaEnum.values()) {
+					map.put(baseRequest.para(), getLoginInfo().get(baseRequest.value()).toString());
+				}
+				put("BaseRequest", map);
+			}
+		};
+	}
 
 	public boolean isAlive() {
 		return alive;
