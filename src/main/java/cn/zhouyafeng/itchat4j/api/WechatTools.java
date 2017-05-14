@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 
-import cn.zhouyafeng.itchat4j.utils.Core;
+import cn.zhouyafeng.itchat4j.core.Core;
 
 /**
  * 微信小工具，如获好友列表等
@@ -28,18 +28,7 @@ public class WechatTools {
 	 * @param toUserName
 	 */
 	public static void sendMsgByUserName(String msg, String toUserName) {
-		MessageTools.sendMsg(msg, toUserName);
-	}
-
-	/**
-	 * 获取好友列表，JSONObject格式
-	 * 
-	 * @author https://github.com/yaphone
-	 * @date 2017年5月4日 下午10:55:18
-	 * @return
-	 */
-	private static List<JSONObject> getJsonContactList() {
-		return core.getContactList();
+		MessageTools.sendMsgById(msg, toUserName);
 	}
 
 	/**

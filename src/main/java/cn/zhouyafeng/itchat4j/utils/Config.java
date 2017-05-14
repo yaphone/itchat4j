@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import cn.zhouyafeng.itchat4j.utils.enums.OsNameEnum;
+
 /**
  * 配置信息
  * 
@@ -14,6 +16,9 @@ import java.util.Arrays;
  *
  */
 public class Config {
+
+	public static final String API_WXAPPID = "API_WXAPPID";
+
 	public static final String picDir = "D://itchat4j";
 	public static final String VERSION = "1.2.18";
 	public static final String BASE_URL = "https://login.weixin.qq.com";
@@ -52,18 +57,18 @@ public class Config {
 	 * @author https://github.com/yaphone
 	 * @date 2017年4月8日 下午10:27:53
 	 */
-	public static OsName getOsName() {
+	public static OsNameEnum getOsNameEnum() {
 		String os = System.getProperty("os.name").toUpperCase();
-		if (os.indexOf(OsName.DARWIN.toString()) >= 0) {
-			return OsName.DARWIN;
-		} else if (os.indexOf(OsName.WINDOWS.toString()) >= 0) {
-			return OsName.WINDOWS;
-		} else if (os.indexOf(OsName.LINUX.toString()) >= 0) {
-			return OsName.LINUX;
-		} else if (os.indexOf(OsName.MAC.toString()) >= 0) {
-			return OsName.MAC;
+		if (os.indexOf(OsNameEnum.DARWIN.toString()) >= 0) {
+			return OsNameEnum.DARWIN;
+		} else if (os.indexOf(OsNameEnum.WINDOWS.toString()) >= 0) {
+			return OsNameEnum.WINDOWS;
+		} else if (os.indexOf(OsNameEnum.LINUX.toString()) >= 0) {
+			return OsNameEnum.LINUX;
+		} else if (os.indexOf(OsNameEnum.MAC.toString()) >= 0) {
+			return OsNameEnum.MAC;
 		}
-		return OsName.OTHER;
+		return OsNameEnum.OTHER;
 	}
 
 }

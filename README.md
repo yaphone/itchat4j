@@ -128,7 +128,7 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
 
 ## 消息格式
 
-这里简要介绍一下`msg`各种消息，msg均为`json`格式的数据，可使用各自工具进行解析，在itchat4j中我通过alibaba的`fastjosn`工具库进行了解析，每种`msg`均为`fastjson`的标准`JSONObject`对象，后续处理起来非常方便，例如获取文本消息的消息内容：`msg.getString("Text")`，获取名片消息的被推荐人昵称：`msg.getJSONObject("RecommendInfo").getString("NickName")`。有时候可能不需要处理群消息，因此在构造`msg`消息体里我添加了一个判断是否群消息的字段`groupMsg`，可通过`msg.getBooleanValue("groupMsg")`获取字段的值，如果是群消息，返回true，如果非群消息，返回false。
+这里简要介绍一下`msg`各种消息，msg均为`json`格式的数据，可使用各自工具进行解析，在itchat4j中我通过alibaba的`fastjosn`工具库进行了解析，每种`msg`均为`fastjson`的标准`JSONObject`对象，后续处理起来非常方便，例如获取文本消息的消息内容：`msg.getString("Text")`，获取名片消息的被推荐人昵称：`msg.getJSONObject("RecommendInfo").getString("NickName")`。有时候可能不需要处理群消息，因此在构造`msg`消息体里我添加了一个判断是否群消息的字段`groupMsg`，可通过`msg.getBoolean("groupMsg")`获取字段的值，如果是群消息，返回true，如果非群消息，返回false。
 
 ### 1.文本消息
 
@@ -458,41 +458,53 @@ public class MsgHandler implements IMsgHandlerFace {
  * 简单示例程序，收到文本信息自动回复原信息，收到图片、语音、小视频后根据路径自动保存
  * 
  * @author https://github.com/yaphone
- * @date 创建时间：2017年4月28日 下午10:50:36
+ * @date 创建时间：2017年4月25日 上午12:18:09
  * @version 1.0
  *
  */
 public class SimpleDemo implements IMsgHandlerFace {
+	Logger LOG = Logger.getLogger(SimpleDemo.class);
 
 	@Override
 	public String textMsgHandle(JSONObject msg) {
-		String text = msg.getString("Text");
-		return text;
+		String docFilePath = "D:/itchat4j/pic/test.docx"; // 这里是需要发送的文件的路径
+		if (!msg.getBoolean("groupMsg")) { // 群消息不处理
+			String userId = msg.getString("FromUserName");
+			MessageTools.sendFileMsgByUserId(userId, docFilePath); // 发送文件
+			String text = msg.getString("Text"); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
+			return text;
+		}
+		return null;
 	}
 
 	@Override
 	public String picMsgHandle(JSONObject msg) {
-		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()) + ".jpg"; // 这里使用收到图片的时间作为文件名
-		String picPath = "D://itchat4j/pic" + File.separator + fileName; // 保存图片的路径
-		DownloadTools.getDownloadFn(msg, MsgType.PIC, picPath); // 调用此方法来保存图片
+		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());// 这里使用收到图片的时间作为文件名
+		String picPath = "D://itchat4j/pic" + File.separator + fileName + ".jpg"; // 调用此方法来保存图片
+		DownloadTools.getDownloadFn(msg, MsgTypeEnum.PIC.getType(), picPath); // 保存图片的路径
 		return "图片保存成功";
 	}
 
 	@Override
 	public String voiceMsgHandle(JSONObject msg) {
-		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()) + ".mp3"; // 这里使用收到语音的时间作为文件名
-		String voicePath = "D://itchat4j/voice" + File.separator + fileName; // 保存语音的路径
-		DownloadTools.getDownloadFn(msg, MsgType.VOICE, voicePath); // 调用此方法来保存语音
+		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+		String voicePath = "D://itchat4j/voice" + File.separator + fileName + ".mp3";
+		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VOICE.getType(), voicePath);
 		return "声音保存成功";
 	}
 
 	@Override
 	public String viedoMsgHandle(JSONObject msg) {
 		System.out.println(msg);
-		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()) + ".mp4"; // 这里使用收到小视频的时间作为文件名
-		String viedoPath = "D://itchat4j/viedo" + File.separator + fileName;// 保存小视频的路径
-		DownloadTools.getDownloadFn(msg, MsgType.VIEDO, viedoPath);// 调用此方法来保存小视频
+		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+		String viedoPath = "D://itchat4j/viedo" + File.separator + fileName + ".mp4";
+		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VIEDO.getType(), viedoPath);
 		return "视频保存成功";
+	}
+
+	@Override
+	public String nameCardMsgHandle(JSONObject msg) {
+		return "收到名片消息";
 	}
 
 }
@@ -510,7 +522,7 @@ public class SimpleDemo implements IMsgHandlerFace {
  * @version 1.0
  *
  */
-public class Mytest {
+public class MyTest {
 	public static void main(String[] args) {
 		String qrPath = "D://itchat4j//login"; // 保存登陆二维码图片的路径
 		IMsgHandlerFace msgHandler = new SimpleDemo(); // 实现IMsgHandlerFace接口的类
@@ -518,6 +530,7 @@ public class Mytest {
 		wechat.start(); // 启动服务，会在qrPath下生成一张二维码图片，扫描即可登陆，注意，二维码图片如果超过一定时间未扫描会过期，过期时会自动更新，所以你可能需要重新打开图片
 	}
 }
+
 ```
 
 ### Demo2 图灵机器人
@@ -527,6 +540,7 @@ public class Mytest {
 这个示例中我们接入图灵机器人的API，将收到的好友的文本信息发送给图灵机器人，并将机器人回复的消息发送给好友，接下来还是把舞台交代码和注释君吧。
 
 ```Java
+
 /**
  * 图灵机器人示例
  * 
@@ -536,8 +550,7 @@ public class Mytest {
  *
  */
 public class TulingRobot implements IMsgHandlerFace {
-
-	MyHttpClient myHttpClient = new MyHttpClient();
+	MyHttpClient myHttpClient = Core.getInstance().getMyHttpClient();
 	String apiKey = "597b34bea4ec4c85a775c469c84b6817"; // 这里是我申请的图灵机器人API接口，每天只能5000次调用，建议自己去申请一个，免费的:)
 	Logger logger = Logger.getLogger("TulingRobot");
 
@@ -568,29 +581,39 @@ public class TulingRobot implements IMsgHandlerFace {
 
 	@Override
 	public String picMsgHandle(JSONObject msg) {
-
 		return "收到图片";
 	}
 
 	@Override
 	public String voiceMsgHandle(JSONObject msg) {
-
+		String fileName = String.valueOf(new Date().getTime());
+		String voicePath = "D://itchat4j/voice" + File.separator + fileName + ".mp3";
+		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VOICE.getType(), voicePath);
 		return "收到语音";
 	}
 
 	@Override
 	public String viedoMsgHandle(JSONObject msg) {
-
+		String fileName = String.valueOf(new Date().getTime());
+		String viedoPath = "D://itchat4j/viedo" + File.separator + fileName + ".mp4";
+		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VIEDO.getType(), viedoPath);
 		return "收到视频";
 	}
 
 	public static void main(String[] args) {
 		IMsgHandlerFace msgHandler = new TulingRobot();
-		Wechat wechat = new Wechat(msgHandler, "/home/itchat4j/demo/itchat4j/login");
+		Wechat wechat = new Wechat(msgHandler, "D://itchat4j/login");
 		wechat.start();
 	}
 
+	@Override
+	public String nameCardMsgHandle(JSONObject msg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
+
 ```
 
 ### Demo3 itchat4j集成在SpringMVC应用中

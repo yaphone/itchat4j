@@ -1,4 +1,4 @@
-package cn.zhouyafeng.itchat4j.utils;
+package cn.zhouyafeng.itchat4j.utils.enums;
 
 /**
  * 系统平台
@@ -8,6 +8,6 @@ package cn.zhouyafeng.itchat4j.utils;
  * @version 1.0
  *
  */
-public enum OsName {
+public enum OsNameEnum {
 	WINDOWS, LINUX, DARWIN, MAC, OTHER
 }

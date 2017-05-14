@@ -6,26 +6,25 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
 
 import javax.activation.MimetypesFileTypeMap;
 
+import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import cn.zhouyafeng.itchat4j.tools.CommonTool;
-import cn.zhouyafeng.itchat4j.utils.Constant;
-import cn.zhouyafeng.itchat4j.utils.Core;
-import cn.zhouyafeng.itchat4j.utils.MsgType;
+import cn.zhouyafeng.itchat4j.core.Core;
+import cn.zhouyafeng.itchat4j.utils.Config;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
+import cn.zhouyafeng.itchat4j.utils.enums.URLEnum;
 
 /**
  * 消息处理类
@@ -36,91 +35,9 @@ import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
  *
  */
 public class MessageTools {
-	private static Logger logger = Logger.getLogger("Message");
+	private static Logger LOG = LoggerFactory.getLogger(MessageTools.class);
 	private static Core core = Core.getInstance();
 	private static MyHttpClient myHttpClient = core.getMyHttpClient();
-
-	/**
-	 * 接收消息，放入队列
-	 * 
-	 * @author https://github.com/yaphone
-	 * @date 2017年4月23日 下午2:30:48
-	 * @param msgList
-	 * @return
-	 */
-	public static JSONArray produceMsg(JSONArray msgList) {
-		JSONArray result = new JSONArray();
-		for (int i = 0; i < msgList.size(); i++) {
-			JSONObject msg = new JSONObject();
-			JSONObject m = msgList.getJSONObject(i);
-			m.put("groupMsg", false);// 是否是群消息
-			if (m.getString("FromUserName").contains("@@") || m.getString("ToUserName").contains("@@")) { // 群聊消息
-				// produceGroupChat(core, m);
-				// m.remove("Content");
-				if (m.getString("FromUserName").contains("@@")
-						&& !core.getGroupIdList().contains(m.getString("FromUserName"))) {
-					core.getGroupIdList().add((m.getString("FromUserName")));
-				} else if (m.getString("ToUserName").contains("@@")
-						&& !core.getGroupIdList().contains(m.getString("ToUserName"))) {
-					core.getGroupIdList().add((m.getString("ToUserName")));
-				}
-				// 群消息与普通消息不同的是在其消息体（Content）中会包含发送者id及":<br/>"消息，这里需要处理一下，去掉多余信息，只保留消息内容
-				if (m.getString("Content").contains("<br/>")) {
-					String content = m.getString("Content").substring(m.getString("Content").indexOf("<br/>") + 5);
-					m.put("Content", content);
-					m.put("groupMsg", true);
-				}
-			} else {
-				CommonTool.msgFormatter(m, "Content");
-			}
-			if (m.getInteger("MsgType") == MsgType.MSGTYPE_TEXT) { // words 文本消息
-				if (m.getString("Url").length() != 0) {
-					String regEx = "(.+?\\(.+?\\))";
-					Matcher matcher = CommonTool.getMatcher(regEx, m.getString("Content"));
-					String data = "Map";
-					if (matcher.find()) {
-						data = matcher.group(1);
-					}
-					msg.put("Type", "Map");
-					msg.put("Text", data);
-				} else {
-					msg.put("Type", MsgType.TEXT);
-					msg.put("Text", m.getString("Content"));
-				}
-				m.put("Type", msg.getString("Type"));
-				m.put("Text", msg.getString("Text"));
-			} else if (m.getInteger("MsgType") == MsgType.MSGTYPE_IMAGE
-					|| m.getInteger("MsgType") == MsgType.MSGTYPE_EMOTICON) { // 图片消息
-				m.put("Type", MsgType.PIC);
-			} else if (m.getInteger("MsgType") == MsgType.MSGTYPE_VOICE) { // 语音消息
-				m.put("Type", MsgType.VOICE);
-			} else if (m.getInteger("MsgType") == 37) {// friends 好友确认消息
-
-			} else if (m.getInteger("MsgType") == 42) { // 共享名片
-				m.put("Type", MsgType.NAMECARD);
-
-			} else if (m.getInteger("MsgType") == MsgType.MSGTYPE_VIDEO
-					|| m.getInteger("MsgType") == MsgType.MSGTYPE_MICROVIDEO) {// viedo
-				m.put("Type", MsgType.VIEDO);
-			} else if (m.getInteger("MsgType") == 49) { // sharing 分享链接
-
-			} else if (m.getInteger("MsgType") == 51) {// phone init 微信初始化消息
-
-			} else if (m.getInteger("MsgType") == 10000) {// 系统消息
-
-			} else if (m.getInteger("MsgType") == 10002) { // 撤回消息
-
-			} else {
-				logger.info("Useless msg");
-			}
-			result.add(m);
-		}
-		return result;
-	}
-
-	public static void send(String msg, String toUserName, String mediaId) {
-		sendMsg(msg, toUserName);
-	}
 
 	/**
 	 * 根据UserName发送文本消息
@@ -130,9 +47,9 @@ public class MessageTools {
 	 * @param msg
 	 * @param toUserName
 	 */
-	public static void sendMsg(String text, String toUserName) {
-		logger.info(String.format("Request to send a text message to %s: %s", toUserName, text));
-		sendRawMsg(1, text, toUserName);
+	private static void sendMsg(String text, String toUserName) {
+		LOG.info(String.format("发送消息 %s: %s", toUserName, text));
+		webWxSendMsg(1, text, toUserName);
 	}
 
 	/**
@@ -159,7 +76,7 @@ public class MessageTools {
 		if (nickName != null) {
 			String toUserName = WechatTools.getUserNameByNickName(nickName);
 			if (toUserName != null) {
-				sendRawMsg(1, text, toUserName);
+				webWxSendMsg(1, text, toUserName);
 				return true;
 			}
 		}
@@ -176,29 +93,24 @@ public class MessageTools {
 	 * @param content
 	 * @param toUserName
 	 */
-	public static void sendRawMsg(int msgType, String content, String toUserName) {
-		String url = String.format("%s/webwxsendmsg", core.getLoginInfo().get("url"));
-
-		Map<String, Object> paramMap = new HashMap<String, Object>();
-		@SuppressWarnings("unchecked")
-		Map<String, Map<String, String>> baseRequestMap = (Map<String, Map<String, String>>) core.getLoginInfo()
-				.get("baseRequest");
-		paramMap.put("BaseRequest", baseRequestMap.get("BaseRequest"));
+	public static void webWxSendMsg(int msgType, String content, String toUserName) {
+		String url = String.format(URLEnum.WEB_WX_SEND_MSG.getUrl(), core.getLoginInfo().get("url"));
 		Map<String, Object> msgMap = new HashMap<String, Object>();
 		msgMap.put("Type", msgType);
 		msgMap.put("Content", content);
-		msgMap.put("FromUserName", core.getStorageClass().getUserName());
-		msgMap.put("ToUserName", toUserName == null ? core.getStorageClass().getUserName() : toUserName);
+		msgMap.put("FromUserName", core.getUserName());
+		msgMap.put("ToUserName", toUserName == null ? core.getUserName() : toUserName);
 		msgMap.put("LocalID", new Date().getTime() * 10);
 		msgMap.put("ClientMsgId", new Date().getTime() * 10);
+		Map<String, Object> paramMap = core.getParamMap();
 		paramMap.put("Msg", msgMap);
 		paramMap.put("Scene", 0);
 		try {
 			String paramStr = JSON.toJSONString(paramMap);
 			HttpEntity entity = myHttpClient.doPost(url, paramStr);
-			EntityUtils.toString(entity, "UTF-8");
+			EntityUtils.toString(entity, Consts.UTF_8);
 		} catch (Exception e) {
-			logger.info(e.getMessage());
+			LOG.error("webWxSendMsg", e);
 		}
 	}
 
@@ -219,13 +131,13 @@ public class MessageTools {
 	 * @param filePath
 	 * @return
 	 */
-	private static JSONObject uploadMediaToServer(String filePath) {
+	private static JSONObject webWxUploadMedia(String filePath) {
 		File f = new File(filePath);
 		if (!f.exists() && f.isFile()) {
-			logger.info("file is not exist");
+			LOG.info("file is not exist");
 			return null;
 		}
-		String url = (String) core.getLoginInfo().get("fileUrl") + "/webwxuploadmedia?f=json";
+		String url = String.format(URLEnum.WEB_WX_UPLOAD_MEDIA.getUrl(), core.getLoginInfo().get("fileUrl"));
 		String mimeType = new MimetypesFileTypeMap().getContentType(f);
 		String mediaType = "";
 		if (mimeType == null) {
@@ -240,15 +152,12 @@ public class MessageTools {
 				+ String.valueOf(new Random().nextLong()).substring(0, 4);
 		String webwxDataTicket = MyHttpClient.getCookie("webwx_data_ticket");
 		if (webwxDataTicket == null) {
-			logger.info("get cookie webwx_data_ticket error");
+			LOG.error("get cookie webwx_data_ticket error");
 			return null;
 		}
 
-		Map<String, Object> paramMap = new HashMap<String, Object>();
-		@SuppressWarnings("unchecked")
-		Map<String, Map<String, String>> baseRequestMap = (Map<String, Map<String, String>>) core.getLoginInfo()
-				.get("baseRequest");
-		paramMap.put("BaseRequest", baseRequestMap.get("BaseRequest"));
+		Map<String, Object> paramMap = core.getParamMap();
+
 		paramMap.put("ClientMediaId", clientMediaId);
 		paramMap.put("TotalLen", fileSize);
 		paramMap.put("StartPos", 0);
@@ -272,10 +181,10 @@ public class MessageTools {
 		HttpEntity entity = myHttpClient.doPostFile(url, reqEntity);
 		if (entity != null) {
 			try {
-				String result = EntityUtils.toString(entity, "UTF-8");
+				String result = EntityUtils.toString(entity, Consts.UTF_8);
 				return JSON.parseObject(result);
 			} catch (Exception e) {
-				logger.info(e.getMessage());
+				LOG.error("webWxUploadMedia 错误： ", e);
 			}
 
 		}
@@ -308,7 +217,7 @@ public class MessageTools {
 	 * @return
 	 */
 	public static boolean sendPicMsgByUserId(String userId, String filePath) {
-		JSONObject responseObj = uploadMediaToServer(filePath);
+		JSONObject responseObj = webWxUploadMedia(filePath);
 		if (responseObj != null) {
 			String mediaId = responseObj.getString("MediaId");
 			if (mediaId != null) {
@@ -331,7 +240,7 @@ public class MessageTools {
 		Map<String, Object> msgMap = new HashMap<String, Object>();
 		msgMap.put("Type", 3);
 		msgMap.put("MediaId", mediaId);
-		msgMap.put("FromUserName", core.getUserSelfList().get(0).getString("UserName"));
+		msgMap.put("FromUserName", core.getUserSelf().getString("UserName"));
 		msgMap.put("ToUserName", userId);
 		String clientMsgId = String.valueOf(new Date().getTime())
 				+ String.valueOf(new Random().nextLong()).substring(1, 5);
@@ -347,10 +256,10 @@ public class MessageTools {
 		HttpEntity entity = myHttpClient.doPost(url, paramStr);
 		if (entity != null) {
 			try {
-				String result = EntityUtils.toString(entity, "UTF-8");
+				String result = EntityUtils.toString(entity, Consts.UTF_8);
 				return JSON.parseObject(result).getJSONObject("BaseResponse").getInteger("Ret") == 0;
 			} catch (Exception e) {
-				logger.info(e.getMessage());
+				LOG.error("webWxSendMsgImg 错误： ", e);
 			}
 		}
 		return false;
@@ -369,18 +278,18 @@ public class MessageTools {
 	public static boolean sendFileMsgByUserId(String userId, String filePath) {
 		String title = new File(filePath).getName();
 		Map<String, String> data = new HashMap<String, String>();
-		data.put("appid", Constant.API_WXAPPID);
+		data.put("appid", Config.API_WXAPPID);
 		data.put("title", title);
 		data.put("totallen", "");
 		data.put("attachid", "");
 		data.put("type", "6"); // APPMSGTYPE_ATTACH
 		data.put("fileext", title.split("\\.")[1]); // 文件后缀
-		JSONObject responseObj = uploadMediaToServer(filePath);
+		JSONObject responseObj = webWxUploadMedia(filePath);
 		if (responseObj != null) {
 			data.put("totallen", responseObj.getString("StartPos"));
 			data.put("attachid", responseObj.getString("MediaId"));
 		} else {
-			logger.info("sednFileMsgByUserId error");
+			LOG.error("sednFileMsgByUserId 错误: ", data);
 		}
 		return webWxSendAppMsg(userId, data);
 	}
@@ -423,25 +332,30 @@ public class MessageTools {
 		Map<String, Object> msgMap = new HashMap<String, Object>();
 		msgMap.put("Type", data.get("type"));
 		msgMap.put("Content", content);
-		msgMap.put("FromUserName", core.getUserSelfList().get(0).getString("UserName"));
+		msgMap.put("FromUserName", core.getUserSelf().getString("UserName"));
 		msgMap.put("ToUserName", userId);
 		msgMap.put("LocalID", clientMsgId);
 		msgMap.put("ClientMsgId", clientMsgId);
-		Map<String, Object> paramMap = new HashMap<String, Object>();
-		@SuppressWarnings("unchecked")
-		Map<String, Map<String, String>> baseRequestMap = (Map<String, Map<String, String>>) core.getLoginInfo()
-				.get("baseRequest");
-		paramMap.put("BaseRequest", baseRequestMap.get("BaseRequest"));
+		/*
+		 * Map<String, Object> paramMap = new HashMap<String, Object>();
+		 * 
+		 * @SuppressWarnings("unchecked") Map<String, Map<String, String>>
+		 * baseRequestMap = (Map<String, Map<String, String>>)
+		 * core.getLoginInfo() .get("baseRequest"); paramMap.put("BaseRequest",
+		 * baseRequestMap.get("BaseRequest"));
+		 */
+
+		Map<String, Object> paramMap = core.getParamMap();
 		paramMap.put("Msg", msgMap);
 		paramMap.put("Scene", 0);
 		String paramStr = JSON.toJSONString(paramMap);
 		HttpEntity entity = myHttpClient.doPost(url, paramStr);
 		if (entity != null) {
 			try {
-				String result = EntityUtils.toString(entity, "UTF-8");
+				String result = EntityUtils.toString(entity, Consts.UTF_8);
 				return JSON.parseObject(result).getJSONObject("BaseResponse").getInteger("Ret") == 0;
 			} catch (Exception e) {
-				logger.info(e.getMessage());
+				LOG.error("错误: ", e);
 			}
 		}
 		return false;
