@@ -99,7 +99,6 @@ public class MyHttpClient {
 			if (params != null) {
 				String paramStr = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
 				httpGet = new HttpGet(url + "?" + paramStr);
-				System.out.println(httpGet.getURI());
 
 			} else {
 				httpGet = new HttpGet(url);

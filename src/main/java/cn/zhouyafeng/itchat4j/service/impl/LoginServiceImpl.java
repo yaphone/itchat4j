@@ -25,20 +25,21 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.zhouyafeng.itchat4j.core.Core;
 import cn.zhouyafeng.itchat4j.core.MsgCenter;
 import cn.zhouyafeng.itchat4j.service.ILoginService;
 import cn.zhouyafeng.itchat4j.utils.Config;
-import cn.zhouyafeng.itchat4j.utils.Core;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
 import cn.zhouyafeng.itchat4j.utils.SleepUtils;
 import cn.zhouyafeng.itchat4j.utils.enums.ResultEnum;
+import cn.zhouyafeng.itchat4j.utils.enums.RetCodeEnum;
 import cn.zhouyafeng.itchat4j.utils.enums.StorageLoginInfoEnum;
 import cn.zhouyafeng.itchat4j.utils.enums.URLEnum;
 import cn.zhouyafeng.itchat4j.utils.enums.parameters.BaseParaEnum;
 import cn.zhouyafeng.itchat4j.utils.enums.parameters.LoginParaEnum;
 import cn.zhouyafeng.itchat4j.utils.enums.parameters.StatusNotifyParaEnum;
 import cn.zhouyafeng.itchat4j.utils.enums.parameters.UUIDParaEnum;
-import cn.zhouyafeng.itchat4j.utils.tools.CommonTool;
+import cn.zhouyafeng.itchat4j.utils.tools.CommonTools;
 
 /**
  * 登陆服务实现类
@@ -83,13 +84,11 @@ public class LoginServiceImpl implements ILoginService {
 				String status = checklogin(result);
 
 				if (ResultEnum.SUCCESS.getCode().equals(status)) {
-					LOG.info(("登陆成功"));
 					processLoginInfo(result); // 处理结果
 					isLogin = true;
 					core.setAlive(isLogin);
 					break;
 				}
-
 				if (ResultEnum.WAIT_CONFIRM.getCode().equals(status)) {
 					LOG.info("请点击微信确认按钮，进行登陆");
 				}
@@ -115,7 +114,7 @@ public class LoginServiceImpl implements ILoginService {
 		try {
 			String result = EntityUtils.toString(entity);
 			String regEx = "window.QRLogin.code = (\\d+); window.QRLogin.uuid = \"(\\S+?)\";";
-			Matcher matcher = CommonTool.getMatcher(regEx, result);
+			Matcher matcher = CommonTools.getMatcher(regEx, result);
 			if (matcher.find()) {
 				if ((ResultEnum.SUCCESS.getCode().equals(matcher.group(1)))) {
 					core.setUuid(matcher.group(2));
@@ -140,7 +139,7 @@ public class LoginServiceImpl implements ILoginService {
 			out.flush();
 			out.close();
 			try {
-				CommonTool.printQr(qrPath); // 打开登陆二维码图片
+				CommonTools.printQr(qrPath); // 打开登陆二维码图片
 			} catch (Exception e) {
 				LOG.info(e.getMessage());
 			}
@@ -169,7 +168,6 @@ public class LoginServiceImpl implements ILoginService {
 			String result = EntityUtils.toString(entity, Consts.UTF_8);
 			JSONObject obj = JSON.parseObject(result);
 
-			LOG.info(obj.toString());// 调试
 			JSONObject user = obj.getJSONObject(StorageLoginInfoEnum.User.getKey());
 			JSONObject syncKey = obj.getJSONObject(StorageLoginInfoEnum.SyncKey.getKey());
 
@@ -213,7 +211,7 @@ public class LoginServiceImpl implements ILoginService {
 
 		try {
 			HttpEntity entity = httpClient.doPost(url, paramStr);
-			EntityUtils.toString(entity, Consts.UTF_8);// TODO
+			EntityUtils.toString(entity, Consts.UTF_8);
 		} catch (Exception e) {
 			LOG.error("微信状态通知接口失败！", e);
 		}
@@ -233,18 +231,19 @@ public class LoginServiceImpl implements ILoginService {
 						Map<String, String> resultMap = syncCheck();
 						String retcode = resultMap.get("retcode");
 						String selector = resultMap.get("selector");
-						if (retcode.equals("9999")) {
+						if (retcode.equals(RetCodeEnum.UNKOWN.getCode())) {
+							LOG.info(RetCodeEnum.UNKOWN.getType());
 							continue;
-						} else if (retcode.equals("1100")) { // 退出
-							LOG.info("login out");
+						} else if (retcode.equals(RetCodeEnum.LOGIN_OUT.getCode())) { // 退出
+							LOG.info(RetCodeEnum.LOGIN_OUT.getType());
 							break;
-						} else if (retcode.equals("1101")) { // 其它地方登陆
-							LOG.info("login otherwhere");
+						} else if (retcode.equals(RetCodeEnum.LOGIN_OTHERWHERE.getCode())) { // 其它地方登陆
+							LOG.info(RetCodeEnum.LOGIN_OTHERWHERE.getType());
 							break;
-						} else if (retcode.equals("1102")) { // 移动端退出
-							LOG.info("login quit on phone");
+						} else if (retcode.equals(RetCodeEnum.MOBILE_LOGIN_OUT.getCode())) { // 移动端退出
+							LOG.info(RetCodeEnum.MOBILE_LOGIN_OUT.getType());
 							break;
-						} else if (retcode.equals("0")) {
+						} else if (retcode.equals(RetCodeEnum.NORMAL.getCode())) {
 							if (selector.equals("2")) {
 								JSONObject msgObj = webWxSync();
 								if (msgObj != null) {
@@ -272,7 +271,6 @@ public class LoginServiceImpl implements ILoginService {
 							}
 						} else {
 							JSONObject obj = webWxSync();
-							LOG.info(obj.toJSONString());
 						}
 					} catch (Exception e) {
 						LOG.info(e.getMessage());
@@ -307,7 +305,7 @@ public class LoginServiceImpl implements ILoginService {
 
 			core.setMemberCount(fullFriendsJsonList.getInteger(StorageLoginInfoEnum.MemberCount.getKey()));
 			JSONArray member = fullFriendsJsonList.getJSONArray(StorageLoginInfoEnum.MemberList.getKey());
-			for (Iterator iterator = member.iterator(); iterator.hasNext();) {
+			for (Iterator<?> iterator = member.iterator(); iterator.hasNext();) {
 				JSONObject o = (JSONObject) iterator.next();
 
 				if ((o.getInteger("VerifyFlag") & 8) != 0) { // 公众号/服务号
@@ -337,7 +335,7 @@ public class LoginServiceImpl implements ILoginService {
 	 */
 	public String checklogin(String result) {
 		String regEx = "window.code=(\\d+)";
-		Matcher matcher = CommonTool.getMatcher(regEx, result);
+		Matcher matcher = CommonTools.getMatcher(regEx, result);
 		if (matcher.find()) {
 			return matcher.group(1);
 		}
@@ -353,7 +351,7 @@ public class LoginServiceImpl implements ILoginService {
 	 */
 	private void processLoginInfo(String loginContent) {
 		String regEx = "window.redirect_uri=\"(\\S+)\";";
-		Matcher matcher = CommonTool.getMatcher(regEx, loginContent);
+		Matcher matcher = CommonTools.getMatcher(regEx, loginContent);
 		if (matcher.find()) {
 			String originalUrl = matcher.group(1);
 			String url = originalUrl.substring(0, originalUrl.lastIndexOf('/')); // https://wx2.qq.com/cgi-bin/mmwebwx-bin
@@ -389,7 +387,7 @@ public class LoginServiceImpl implements ILoginService {
 				LOG.info(e.getMessage());
 				return;
 			}
-			Document doc = CommonTool.xmlParser(text);
+			Document doc = CommonTools.xmlParser(text);
 			if (doc != null) {
 				core.getLoginInfo().put(StorageLoginInfoEnum.skey.getKey(),
 						doc.getElementsByTagName(StorageLoginInfoEnum.skey.getKey()).item(0).getFirstChild()
@@ -533,7 +531,7 @@ public class LoginServiceImpl implements ILoginService {
 			}
 			String text = EntityUtils.toString(entity);
 			String regEx = "window.synccheck=\\{retcode:\"(\\d+)\",selector:\"(\\d+)\"\\}";
-			Matcher matcher = CommonTool.getMatcher(regEx, text);
+			Matcher matcher = CommonTools.getMatcher(regEx, text);
 			if (!matcher.find() || matcher.group(1).equals("2")) {
 				LOG.info(String.format("Unexpected sync check result: %s", text));
 			} else {

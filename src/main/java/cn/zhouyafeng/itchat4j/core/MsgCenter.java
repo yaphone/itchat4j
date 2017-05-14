@@ -11,11 +11,18 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.zhouyafeng.itchat4j.api.MessageTools;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
-import cn.zhouyafeng.itchat4j.utils.Core;
-import cn.zhouyafeng.itchat4j.utils.MsgType;
+import cn.zhouyafeng.itchat4j.utils.MsgCodeEnum;
 import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
-import cn.zhouyafeng.itchat4j.utils.tools.CommonTool;
+import cn.zhouyafeng.itchat4j.utils.tools.CommonTools;
 
+/**
+ * 消息处理中心
+ * 
+ * @author https://github.com/yaphone
+ * @date 创建时间：2017年5月14日 下午12:47:50
+ * @version 1.0
+ *
+ */
 public class MsgCenter {
 	private static Logger LOG = LoggerFactory.getLogger(MsgCenter.class);
 
@@ -36,8 +43,6 @@ public class MsgCenter {
 			JSONObject m = msgList.getJSONObject(i);
 			m.put("groupMsg", false);// 是否是群消息
 			if (m.getString("FromUserName").contains("@@") || m.getString("ToUserName").contains("@@")) { // 群聊消息
-				// produceGroupChat(core, m);
-				// m.remove("Content");
 				if (m.getString("FromUserName").contains("@@")
 						&& !core.getGroupIdList().contains(m.getString("FromUserName"))) {
 					core.getGroupIdList().add((m.getString("FromUserName")));
@@ -52,12 +57,13 @@ public class MsgCenter {
 					m.put("groupMsg", true);
 				}
 			} else {
-				CommonTool.msgFormatter(m, "Content");
+				CommonTools.msgFormatter(m, "Content");
 			}
-			if (m.getInteger("MsgType") == MsgType.MSGTYPE_TEXT) { // words 文本消息
+			if (m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_TEXT.getCode()) { // words
+																					// 文本消息
 				if (m.getString("Url").length() != 0) {
 					String regEx = "(.+?\\(.+?\\))";
-					Matcher matcher = CommonTool.getMatcher(regEx, m.getString("Content"));
+					Matcher matcher = CommonTools.getMatcher(regEx, m.getString("Content"));
 					String data = "Map";
 					if (matcher.find()) {
 						data = matcher.group(1);
@@ -65,44 +71,55 @@ public class MsgCenter {
 					msg.put("Type", "Map");
 					msg.put("Text", data);
 				} else {
-					msg.put("Type", MsgTypeEnum.TEXT);
+					msg.put("Type", MsgTypeEnum.TEXT.getType());
 					msg.put("Text", m.getString("Content"));
 				}
 				m.put("Type", msg.getString("Type"));
 				m.put("Text", msg.getString("Text"));
-			} else if (m.getInteger("MsgType") == MsgType.MSGTYPE_IMAGE
-					|| m.getInteger("MsgType") == MsgType.MSGTYPE_EMOTICON) { // 图片消息
+			} else if (m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_IMAGE.getCode()
+					|| m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_EMOTICON.getCode()) { // 图片消息
 				m.put("Type", MsgTypeEnum.PIC.getType());
-			} else if (m.getInteger("MsgType") == MsgType.MSGTYPE_VOICE) { // 语音消息
+			} else if (m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_VOICE.getCode()) { // 语音消息
 				m.put("Type", MsgTypeEnum.VOICE.getType());
-			} else if (m.getInteger("MsgType") == 37) {// friends 好友确认消息
+			} else if (m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_VERIFYMSG.getCode()) {// friends
+																							// 好友确认消息
 
-			} else if (m.getInteger("MsgType") == 42) { // 共享名片
+			} else if (m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_SHARECARD.getCode()) { // 共享名片
 				m.put("Type", MsgTypeEnum.NAMECARD.getType());
 
-			} else if (m.getInteger("MsgType") == MsgType.MSGTYPE_VIDEO
-					|| m.getInteger("MsgType") == MsgType.MSGTYPE_MICROVIDEO) {// viedo
+			} else if (m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_VIDEO.getCode()
+					|| m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_MICROVIDEO.getCode()) {// viedo
 				m.put("Type", MsgTypeEnum.VIEDO.getType());
-			} else if (m.getInteger("MsgType") == 49) { // sharing 分享链接
+			} else if (m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_APP.getCode()) { // sharing
+																						// 分享链接
 
-			} else if (m.getInteger("MsgType") == 51) {// phone init 微信初始化消息
+			} else if (m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_STATUSNOTIFY.getCode()) {// phone
+																								// init
+																								// 微信初始化消息
 
-			} else if (m.getInteger("MsgType") == 10000) {// 系统消息
+			} else if (m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_SYS.getCode()) {// 系统消息
 
-			} else if (m.getInteger("MsgType") == 10002) { // 撤回消息
+			} else if (m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_RECALLED.getCode()) { // 撤回消息
 
 			} else {
 				LOG.info("Useless msg");
 			}
+			LOG.info("收到消息一条，来自: " + m.getString("FromUserName"));
 			result.add(m);
 		}
 		return result;
 	}
 
+	/**
+	 * 消息处理
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月14日 上午10:52:34
+	 * @param msgHandler
+	 */
 	public static void handleMsg(IMsgHandlerFace msgHandler) {
 		while (true) {
 			if (core.getMsgList().size() > 0 && core.getMsgList().get(0).getString("Content") != null) {
-				// System.out.println(core.getMsgList().get(0));
 				if (core.getMsgList().get(0).getString("Content").length() > 0) {
 					JSONObject msg = core.getMsgList().get(0);
 					if (msg.getString("Type") != null) {

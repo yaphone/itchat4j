@@ -31,7 +31,7 @@ import cn.zhouyafeng.itchat4j.utils.enums.OsNameEnum;
  * @version 1.0
  *
  */
-public class CommonTool {
+public class CommonTools {
 
 	public static boolean printQr(String qrPath) {
 

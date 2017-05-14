@@ -1,4 +1,4 @@
-package cn.zhouyafeng.itchat4j.utils;
+package cn.zhouyafeng.itchat4j.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 
+import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
 import cn.zhouyafeng.itchat4j.utils.enums.parameters.BaseParaEnum;
 
 /**
@@ -64,6 +65,11 @@ public class Core {
 	 */
 	public Map<String, Object> getParamMap() {
 		return new HashMap<String, Object>(1) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			{
 				Map<String, String> map = new HashMap<String, String>();
 				for (BaseParaEnum baseRequest : BaseParaEnum.values()) {

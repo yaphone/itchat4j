@@ -13,8 +13,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.zhouyafeng.itchat4j.Wechat;
+import cn.zhouyafeng.itchat4j.core.Core;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
-import cn.zhouyafeng.itchat4j.utils.Core;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
 import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
 import cn.zhouyafeng.itchat4j.utils.tools.DownloadTools;
@@ -29,7 +29,7 @@ import cn.zhouyafeng.itchat4j.utils.tools.DownloadTools;
  */
 public class TulingRobot implements IMsgHandlerFace {
 	MyHttpClient myHttpClient = Core.getInstance().getMyHttpClient();
-	String apiKey = "597b34bea4ec4c85a775c469c84b6817";
+	String apiKey = "597b34bea4ec4c85a775c469c84b6817"; // 这里是我申请的图灵机器人API接口，每天只能5000次调用，建议自己去申请一个，免费的:)
 	Logger logger = Logger.getLogger("TulingRobot");
 
 	@Override

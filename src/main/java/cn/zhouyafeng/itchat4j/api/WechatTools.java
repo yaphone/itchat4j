@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
 
-import cn.zhouyafeng.itchat4j.utils.Core;
+import cn.zhouyafeng.itchat4j.core.Core;
 
 /**
  * 微信小工具，如获好友列表等

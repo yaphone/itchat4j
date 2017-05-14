@@ -1,4 +1,4 @@
-package cn.zhouyafeng.itchat4j.demo;
+package cn.zhouyafeng.itchat4j.demo.demo1;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSONObject;
 
-import cn.zhouyafeng.itchat4j.Wechat;
+import cn.zhouyafeng.itchat4j.api.MessageTools;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
 import cn.zhouyafeng.itchat4j.utils.tools.DownloadTools;
@@ -26,27 +26,21 @@ public class SimpleDemo implements IMsgHandlerFace {
 
 	@Override
 	public String textMsgHandle(JSONObject msg) {
-		// String docFilePath = "D:/itchat4j/pic/test.docx";
-		// String pngFilePath = "D:/itchat4j/pic/test.png";
-		// String pdfFilePath = "D:/itchat4j/pic/测试.pdf";
-		// String txtFilePath = "D:/itchat4j/pic/test.txt";
-		// MessageTools.sendFileMsgByNickName("yaphone", docFilePath);
-		// MessageTools.sendFileMsgByNickName("yaphone", pngFilePath);
-		// MessageTools.sendFileMsgByNickName("yaphone", pdfFilePath);
-		// MessageTools.sendFileMsgByNickName("yaphone", txtFilePath);
-		// logger.info("info" + msg.toJSONString());
-		// System.out.println("*************");
-		LOG.info("debug" + msg.toJSONString());
-		String text = msg.getString("Text");
-		return text;
-		// return null;
+		String docFilePath = "D:/itchat4j/pic/test.docx"; // 这里是需要发送的文件的路径
+		if (!msg.getBoolean("groupMsg")) { // 群消息不处理
+			String userId = msg.getString("FromUserName");
+			MessageTools.sendFileMsgByUserId(userId, docFilePath); // 发送文件
+			String text = msg.getString("Text"); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
+			return text;
+		}
+		return null;
 	}
 
 	@Override
 	public String picMsgHandle(JSONObject msg) {
-		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
-		String picPath = "D://itchat4j/pic" + File.separator + fileName + ".jpg";
-		DownloadTools.getDownloadFn(msg, MsgTypeEnum.PIC.getType(), picPath);
+		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());// 这里使用收到图片的时间作为文件名
+		String picPath = "D://itchat4j/pic" + File.separator + fileName + ".jpg"; // 调用此方法来保存图片
+		DownloadTools.getDownloadFn(msg, MsgTypeEnum.PIC.getType(), picPath); // 保存图片的路径
 		return "图片保存成功";
 	}
 
@@ -70,12 +64,6 @@ public class SimpleDemo implements IMsgHandlerFace {
 	@Override
 	public String nameCardMsgHandle(JSONObject msg) {
 		return "收到名片消息";
-	}
-
-	public static void main(String[] args) {
-		IMsgHandlerFace msgHandler = new SimpleDemo();
-		Wechat wechat = new Wechat(msgHandler, "D://itchat4j/login");
-		wechat.start();
 	}
 
 }

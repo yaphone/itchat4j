@@ -14,7 +14,7 @@ import org.apache.http.util.EntityUtils;
 
 import com.alibaba.fastjson.JSONObject;
 
-import cn.zhouyafeng.itchat4j.utils.Core;
+import cn.zhouyafeng.itchat4j.core.Core;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
 import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
 import cn.zhouyafeng.itchat4j.utils.enums.URLEnum;
