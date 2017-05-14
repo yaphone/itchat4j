@@ -1,4 +1,4 @@
-package cn.zhouyafeng.itchat4j.demo;
+package cn.zhouyafeng.itchat4j.demo.demo2;
 
 import java.io.File;
 import java.util.Date;

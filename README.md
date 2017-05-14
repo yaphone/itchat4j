@@ -106,6 +106,7 @@ public static boolean sendFileMsgByUserId(String userId, String filePath)
 
 - 根据userId获取用户的详细信息
 - 获取群成员列表
+- 拉人进群功能
 
 
 ## 如何使用
@@ -114,7 +115,7 @@ public static boolean sendFileMsgByUserId(String userId, String filePath)
 
 itchat4j是一个Maven项目，下载源码后，可以以Maven项目的形式导入，导入后的项目结构如下图:
 
-![itchat4j项目结构](http://oj5vdtyuu.bkt.clouddn.com/itchat4j%E9%A1%B9%E7%9B%AE.png)
+![itchat4j项目结构](http://oj5vdtyuu.bkt.clouddn.com/itchat4j%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%842.png)
 
 src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小Demo：一个是基本功能的小示例，当前，itchat4j可以处理四类基本信息，文本、语音、图片和小视频，该示例在收到文本信息后自动回复，回复内容为收到的文本，当收到图片、语音、小视频时可以保存到指定的目录；一个是微信接入图灵机器人的小例子，如下图。
 
