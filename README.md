@@ -121,6 +121,8 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
 
 ### 微信机器人使用截图
 
+![Windows控制台](http://oj5vdtyuu.bkt.clouddn.com/windows%E5%8F%AF%E8%BF%90%E8%A1%8C%E7%A8%8B%E5%BA%8F.png)
+
 ![微信机器人](http://oj5vdtyuu.bkt.clouddn.com/%E5%BE%AE%E4%BF%A1%E6%9C%BA%E5%99%A8%E4%BA%BA.jpg)
 
 ![控制台收到的消息](http://oj5vdtyuu.bkt.clouddn.com/%E6%8E%A7%E5%88%B6%E5%8F%B0%E6%94%B6%E5%88%B0%E7%9A%84%E6%B6%88%E6%81%AF.png)
@@ -450,7 +452,7 @@ public class MsgHandler implements IMsgHandlerFace {
 
 在`textMsgHandler`中，通过`msg.getString("Text")`就可以获取收到的文本信息，然后作进一步处理，比如接入图灵机器人、消息自动回复等，我们需要在这个方法中返回一个字符串，即是需要回复给好友的消息，在SimpleDemo这个示例中，我们直接回复收到的原文本消息。
 
-在`picMsgHandle`、`voiceMsgHandle`、`viedoMsgHandle`这三个方法中，我们需要将这些消息下载下来，然后再作进一步处理，所以需要为每种类型的消息提供一个保存路径，然后调用`DownloadTools.getDownloadFn`方法可以将这三种类型的消息下载下来。`DownloadTools.getDownloadFn`方法提供下载图片、语音、小视频的功能，需要三个参数，第一个参数为我们收到的msg，第二个参数为`MsgType`，也就是消息类型，图片、语音、小视频分别对应`MsgType.PIC`、`MsgType.VOICE`、`MsgType.VOICE`，然后第三个参数就是保存这些消息的路径了。
+在`picMsgHandle`、`voiceMsgHandle`、`viedoMsgHandle`这三个方法中，我们需要将这些消息下载下来，然后再作进一步处理，所以需要为每种类型的消息提供一个保存路径，然后调用`DownloadTools.getDownloadFn`方法可以将这三种类型的消息下载下来。`DownloadTools.getDownloadFn`方法提供下载图片、语音、小视频的功能，需要三个参数，第一个参数为我们收到的msg，第二个参数为`MsgType`，也就是消息类型，图片、语音、小视频分别对应`MsgTypeEnum.PIC.getType()`、`MsgTypeEnum.VOICE.getType()`、`MsgTypeEnum.VIEDO.getType()`，然后第三个参数就是保存这些消息的路径了。
 
 就不多说了，让代码和注释君自述吧，有不明白的地方，可以在Issue中提出来。
 

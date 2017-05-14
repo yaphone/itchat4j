@@ -54,7 +54,6 @@ public class SimpleDemo implements IMsgHandlerFace {
 
 	@Override
 	public String viedoMsgHandle(JSONObject msg) {
-		System.out.println(msg);
 		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
 		String viedoPath = "D://itchat4j/viedo" + File.separator + fileName + ".mp4";
 		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VIEDO.getType(), viedoPath);

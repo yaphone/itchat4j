@@ -47,12 +47,12 @@ public class DownloadTools {
 		List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
 		String url = "";
 		if (type.equals(MsgTypeEnum.PIC.getType())) {
-			url = String.format(URLEnum.WEB_WX_GET_MSG_IMG.getUrl(), core.getLoginInfo().get("url"));
+			url = String.format(URLEnum.WEB_WX_GET_MSG_IMG.getUrl(), (String) core.getLoginInfo().get("url"));
 		} else if (type.equals(MsgTypeEnum.VOICE.getType())) {
-			url = String.format(URLEnum.WEB_WX_GET_VOICE.getUrl(), core.getLoginInfo().get("url"));
+			url = String.format(URLEnum.WEB_WX_GET_VOICE.getUrl(), (String) core.getLoginInfo().get("url"));
 		} else if (type.equals(MsgTypeEnum.VIEDO.getType())) {
 			headerMap.put("Range", "bytes=0-");
-			url = String.format(URLEnum.WEB_WX_GET_VIEDO.getUrl(), core.getLoginInfo().get("url"));
+			url = String.format(URLEnum.WEB_WX_GET_VIEDO.getUrl(), (String) core.getLoginInfo().get("url"));
 		}
 		params.add(new BasicNameValuePair("msgid", msg.getString("NewMsgId")));
 		params.add(new BasicNameValuePair("skey", (String) core.getLoginInfo().get("skey")));
