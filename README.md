@@ -659,6 +659,12 @@ public class WechatService implements IWechatServiceFace {
 
 [WeixinBot](https://github.com/Urinx/WeixinBot): 网页版微信API，包含终端版微信及微信机器人
 
+## 鸣谢：
+
+itchat4j开源后，收到很多朋友的建议，对ithcat4j改进做出了很多帮助，在此表示感谢！
+
+[@jasonTangxd](https://github.com/jasonTangxd?tab=overview&from=2017-05-15)，项目结构调整。
+
 ## 问题和建议
 
 本项目长期更新、维护，功能不断扩展与完善中，欢迎star。
