@@ -21,7 +21,11 @@ public enum URLEnum {
     WEB_WX_UPLOAD_MEDIA("%s/webwxuploadmedia?f=json", "上传文件到服务器"),
     WEB_WX_GET_MSG_IMG("%s/webwxgetmsgimg", "下载图片消息"),
     WEB_WX_GET_VOICE("%s/webwxgetvoice", "下载语音消息"),
-    WEB_WX_GET_VIEDO("%s/webwxgetvideo", "下载语音消息")
+    WEB_WX_GET_VIEDO("%s/webwxgetvideo", "下载语音消息"),
+    WEB_WX_PUSH_LOGIN("%s/webwxpushloginurl", "不扫码登陆"),
+    
+    
+    
 
     ;
 

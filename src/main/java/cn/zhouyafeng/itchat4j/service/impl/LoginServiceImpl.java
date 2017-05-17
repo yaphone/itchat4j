@@ -229,6 +229,7 @@ public class LoginServiceImpl implements ILoginService {
 				while (core.isAlive()) {
 					try {
 						Map<String, String> resultMap = syncCheck();
+						System.out.println(resultMap);
 						String retcode = resultMap.get("retcode");
 						String selector = resultMap.get("selector");
 						if (retcode.equals(RetCodeEnum.UNKOWN.getCode())) {
@@ -236,12 +237,15 @@ public class LoginServiceImpl implements ILoginService {
 							continue;
 						} else if (retcode.equals(RetCodeEnum.LOGIN_OUT.getCode())) { // 退出
 							LOG.info(RetCodeEnum.LOGIN_OUT.getType());
+							core.setAlive(false);
 							break;
 						} else if (retcode.equals(RetCodeEnum.LOGIN_OTHERWHERE.getCode())) { // 其它地方登陆
 							LOG.info(RetCodeEnum.LOGIN_OTHERWHERE.getType());
+							core.setAlive(false);
 							break;
 						} else if (retcode.equals(RetCodeEnum.MOBILE_LOGIN_OUT.getCode())) { // 移动端退出
 							LOG.info(RetCodeEnum.MOBILE_LOGIN_OUT.getType());
+							core.setAlive(false);
 							break;
 						} else if (retcode.equals(RetCodeEnum.NORMAL.getCode())) {
 							if (selector.equals("2")) {
