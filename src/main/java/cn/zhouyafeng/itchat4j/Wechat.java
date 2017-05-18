@@ -4,12 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cn.zhouyafeng.itchat4j.controller.LoginController;
+import cn.zhouyafeng.itchat4j.core.Core;
 import cn.zhouyafeng.itchat4j.core.MsgCenter;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 
 public class Wechat {
 	private static final Logger LOG = LoggerFactory.getLogger(Wechat.class);
 	private IMsgHandlerFace msgHandler;
+	private Core core = Core.getInstance();
 
 	public Wechat(IMsgHandlerFace msgHandler, String qrPath) {
 		System.setProperty("jsse.enableSNIExtension", "false"); // 防止SSL错误
