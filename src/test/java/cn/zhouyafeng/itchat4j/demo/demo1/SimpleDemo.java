@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSONObject;
 
+import cn.zhouyafeng.itchat4j.api.WechatTools;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
 import cn.zhouyafeng.itchat4j.utils.tools.DownloadTools;
@@ -30,6 +31,9 @@ public class SimpleDemo implements IMsgHandlerFace {
 			// String userId = msg.getString("FromUserName");
 			// MessageTools.sendFileMsgByUserId(userId, docFilePath); // 发送文件
 			String text = msg.getString("Text"); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
+			if (text.equals("111")) {
+				WechatTools.logout();
+			}
 			return text;
 		}
 		return null;

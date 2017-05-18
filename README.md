@@ -54,7 +54,15 @@ public static List<String> getContactList()
 public static List<String> getGroupIdList()
 ```
 
-#### 3. 根据好友昵称发送文本消息，MessageTools.sendMsgByNickName(String text, String nickName)
+#### 3.退出微信 WechatTools.logout()
+
+退出itchat4j，不再处理消息，其函数声明为:
+
+```
+public static void logout()
+```
+
+#### 4. 根据好友昵称发送文本消息，MessageTools.sendMsgByNickName(String text, String nickName)
 
 此方法根据用户昵称发送文本消息，注意，用户需在你的好友列表里，否则发送失败，如果你的好友列表里有存在昵称一样的多个用户，则只会给第一个匹配的好友发送消息。方法接受两个参数，`text`为要发送的文本消息，`nickName`为要发送消息的好友昵称，成功发送时返回true，失败返回false。其函数声明为：
 
@@ -62,7 +70,7 @@ public static List<String> getGroupIdList()
 public static boolean sendMsgByNickName(String text, String nickName)
 ```
 
-#### 4.根据ID发送文本消息， MessageTools.sendMsgById(String text, String id)
+#### 5.根据ID发送文本消息， MessageTools.sendMsgById(String text, String id)
 
 根据ID发送文本消息，发送者ID可以从`msg`里通过`msg.getString("FromUserName")`获取，格式为`@@d052d34b9c9228830363013ee53deb461404f80ea353dbdd8fc9391cbf5f1c46`（群消息）或`@a257b99314d8313862cd44ab02fe0f81`（非群消息），调用此方法可向指定id发送消息。其函数声明为：
 
@@ -70,7 +78,7 @@ public static boolean sendMsgByNickName(String text, String nickName)
 public static void sendMsgById(String text, String id)
 ```
 
-#### 5.根据好友昵称发送图片消息，MessageTools.sendPicMsgByNickName(String nickName, String filePath)
+#### 6.根据好友昵称发送图片消息，MessageTools.sendPicMsgByNickName(String nickName, String filePath)
 
 此方法根据好友昵称发送图片消息，`filePath`为图片文件路径，如`D:/itchat4j/pic/test.jpg`，成功返回true，失败返回false。其函数声明为：
 
@@ -78,7 +86,7 @@ public static void sendMsgById(String text, String id)
 public static boolean sendPicMsgByNickName(String nickName, String filePath)
 ```
 
-#### 6.根据ID发送图片消息，MessageTools.sendPicMsgByUserId(String userId, String filePath)
+#### 7.根据ID发送图片消息，MessageTools.sendPicMsgByUserId(String userId, String filePath)
 
 此方法根据好友ID发送图片消息，filePath`为图片文件路径，如`D:/itchat4j/pic/test.jpg`，成功返回true，失败返回false。其函数声明为：
 
@@ -86,7 +94,7 @@ public static boolean sendPicMsgByNickName(String nickName, String filePath)
 public static boolean sendPicMsgByUserId(String userId, String filePath)
 ```
 
-#### 7.根据好友昵称发送文件消息，MessageTools.sendFileMsgByNickName(String nickName, String filePath)
+#### 8.根据好友昵称发送文件消息，MessageTools.sendFileMsgByNickName(String nickName, String filePath)
 
 此方法根据好友昵称发送文件消息，文件可以为多种类型，如txt、PDF、小视频、语音、excel、docx等，发送时请保证文件后缀名正确。成功返回true，失败返回false。其函数声明为：
 
@@ -94,7 +102,7 @@ public static boolean sendPicMsgByUserId(String userId, String filePath)
 public static boolean sendPicFileByNickName(String nickName, String filePath)
 ```
 
-#### 8.根据ID发送文件消息，MessageTools.sendFileMsgByNickName(String nickName, String filePath)
+#### 9.根据ID发送文件消息，MessageTools.sendFileMsgByNickName(String nickName, String filePath)
 
 此方法根据好友昵称发送文件消息，成功返回true，失败返回false。其函数声明为：
 

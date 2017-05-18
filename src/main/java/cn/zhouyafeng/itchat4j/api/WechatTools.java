@@ -3,9 +3,18 @@ package cn.zhouyafeng.itchat4j.api;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.Consts;
+import org.apache.http.HttpEntity;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.alibaba.fastjson.JSONObject;
 
 import cn.zhouyafeng.itchat4j.core.Core;
+import cn.zhouyafeng.itchat4j.utils.enums.StorageLoginInfoEnum;
+import cn.zhouyafeng.itchat4j.utils.enums.URLEnum;
 
 /**
  * 微信小工具，如获好友列表等
@@ -16,6 +25,7 @@ import cn.zhouyafeng.itchat4j.core.Core;
  *
  */
 public class WechatTools {
+	private static Logger LOG = LoggerFactory.getLogger(WechatTools.class);
 
 	private static Core core = Core.getInstance();
 
@@ -87,6 +97,35 @@ public class WechatTools {
 
 	public static List<String> getGroupIdList() {
 		return core.getGroupIdList();
+	}
+
+	/**
+	 * 退出微信
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月18日 下午11:56:54
+	 */
+	public static void logout() {
+		webWxLogout();
+		core.setAlive(false);
+	}
+
+	private static boolean webWxLogout() {
+		String url = String.format(URLEnum.WEB_WX_LOGOUT.getUrl(),
+				core.getLoginInfo().get(StorageLoginInfoEnum.url.getKey()));
+		List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+		params.add(new BasicNameValuePair("redirect", "1"));
+		params.add(new BasicNameValuePair("type", "1"));
+		params.add(
+				new BasicNameValuePair("skey", (String) core.getLoginInfo().get(StorageLoginInfoEnum.skey.getKey())));
+		try {
+			HttpEntity entity = core.getMyHttpClient().doGet(url, params, false, null);
+			String text = EntityUtils.toString(entity, Consts.UTF_8); // 无消息
+			return true;
+		} catch (Exception e) {
+			LOG.debug(e.getMessage());
+		}
+		return false;
 	}
 
 }
