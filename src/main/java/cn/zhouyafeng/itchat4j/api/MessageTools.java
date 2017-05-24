@@ -246,11 +246,8 @@ public class MessageTools {
 				+ String.valueOf(new Random().nextLong()).substring(1, 5);
 		msgMap.put("LocalID", clientMsgId);
 		msgMap.put("ClientMsgId", clientMsgId);
-		Map<String, Object> paramMap = new HashMap<String, Object>();
-		@SuppressWarnings("unchecked")
-		Map<String, Map<String, String>> baseRequestMap = (Map<String, Map<String, String>>) core.getLoginInfo()
-				.get("baseRequest");
-		paramMap.put("BaseRequest", baseRequestMap.get("BaseRequest"));
+		Map<String, Object> paramMap = core.getParamMap();
+		paramMap.put("BaseRequest", core.getParamMap().get("BaseRequest"));
 		paramMap.put("Msg", msgMap);
 		String paramStr = JSON.toJSONString(paramMap);
 		HttpEntity entity = myHttpClient.doPost(url, paramStr);
