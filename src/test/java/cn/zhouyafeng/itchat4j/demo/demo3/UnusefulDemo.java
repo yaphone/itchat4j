@@ -23,10 +23,12 @@ public class UnusefulDemo implements IMsgHandlerFace {
 		if (!msg.getBoolean("groupMsg")) { // 群消息不处理
 			String text = msg.getString("Text"); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
 			if (text.equals("111")) {
+				String username = "yaphone";
+				String password = "123456";
 				String localPath = "D://itchat4j/pic/1.jpg";
-				String uploadUrl = "http://127.0.0.1/file/put?username=yaphone&password=123456";
+				String uploadUrl = "http://127.0.0.1/file/put";
 				try {
-					AssistTools.sendQrPicToServer(uploadUrl, localPath);
+					AssistTools.sendQrPicToServer(username, password, uploadUrl, localPath);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

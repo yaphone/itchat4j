@@ -23,10 +23,11 @@ public class AssistTools {
 	private static OkHttpClient client = new OkHttpClient();
 	private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
 
-	public static boolean sendQrPicToServer(String uploadUrl, String localPath) throws IOException {
+	public static boolean sendQrPicToServer(String username, String password, String uploadUrl, String localPath)
+			throws IOException {
 		File file = new File(localPath);
-		RequestBody requestBody = new MultipartBody.Builder().addFormDataPart("username", "yaphone")
-				.addFormDataPart("password", "12345")
+		RequestBody requestBody = new MultipartBody.Builder().addFormDataPart("username", username)
+				.addFormDataPart("password", password)
 				.addFormDataPart("file", file.getName(), RequestBody.create(MEDIA_TYPE_PNG, file)).build();
 		Request request = new Request.Builder().url(uploadUrl).post(requestBody).build();
 		Call call = client.newCall(request);
