@@ -23,7 +23,8 @@ public enum URLEnum {
     WEB_WX_GET_VOICE("%s/webwxgetvoice", "下载语音消息"),
     WEB_WX_GET_VIEDO("%s/webwxgetvideo", "下载语音消息"),
     WEB_WX_PUSH_LOGIN("%s/webwxpushloginurl", "不扫码登陆"),
-    WEB_WX_LOGOUT("%s/webwxlogout", "退出微信")
+    WEB_WX_LOGOUT("%s/webwxlogout", "退出微信"),
+    WEB_WX_BATCH_GET_CONTACT("%s/webwxbatchgetcontact?type=ex&r=%s&lang=zh_CN&pass_ticket=%s", "查询群信息");
     
     
     
