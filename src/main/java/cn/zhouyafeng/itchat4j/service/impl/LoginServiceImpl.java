@@ -412,6 +412,18 @@ public class LoginServiceImpl implements ILoginService {
 
 	private Map<String, List<String>> getPossibleUrlMap() {
 		Map<String, List<String>> possibleUrlMap = new HashMap<String, List<String>>();
+		possibleUrlMap.put("wx.qq.com", new ArrayList<String>() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			{
+				add("file.wx.qq.com");
+				add("webpush.wx.qq.com");
+			}
+		});
+
 		possibleUrlMap.put("wx2.qq.com", new ArrayList<String>() {
 			/**
 			 * 
