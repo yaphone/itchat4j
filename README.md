@@ -70,8 +70,6 @@ public static void logout()
 public static void remarkNameByNickName(String nickName, String remName)
 ```
 
-
-
 #### 5. 根据好友昵称发送文本消息，MessageTools.sendMsgByNickName(String text, String nickName)
 
 此方法根据用户昵称发送文本消息，注意，用户需在你的好友列表里，否则发送失败，如果你的好友列表里有存在昵称一样的多个用户，则只会给第一个匹配的好友发送消息。方法接受两个参数，`text`为要发送的文本消息，`nickName`为要发送消息的好友昵称，成功发送时返回true，失败返回false。其函数声明为：
@@ -684,6 +682,8 @@ itchat4j开源后，收到很多朋友的建议，对ithcat4j改进做出了很�
 [@jasonTangxd](https://github.com/jasonTangxd?tab=overview&from=2017-05-15)，项目结构调整。
 
 [@libre818](https://github.com/libre818)。
+
+@QQ群好友（北极心 851668663）
 
 ## 问题和建议
 
