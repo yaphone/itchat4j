@@ -33,8 +33,12 @@ public class SimpleDemo implements IMsgHandlerFace {
 			// MessageTools.sendFileMsgByUserId(userId, docFilePath); // 发送文件
 			MessageTools.sendPicMsgByUserId(userId, docFilePath);
 			String text = msg.getString("Text"); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
+			LOG.info(text);
 			if (text.equals("111")) {
 				WechatTools.logout();
+			}
+			if (text.equals("222")) {
+				WechatTools.remarkNameByNickName("yaphone", "Hello");
 			}
 			return text;
 		}

@@ -229,7 +229,7 @@ public class LoginServiceImpl implements ILoginService {
 				while (core.isAlive()) {
 					try {
 						Map<String, String> resultMap = syncCheck();
-						System.out.println(resultMap);
+						LOG.info(JSONObject.toJSONString(resultMap));
 						String retcode = resultMap.get("retcode");
 						String selector = resultMap.get("selector");
 						if (retcode.equals(RetCodeEnum.UNKOWN.getCode())) {
@@ -248,8 +248,8 @@ public class LoginServiceImpl implements ILoginService {
 							core.setAlive(false);
 							break;
 						} else if (retcode.equals(RetCodeEnum.NORMAL.getCode())) {
+							JSONObject msgObj = webWxSync();
 							if (selector.equals("2")) {
-								JSONObject msgObj = webWxSync();
 								if (msgObj != null) {
 									try {
 										JSONArray msgList = new JSONArray();
@@ -261,17 +261,13 @@ public class LoginServiceImpl implements ILoginService {
 									} catch (Exception e) {
 										LOG.info(e.getMessage());
 									}
-								} else if (selector.equals("7")) {
-									webWxSync();
-								} else if (selector.equals("4")) {
-									// 保存群聊到通讯录
-									// 修改群名称
-									// 新增或删除联系人
-									// 群聊成员数目变化
-									// TODO
-								} else if (selector.equals("3") || selector.equals("6")) {
-									break;
 								}
+							} else if (selector.equals("7")) {
+								webWxSync();
+							} else if (selector.equals("4")) {
+								continue;
+							} else if (selector.equals("3") || selector.equals("6")) {
+								continue;
 							}
 						} else {
 							JSONObject obj = webWxSync();

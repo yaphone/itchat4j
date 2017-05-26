@@ -50,6 +50,7 @@ public class Core {
 	private List<JSONObject> publicUsersList = new ArrayList<JSONObject>();;// 公众号／服务号
 	private List<JSONObject> specialUsersList = new ArrayList<JSONObject>();;// 特殊账号
 	private List<String> groupIdList = new ArrayList<String>();
+	private Map<String, JSONObject> userInfoMap = new HashMap<String, JSONObject>();
 
 	Map<String, Object> loginInfo = new HashMap<String, Object>();
 	// CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -230,6 +231,14 @@ public class Core {
 
 	public void setUserSelf(JSONObject userSelf) {
 		this.userSelf = userSelf;
+	}
+
+	public Map<String, JSONObject> getUserInfoMap() {
+		return userInfoMap;
+	}
+
+	public void setUserInfoMap(Map<String, JSONObject> userInfoMap) {
+		this.userInfoMap = userInfoMap;
 	}
 
 }
