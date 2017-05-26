@@ -3,6 +3,7 @@ package cn.zhouyafeng.itchat4j.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cn.zhouyafeng.itchat4j.api.WechatTools;
 import cn.zhouyafeng.itchat4j.core.Core;
 import cn.zhouyafeng.itchat4j.service.ILoginService;
 import cn.zhouyafeng.itchat4j.service.impl.LoginServiceImpl;
@@ -73,5 +74,8 @@ public class LoginController {
 
 		LOG.info("8. 获取联系人信息");
 		loginService.webWxGetContact();
+
+		LOG.info("9. 缓存本次登陆好友相关消息");
+		WechatTools.setUserInfo(); // 登陆成功后缓存本次登陆好友相关消息（NickName, UserName）
 	}
 }
