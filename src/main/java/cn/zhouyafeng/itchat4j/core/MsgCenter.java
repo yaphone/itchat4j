@@ -123,21 +123,25 @@ public class MsgCenter {
 				if (core.getMsgList().get(0).getString("Content").length() > 0) {
 					JSONObject msg = core.getMsgList().get(0);
 					if (msg.getString("Type") != null) {
-						if (msg.getString("Type").equals(MsgTypeEnum.TEXT.getType())) {
-							String result = msgHandler.textMsgHandle(msg);
-							MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
-						} else if (msg.getString("Type").equals(MsgTypeEnum.PIC.getType())) {
-							String result = msgHandler.picMsgHandle(msg);
-							MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
-						} else if (msg.getString("Type").equals(MsgTypeEnum.VOICE.getType())) {
-							String result = msgHandler.voiceMsgHandle(msg);
-							MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
-						} else if (msg.getString("Type").equals(MsgTypeEnum.VIEDO.getType())) {
-							String result = msgHandler.viedoMsgHandle(msg);
-							MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
-						} else if (msg.getString("Type").equals(MsgTypeEnum.NAMECARD.getType())) {
-							String result = msgHandler.nameCardMsgHandle(msg);
-							MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+						try {
+							if (msg.getString("Type").equals(MsgTypeEnum.TEXT.getType())) {
+								String result = msgHandler.textMsgHandle(msg);
+								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+							} else if (msg.getString("Type").equals(MsgTypeEnum.PIC.getType())) {
+								String result = msgHandler.picMsgHandle(msg);
+								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+							} else if (msg.getString("Type").equals(MsgTypeEnum.VOICE.getType())) {
+								String result = msgHandler.voiceMsgHandle(msg);
+								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+							} else if (msg.getString("Type").equals(MsgTypeEnum.VIEDO.getType())) {
+								String result = msgHandler.viedoMsgHandle(msg);
+								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+							} else if (msg.getString("Type").equals(MsgTypeEnum.NAMECARD.getType())) {
+								String result = msgHandler.nameCardMsgHandle(msg);
+								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
 					}
 				}
