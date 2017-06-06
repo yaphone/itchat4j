@@ -422,6 +422,12 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
 
 
 
+## 如何使用
+
+如果你想引入自己的项目，请切换到`pom.xml`目录，执行`mvn package`命令，将生成的`itchat4j`的jar包收入即可。
+
+
+
 ## 简单入门教程
 
 *项目不断更新中，教程仅供参考*
