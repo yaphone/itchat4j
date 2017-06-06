@@ -103,8 +103,8 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.0</version>
           <configuration>
-              <source>1.6</source>
-              <target>1.6</target>
+              <source>1.8</source>
+              <target>1.8</target>
            </configuration>
       </plugin>
       
@@ -122,25 +122,33 @@
           </execution>
         </executions>
       </plugin>
-      
-      <plugin>
+
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
+        <version>2.3</version>
         <configuration>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-            <descriptorRef>src</descriptorRef>
-          </descriptorRefs>
+            <appendAssemblyId>false</appendAssemblyId>
+            <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+            </descriptorRefs>
+            <archive>
+                <manifest>
+                    <mainClass>cn.zhouyafeng.itchat4j.main.TulingRobot</mainClass>
+                    <mainClass>cn.zhouyafeng.itchat4j.main.MyTest</mainClass>
+                </manifest>
+            </archive>
         </configuration>
-      </plugin>
-      
+        <executions>
+            <execution>
+                <id>make-assembly</id>
+                <phase>package</phase>
+                <goals>
+                    <goal>assembly</goal>
+                </goals>
+            </execution>
+        </executions>
+    </plugin>
     </plugins>
   </build>
 </project>

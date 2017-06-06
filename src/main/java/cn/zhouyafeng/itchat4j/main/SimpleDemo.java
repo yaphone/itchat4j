@@ -1,17 +1,15 @@
-package cn.zhouyafeng.itchat4j.demo.demo1;
-
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import org.apache.log4j.Logger;
-
-import com.alibaba.fastjson.JSONObject;
+package cn.zhouyafeng.itchat4j.main;
 
 import cn.zhouyafeng.itchat4j.api.WechatTools;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
 import cn.zhouyafeng.itchat4j.utils.tools.DownloadTools;
+import com.alibaba.fastjson.JSONObject;
+import org.apache.log4j.Logger;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * 简单示例程序，收到文本信息自动回复原信息，收到图片、语音、小视频后根据路径自动保存
