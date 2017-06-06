@@ -302,9 +302,39 @@ public class LoginServiceImpl implements ILoginService {
 		try {
 			String result = EntityUtils.toString(entity, Consts.UTF_8);
 			JSONObject fullFriendsJsonList = JSON.parseObject(result);
-
+			// 查看seq是否为0，0表示好友列表已全部获取完毕，若大于0，则表示好友列表未获取完毕，当前的字节数（断点续传）
+			long seq = 0;
+			long currentTime = 0L;
+			List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+			if (fullFriendsJsonList.get("Seq") != null) {
+				seq = fullFriendsJsonList.getLong("Seq");
+				currentTime = new Date().getTime();
+			}
 			core.setMemberCount(fullFriendsJsonList.getInteger(StorageLoginInfoEnum.MemberCount.getKey()));
 			JSONArray member = fullFriendsJsonList.getJSONArray(StorageLoginInfoEnum.MemberList.getKey());
+
+			// 循环获取seq直到为0，即获取全部好友列表 ==0：好友获取完毕 >0：好友未获取完毕，此时seq为已获取的字节数
+			while (seq > 0) {
+				// 设置seq传参
+				params.add(new BasicNameValuePair("r", String.valueOf(currentTime)));
+				params.add(new BasicNameValuePair("seq", String.valueOf(seq)));
+				entity = httpClient.doGet(url, params, false, null);
+
+				params.remove(new BasicNameValuePair("r", String.valueOf(currentTime)));
+				params.remove(new BasicNameValuePair("seq", String.valueOf(seq)));
+
+				result = EntityUtils.toString(entity, Consts.UTF_8);
+				fullFriendsJsonList = JSON.parseObject(result);
+
+				if (fullFriendsJsonList.get("Seq") != null) {
+					seq = fullFriendsJsonList.getLong("Seq");
+					currentTime = new Date().getTime();
+				}
+
+				// 累加好友列表
+				member.addAll(fullFriendsJsonList.getJSONArray(StorageLoginInfoEnum.MemberList.getKey()));
+			}
+			core.setMemberCount(member.size());
 			for (Iterator<?> iterator = member.iterator(); iterator.hasNext();) {
 				JSONObject o = (JSONObject) iterator.next();
 
