@@ -46,8 +46,7 @@ public class SimpleDemo implements IMsgHandlerFace {
 				LOG.info(WechatTools.getMemberListByGroupId(WechatTools.getGroupIdList().get(0)));
 				LOG.info("*********************");
 			}
-			return null;
-			// return text;
+			return text;
 		}
 		return null;
 	}
