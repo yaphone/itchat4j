@@ -189,6 +189,16 @@ public class LoginServiceImpl implements ILoginService {
 			core.setUserName(user.getString("UserName"));
 			core.setNickName(user.getString("NickName"));
 			core.setUserSelf(obj.getJSONObject("User"));
+
+			JSONArray contactListArray = obj.getJSONArray("ContactList");
+			for (int i = 0; i < contactListArray.size(); i++) {
+				JSONObject o = contactListArray.getJSONObject(i);
+				if (o.getString("UserName").indexOf("@@") != -1) {
+					core.getGroupIdList().add(o.getString("UserName")); // 更新GroupIdList
+					core.getGroupList().add(o); // 更新GroupList
+				}
+			}
+
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -335,15 +345,18 @@ public class LoginServiceImpl implements ILoginService {
 				member.addAll(fullFriendsJsonList.getJSONArray(StorageLoginInfoEnum.MemberList.getKey()));
 			}
 			core.setMemberCount(member.size());
+			LOG.info(JSON.toJSONString(member));
 			for (Iterator<?> iterator = member.iterator(); iterator.hasNext();) {
 				JSONObject o = (JSONObject) iterator.next();
-
 				if ((o.getInteger("VerifyFlag") & 8) != 0) { // 公众号/服务号
 					core.getPublicUsersList().add(o);
 				} else if (Config.API_SPECIAL_USER.contains(o.getString("UserName"))) { // 特殊账号
 					core.getSpecialUsersList().add(o);
 				} else if (o.getString("UserName").indexOf("@@") != -1) { // 群聊
-					core.getGroupList().add(o);
+					if (!core.getGroupIdList().contains(o.getString("UserName"))) {
+						core.getGroupIdList().add(o.getString("UserName"));
+						core.getGroupList().add(o);
+					}
 				} else if (o.getString("UserName").equals(core.getUserSelf().getString("UserName"))) { // 自己
 					core.getContactList().remove(o);
 				} else { // 普通联系人

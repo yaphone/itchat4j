@@ -39,6 +39,13 @@ public class SimpleDemo implements IMsgHandlerFace {
 			if (text.equals("222")) {
 				WechatTools.remarkNameByNickName("yaphone", "Hello");
 			}
+			if (text.equals("333")) { // 测试群列表
+				LOG.info(WechatTools.getGroupIdList());
+				LOG.info(WechatTools.getGroupList().size());
+				LOG.info("********************");
+				LOG.info(WechatTools.getMemberListByGroupId(WechatTools.getGroupIdList().get(0)));
+				LOG.info("*********************");
+			}
 			return text;
 		}
 		return null;

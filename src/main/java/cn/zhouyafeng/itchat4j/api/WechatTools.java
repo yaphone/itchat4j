@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.zhouyafeng.itchat4j.core.Core;
@@ -90,16 +91,28 @@ public class WechatTools {
 	 * @date 2017年5月5日 下午9:55:21
 	 * @return
 	 */
-	public static List<String> getGroupList() {
-		List<String> groupList = new ArrayList<String>();
-		for (JSONObject o : core.getGroupList()) {
-			groupList.add(o.getString("Name"));
-		}
-		return groupList;
+	public static List<JSONObject> getGroupList() {
+		return core.getGroupList();
 	}
 
 	public static List<String> getGroupIdList() {
 		return core.getGroupIdList();
+	}
+
+	/**
+	 * 根据groupIdList返回群成员列表
+	 * 
+	 * @date 2017年6月13日 下午11:12:31
+	 * @param groupIdList
+	 * @return
+	 */
+	public static JSONArray getMemberListByGroupId(String groupIdList) {
+		for (JSONObject o : getGroupList()) {
+			if (o.getString("UserName").equals(groupIdList)) {
+				return o.getJSONArray("MemberList");
+			}
+		}
+		return null;
 	}
 
 	/**
