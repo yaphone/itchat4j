@@ -11,4 +11,4 @@
 - linux下：
     - `./run.sh` 生成图片之后直接扫描图片或者如下：
     - `./read.sh` 终端中输出二维码扫描，登录即可
-    - `前提是安装了python和 [qrcode-terminal](https://github.com/alishtory/qrcode-terminal)`
+    - `注意`：前提是安装了python和  [qrcode-terminal](https://github.com/alishtory/qrcode-terminal)

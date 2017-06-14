@@ -29,7 +29,7 @@ public class TulingRobot implements IMsgHandlerFace {
 	MyHttpClient myHttpClient = Core.getInstance().getMyHttpClient();
 	String apiKey = "e4f65340d723498fa577f78a247653de"; // 这里是我申请的图灵机器人API接口，每天只能5000次调用，建议自己去申请一个，免费的:)
 	Logger logger = Logger.getLogger("TulingRobot");
-	String path;
+	private static String path;
 
 	public static void main(String[] args) {
 		IMsgHandlerFace msgHandler = new TulingRobot();
