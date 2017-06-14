@@ -29,10 +29,12 @@ public class TulingRobot implements IMsgHandlerFace {
 	MyHttpClient myHttpClient = Core.getInstance().getMyHttpClient();
 	String apiKey = "e4f65340d723498fa577f78a247653de"; // 这里是我申请的图灵机器人API接口，每天只能5000次调用，建议自己去申请一个，免费的:)
 	Logger logger = Logger.getLogger("TulingRobot");
+	String path;
 
 	public static void main(String[] args) {
 		IMsgHandlerFace msgHandler = new TulingRobot();
 //        "/home/kcp/Code/wechat"
+        path = args[0];
 		Wechat wechat = new Wechat(msgHandler, args[0]);
 		wechat.start();
 	}
@@ -70,7 +72,7 @@ public class TulingRobot implements IMsgHandlerFace {
 	@Override
 	public String voiceMsgHandle(JSONObject msg) {
 		String fileName = String.valueOf(new Date().getTime());
-		String voicePath = "/home/kcp/Code/wechat/voice" + File.separator + fileName + ".mp3";
+		String voicePath = path + File.separator + fileName + ".mp3";
 		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VOICE.getType(), voicePath);
 		return "收到语音";
 	}
@@ -78,7 +80,7 @@ public class TulingRobot implements IMsgHandlerFace {
 	@Override
 	public String viedoMsgHandle(JSONObject msg) {
 		String fileName = String.valueOf(new Date().getTime());
-		String viedoPath = "/home/kcp/Code/wechat/viedo" + File.separator + fileName + ".mp4";
+		String viedoPath = path + File.separator + fileName + ".mp4";
 		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VIEDO.getType(), viedoPath);
 		return "收到视频";
 	}
