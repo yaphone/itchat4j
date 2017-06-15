@@ -61,6 +61,8 @@ public class Core {
 	String hotReloadDir = "itchat.pkl";
 	int receivingRetryCount = 5;
 
+	private long lastNormalRetcodeTime; // 最后一次收到正常retcode的时间，秒为单位
+
 	/**
 	 * 请求参数
 	 */
@@ -239,6 +241,14 @@ public class Core {
 
 	public void setUserInfoMap(Map<String, JSONObject> userInfoMap) {
 		this.userInfoMap = userInfoMap;
+	}
+
+	public synchronized long getLastNormalRetcodeTime() {
+		return lastNormalRetcodeTime;
+	}
+
+	public synchronized void setLastNormalRetcodeTime(long lastNormalRetcodeTime) {
+		this.lastNormalRetcodeTime = lastNormalRetcodeTime;
 	}
 
 }

@@ -7,6 +7,7 @@ import cn.zhouyafeng.itchat4j.api.WechatTools;
 import cn.zhouyafeng.itchat4j.core.Core;
 import cn.zhouyafeng.itchat4j.service.ILoginService;
 import cn.zhouyafeng.itchat4j.service.impl.LoginServiceImpl;
+import cn.zhouyafeng.itchat4j.thread.CheckLoginStatusThread;
 import cn.zhouyafeng.itchat4j.utils.SleepUtils;
 import cn.zhouyafeng.itchat4j.utils.tools.CommonTools;
 
@@ -61,6 +62,9 @@ public class LoginController {
 			LOG.info("6. 微信初始化异常");
 			System.exit(0);
 		}
+
+		LOG.info("开启微信状态检测线程");
+		new Thread(new CheckLoginStatusThread()).start();
 
 		LOG.info("6. 开启微信状态通知");
 		loginService.wxStatusNotify();

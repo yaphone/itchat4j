@@ -154,6 +154,8 @@ public class LoginServiceImpl implements ILoginService {
 
 	@Override
 	public boolean webWxInit() {
+		core.setAlive(true);
+		core.setLastNormalRetcodeTime(System.currentTimeMillis() / 1000);
 		// 组装请求URL和参数
 		String url = String.format(URLEnum.INIT_URL.getUrl(),
 				core.getLoginInfo().get(StorageLoginInfoEnum.url.getKey()),
@@ -247,17 +249,15 @@ public class LoginServiceImpl implements ILoginService {
 							continue;
 						} else if (retcode.equals(RetCodeEnum.LOGIN_OUT.getCode())) { // 退出
 							LOG.info(RetCodeEnum.LOGIN_OUT.getType());
-							core.setAlive(false);
 							break;
 						} else if (retcode.equals(RetCodeEnum.LOGIN_OTHERWHERE.getCode())) { // 其它地方登陆
 							LOG.info(RetCodeEnum.LOGIN_OTHERWHERE.getType());
-							core.setAlive(false);
 							break;
 						} else if (retcode.equals(RetCodeEnum.MOBILE_LOGIN_OUT.getCode())) { // 移动端退出
 							LOG.info(RetCodeEnum.MOBILE_LOGIN_OUT.getType());
-							core.setAlive(false);
 							break;
 						} else if (retcode.equals(RetCodeEnum.NORMAL.getCode())) {
+							core.setLastNormalRetcodeTime(System.currentTimeMillis() / 1000); // 最后收到正常报文时间
 							JSONObject msgObj = webWxSync();
 							if (selector.equals("2")) {
 								if (msgObj != null) {
