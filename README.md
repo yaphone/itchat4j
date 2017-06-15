@@ -78,12 +78,12 @@ public static JSONArray getMemberListByGroupId(String groupIdList)
 public static void logout()
 ```
 
-#### 5.获取微信在线状态WechatTools.getWechatState()
+#### 5.获取微信在线状态WechatTools.getWechatStatus()
 
 查询微信在线状态，在线返回`true`，离线返回`false`，其函数声明为
 
 ```java
-public static boolean getWechatState()
+public static boolean getWechatStatus()
 ```
 
 #### 6.根据用户昵称修改用户备注MessageTools.remarkNameByNickName(String nickName, String remName)

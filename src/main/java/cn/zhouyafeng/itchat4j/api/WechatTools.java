@@ -185,7 +185,7 @@ public class WechatTools {
 	 * @date 2017年6月16日 上午12:47:46
 	 * @return
 	 */
-	public static boolean getWechatState() {
+	public static boolean getWechatStatus() {
 		return core.isAlive();
 	}
 
