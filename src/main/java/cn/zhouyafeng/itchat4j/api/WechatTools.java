@@ -123,7 +123,6 @@ public class WechatTools {
 	 */
 	public static void logout() {
 		webWxLogout();
-		core.setAlive(false);
 	}
 
 	private static boolean webWxLogout() {
@@ -178,6 +177,16 @@ public class WechatTools {
 		} catch (Exception e) {
 			LOG.error("remarkNameByUserName", e);
 		}
+	}
+
+	/**
+	 * 获取微信在线状态
+	 * 
+	 * @date 2017年6月16日 上午12:47:46
+	 * @return
+	 */
+	public static boolean getWechatState() {
+		return core.isAlive();
 	}
 
 }

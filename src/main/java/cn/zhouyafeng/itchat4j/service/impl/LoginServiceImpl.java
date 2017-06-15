@@ -345,7 +345,6 @@ public class LoginServiceImpl implements ILoginService {
 				member.addAll(fullFriendsJsonList.getJSONArray(StorageLoginInfoEnum.MemberList.getKey()));
 			}
 			core.setMemberCount(member.size());
-			LOG.info(JSON.toJSONString(member));
 			for (Iterator<?> iterator = member.iterator(); iterator.hasNext();) {
 				JSONObject o = (JSONObject) iterator.next();
 				if ((o.getInteger("VerifyFlag") & 8) != 0) { // 公众号/服务号
