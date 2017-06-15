@@ -134,8 +134,8 @@
             </descriptorRefs>
             <archive>
                 <manifest>
-                    <mainClass>cn.zhouyafeng.itchat4j.main.TulingRobot</mainClass>
-                    <mainClass>cn.zhouyafeng.itchat4j.main.MyTest</mainClass>
+                    <mainClass>com.kuangcp.test.TulingRobot</mainClass>
+                    <mainClass>com.kuangcp.test.MyTest</mainClass>
                     <mainClass>com.test.ReadProperties</mainClass>
                 </manifest>
             </archive>

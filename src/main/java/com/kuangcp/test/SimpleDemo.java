@@ -1,4 +1,4 @@
-package cn.zhouyafeng.itchat4j.main;
+package com.kuangcp.test;
 
 import cn.zhouyafeng.itchat4j.api.WechatTools;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
