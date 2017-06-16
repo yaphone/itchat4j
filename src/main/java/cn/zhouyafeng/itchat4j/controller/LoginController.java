@@ -63,23 +63,23 @@ public class LoginController {
 			System.exit(0);
 		}
 
-		LOG.info("开启微信状态检测线程");
+		LOG.info("6.开启微信状态检测线程");
 		new Thread(new CheckLoginStatusThread()).start();
 
-		LOG.info("6. 开启微信状态通知");
+		LOG.info("7. 开启微信状态通知");
 		loginService.wxStatusNotify();
 
-		LOG.info("6. 清除。。。。");
+		LOG.info("8. 清除。。。。");
 		CommonTools.clearScreen();
 		LOG.info(String.format("欢迎回来， %s", core.getNickName()));
 
-		LOG.info("7. 开始接收消息");
+		LOG.info("9. 开始接收消息");
 		loginService.startReceiving();
 
-		LOG.info("8. 获取联系人信息");
+		LOG.info("10. 获取联系人信息");
 		loginService.webWxGetContact();
 
-		LOG.info("9. 缓存本次登陆好友相关消息");
+		LOG.info("11. 缓存本次登陆好友相关消息");
 		WechatTools.setUserInfo(); // 登陆成功后缓存本次登陆好友相关消息（NickName, UserName）
 	}
 }
