@@ -49,7 +49,9 @@ public class Core {
 	private List<JSONObject> groupMemeberList = new ArrayList<JSONObject>();; // 群聊成员字典
 	private List<JSONObject> publicUsersList = new ArrayList<JSONObject>();;// 公众号／服务号
 	private List<JSONObject> specialUsersList = new ArrayList<JSONObject>();;// 特殊账号
-	private List<String> groupIdList = new ArrayList<String>();
+	private List<String> groupIdList = new ArrayList<String>(); // 群ID列表
+	private List<String> groupNickNameList = new ArrayList<String>(); // 群NickName列表
+
 	private Map<String, JSONObject> userInfoMap = new HashMap<String, JSONObject>();
 
 	Map<String, Object> loginInfo = new HashMap<String, Object>();
@@ -249,6 +251,14 @@ public class Core {
 
 	public synchronized void setLastNormalRetcodeTime(long lastNormalRetcodeTime) {
 		this.lastNormalRetcodeTime = lastNormalRetcodeTime;
+	}
+
+	public List<String> getGroupNickNameList() {
+		return groupNickNameList;
+	}
+
+	public void setGroupNickNameList(List<String> groupNickNameList) {
+		this.groupNickNameList = groupNickNameList;
 	}
 
 }

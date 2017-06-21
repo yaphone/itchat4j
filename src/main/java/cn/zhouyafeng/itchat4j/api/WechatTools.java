@@ -95,8 +95,24 @@ public class WechatTools {
 		return core.getGroupList();
 	}
 
+	/**
+	 * 获取群ID列表
+	 * 
+	 * @date 2017年6月21日 下午11:42:56
+	 * @return
+	 */
 	public static List<String> getGroupIdList() {
 		return core.getGroupIdList();
+	}
+
+	/**
+	 * 获取群NickName列表
+	 * 
+	 * @date 2017年6月21日 下午11:43:38
+	 * @return
+	 */
+	public static List<String> getGroupNickNameList() {
+		return core.getGroupNickNameList();
 	}
 
 	/**

@@ -198,14 +198,14 @@ public class LoginServiceImpl implements ILoginService {
 				if (o.getString("UserName").indexOf("@@") != -1) {
 					core.getGroupIdList().add(o.getString("UserName")); // 更新GroupIdList
 					core.getGroupList().add(o); // 更新GroupList
+					core.getGroupNickNameList().add(o.getString("NickName"));
 				}
 			}
-
-			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	@Override
@@ -307,6 +307,7 @@ public class LoginServiceImpl implements ILoginService {
 		String url = String.format(URLEnum.WEB_WX_GET_CONTACT.getUrl(),
 				core.getLoginInfo().get(StorageLoginInfoEnum.url.getKey()));
 		Map<String, Object> paramMap = core.getParamMap();
+		System.out.println(paramMap);
 		HttpEntity entity = httpClient.doPost(url, JSON.toJSONString(paramMap));
 
 		try {
@@ -322,7 +323,6 @@ public class LoginServiceImpl implements ILoginService {
 			}
 			core.setMemberCount(fullFriendsJsonList.getInteger(StorageLoginInfoEnum.MemberCount.getKey()));
 			JSONArray member = fullFriendsJsonList.getJSONArray(StorageLoginInfoEnum.MemberList.getKey());
-
 			// 循环获取seq直到为0，即获取全部好友列表 ==0：好友获取完毕 >0：好友未获取完毕，此时seq为已获取的字节数
 			while (seq > 0) {
 				// 设置seq传参
@@ -353,6 +353,7 @@ public class LoginServiceImpl implements ILoginService {
 					core.getSpecialUsersList().add(o);
 				} else if (o.getString("UserName").indexOf("@@") != -1) { // 群聊
 					if (!core.getGroupIdList().contains(o.getString("UserName"))) {
+						core.getGroupNickNameList().add(o.getString("NickName"));
 						core.getGroupIdList().add(o.getString("UserName"));
 						core.getGroupList().add(o);
 					}
@@ -367,6 +368,21 @@ public class LoginServiceImpl implements ILoginService {
 			LOG.error(e.getMessage(), e);
 		}
 		return;
+	}
+
+	/**
+	 * 获取群及群好友列表
+	 * 
+	 * @date 2017年6月22日 上午12:45:21
+	 */
+	private void WebWxBatchGetContact() {
+		String url = String.format(URLEnum.WEB_WX_BATCH_GET_CONTACT.getUrl(),
+				core.getLoginInfo().get(StorageLoginInfoEnum.url.getKey()), new Date().getTime(),
+				core.getLoginInfo().get(StorageLoginInfoEnum.pass_ticket.getKey()));
+		Map<String, Object> paramMap = core.getParamMap();
+		HttpEntity entity = httpClient.doPost(url, JSON.toJSONString(paramMap));
+
+		// TODO
 	}
 
 	/**
