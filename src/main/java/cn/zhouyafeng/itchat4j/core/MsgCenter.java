@@ -98,7 +98,7 @@ public class MsgCenter {
 																								// 微信初始化消息
 
 			} else if (m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_SYS.getCode()) {// 系统消息
-
+				m.put("Type", MsgTypeEnum.SYS.getType());
 			} else if (m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_RECALLED.getCode()) { // 撤回消息
 
 			} else {
@@ -138,6 +138,9 @@ public class MsgCenter {
 								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
 							} else if (msg.getString("Type").equals(MsgTypeEnum.NAMECARD.getType())) {
 								String result = msgHandler.nameCardMsgHandle(msg);
+								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+							} else if (msg.getString("Type").equals(MsgTypeEnum.SYS.getType())) {
+								String result = msgHandler.sysMsgHandle(msg);
 								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
 							}
 						} catch (Exception e) {
