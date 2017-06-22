@@ -68,6 +68,6 @@ public interface IMsgHandlerFace {
 	 * @param msg
 	 * @return
 	 */
-	public String sysMsgHandle(JSONObject msg);
+	public void sysMsgHandle(JSONObject msg);
 
 }

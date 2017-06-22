@@ -278,21 +278,18 @@ public class LoginServiceImpl implements ILoginService {
 								continue;
 							} else if (selector.equals("3")) {
 								continue;
-							}else if (selector.equals("6")) {
+							} else if (selector.equals("6")) {
 								if (msgObj != null) {
 									try {
 										JSONArray msgList = new JSONArray();
 										msgList = msgObj.getJSONArray("AddMsgList");
-										JSONArray modContactList = msgObj.getJSONArray("ModContactList");	//存有删除或者新增的好友信息
+										JSONArray modContactList = msgObj.getJSONArray("ModContactList"); // 存有删除或者新增的好友信息
 										msgList = MsgCenter.produceMsg(msgList);
 										for (int j = 0; j < msgList.size(); j++) {
-
 											JSONObject msg = msgList.getJSONObject(j);
 											JSONObject userInfo = modContactList.getJSONObject(j);
-											msg.put("userInfo",userInfo);
-
+											msg.put("userInfo", userInfo);
 											core.getMsgList().add(msg);
-
 										}
 									} catch (Exception e) {
 										LOG.info(e.getMessage());
