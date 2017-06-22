@@ -42,6 +42,7 @@ public class SimpleDemo implements IMsgHandlerFace {
 			if (text.equals("333")) { // 测试群列表
 				LOG.info(WechatTools.getGroupNickNameList());
 				LOG.info(WechatTools.getGroupIdList().size());
+				LOG.info(WechatTools.getContactList());
 			}
 			return text;
 		}

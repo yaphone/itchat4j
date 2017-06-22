@@ -192,15 +192,24 @@ public class LoginServiceImpl implements ILoginService {
 			core.setNickName(user.getString("NickName"));
 			core.setUserSelf(obj.getJSONObject("User"));
 
-			JSONArray contactListArray = obj.getJSONArray("ContactList");
-			for (int i = 0; i < contactListArray.size(); i++) {
-				JSONObject o = contactListArray.getJSONObject(i);
-				if (o.getString("UserName").indexOf("@@") != -1) {
-					core.getGroupIdList().add(o.getString("UserName")); // 更新GroupIdList
-					core.getGroupList().add(o); // 更新GroupList
-					core.getGroupNickNameList().add(o.getString("NickName"));
+			String chatSet = obj.getString("ChatSet");
+			String[] chatSetArray = chatSet.split(",");
+			for (int i = 0; i < chatSetArray.length; i++) {
+				if (chatSetArray[i].indexOf("@@") != -1) {
+					// 更新GroupIdList
+					core.getGroupIdList().add(chatSetArray[i]); //
 				}
 			}
+			// JSONArray contactListArray = obj.getJSONArray("ContactList");
+			// for (int i = 0; i < contactListArray.size(); i++) {
+			// JSONObject o = contactListArray.getJSONObject(i);
+			// if (o.getString("UserName").indexOf("@@") != -1) {
+			// core.getGroupIdList().add(o.getString("UserName")); //
+			// // 更新GroupIdList
+			// core.getGroupList().add(o); // 更新GroupList
+			// core.getGroupNickNameList().add(o.getString("NickName"));
+			// }
+			// }
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -307,7 +316,6 @@ public class LoginServiceImpl implements ILoginService {
 		String url = String.format(URLEnum.WEB_WX_GET_CONTACT.getUrl(),
 				core.getLoginInfo().get(StorageLoginInfoEnum.url.getKey()));
 		Map<String, Object> paramMap = core.getParamMap();
-		System.out.println(paramMap);
 		HttpEntity entity = httpClient.doPost(url, JSON.toJSONString(paramMap));
 
 		try {
@@ -370,18 +378,32 @@ public class LoginServiceImpl implements ILoginService {
 		return;
 	}
 
-	/**
-	 * 获取群及群好友列表
-	 * 
-	 * @date 2017年6月22日 上午12:45:21
-	 */
-	private void WebWxBatchGetContact() {
+	@Override
+	public void WebWxBatchGetContact() {
 		String url = String.format(URLEnum.WEB_WX_BATCH_GET_CONTACT.getUrl(),
 				core.getLoginInfo().get(StorageLoginInfoEnum.url.getKey()), new Date().getTime(),
 				core.getLoginInfo().get(StorageLoginInfoEnum.pass_ticket.getKey()));
 		Map<String, Object> paramMap = core.getParamMap();
+		paramMap.put("Count", core.getGroupIdList().size());
+		List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+		for (int i = 0; i < core.getGroupIdList().size(); i++) {
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put("UserName", core.getGroupIdList().get(i));
+			map.put("EncryChatRoomId", "");
+			list.add(map);
+		}
+		paramMap.put("List", list);
 		HttpEntity entity = httpClient.doPost(url, JSON.toJSONString(paramMap));
-
+		try {
+			String text = EntityUtils.toString(entity, Consts.UTF_8);
+			JSONObject obj = JSON.parseObject(text);
+			JSONArray contactList = obj.getJSONArray("ContactList");
+			for (int i = 0; i < contactList.size(); i++) { // 群好友
+				// TODO
+			}
+		} catch (Exception e) {
+			LOG.info(e.getMessage());
+		}
 		// TODO
 	}
 
