@@ -80,4 +80,14 @@ public class SimpleDemo implements IMsgHandlerFace {
 		return "收到名片消息";
 	}
 
+	@Override
+	public String sysMsgHandle(JSONObject msg) {
+		// TODO Auto-generated method stub
+		String text = msg.getString("Content");
+		LOG.info(text);
+		String[] tmp = text.split("\"");
+		String answer = "欢迎" + tmp[3] + "！";
+		return answer;
+	}
+
 }

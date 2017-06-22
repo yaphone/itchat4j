@@ -60,4 +60,14 @@ public interface IMsgHandlerFace {
 	 */
 	public String nameCardMsgHandle(JSONObject msg);
 
+	/**
+	 * 处理系统消息
+	 * 
+	 * @author Relyn
+	 * @date 2017年6月21日17:43:51
+	 * @param msg
+	 * @return
+	 */
+	public String sysMsgHandle(JSONObject msg);
+
 }
