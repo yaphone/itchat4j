@@ -125,8 +125,15 @@ public class MsgCenter {
 					if (msg.getString("Type") != null) {
 						try {
 							if (msg.getString("Type").equals(MsgTypeEnum.TEXT.getType())) {
-								String result = msgHandler.textMsgHandle(msg);
-								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+								//存在主动加好友之后的同步联系人到本地
+								String text = msg.getString("Text");
+								if (text.contains("我通过了你的朋友验证请求，现在我们可以开始聊天了")) {
+									JSONObject userInfo = msg.getJSONObject("userInfo");
+									core.getContactList().add(userInfo);
+								}else {
+									String result = msgHandler.textMsgHandle(msg);
+									MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+								}
 							} else if (msg.getString("Type").equals(MsgTypeEnum.PIC.getType())) {
 								String result = msgHandler.picMsgHandle(msg);
 								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
