@@ -48,6 +48,9 @@ public class MessageTools {
 	 * @param toUserName
 	 */
 	private static void sendMsg(String text, String toUserName) {
+		if (text == null) {
+			return;
+		}
 		LOG.info(String.format("发送消息 %s: %s", toUserName, text));
 		webWxSendMsg(1, text, toUserName);
 	}
@@ -61,6 +64,9 @@ public class MessageTools {
 	 * @param id
 	 */
 	public static void sendMsgById(String text, String id) {
+		if (text == null) {
+			return;
+		}
 		sendMsg(text, id);
 	}
 

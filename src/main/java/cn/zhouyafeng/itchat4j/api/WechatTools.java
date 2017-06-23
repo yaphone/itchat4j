@@ -95,24 +95,35 @@ public class WechatTools {
 		return core.getGroupList();
 	}
 
+	/**
+	 * 获取群ID列表
+	 * 
+	 * @date 2017年6月21日 下午11:42:56
+	 * @return
+	 */
 	public static List<String> getGroupIdList() {
 		return core.getGroupIdList();
+	}
+
+	/**
+	 * 获取群NickName列表
+	 * 
+	 * @date 2017年6月21日 下午11:43:38
+	 * @return
+	 */
+	public static List<String> getGroupNickNameList() {
+		return core.getGroupNickNameList();
 	}
 
 	/**
 	 * 根据groupIdList返回群成员列表
 	 * 
 	 * @date 2017年6月13日 下午11:12:31
-	 * @param groupIdList
+	 * @param groupId
 	 * @return
 	 */
-	public static JSONArray getMemberListByGroupId(String groupIdList) {
-		for (JSONObject o : getGroupList()) {
-			if (o.getString("UserName").equals(groupIdList)) {
-				return o.getJSONArray("MemberList");
-			}
-		}
-		return null;
+	public static JSONArray getMemberListByGroupId(String groupId) {
+		return core.getGroupMemeberMap().get(groupId);
 	}
 
 	/**

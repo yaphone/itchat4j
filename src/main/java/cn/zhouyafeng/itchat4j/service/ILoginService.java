@@ -72,4 +72,11 @@ public interface ILoginService {
 	 */
 	void webWxGetContact();
 
+	/**
+	 * 批量获取联系人信息
+	 * 
+	 * @date 2017年6月22日 下午11:24:35
+	 */
+	void WebWxBatchGetContact();
+
 }
