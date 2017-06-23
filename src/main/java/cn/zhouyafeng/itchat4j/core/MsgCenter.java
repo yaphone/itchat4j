@@ -53,6 +53,10 @@ public class MsgCenter {
 				// 群消息与普通消息不同的是在其消息体（Content）中会包含发送者id及":<br/>"消息，这里需要处理一下，去掉多余信息，只保留消息内容
 				if (m.getString("Content").contains("<br/>")) {
 					String content = m.getString("Content").substring(m.getString("Content").indexOf("<br/>") + 5);
+
+					//获取发送者的ID
+					m.put("fasongzheID",m.getString("Content").substring(0,m.getString("Content").indexOf("<br/>")-1));
+
 					m.put("Content", content);
 					m.put("groupMsg", true);
 				}
@@ -127,19 +131,19 @@ public class MsgCenter {
 						try {
 							if (msg.getString("Type").equals(MsgTypeEnum.TEXT.getType())) {
 								String result = msgHandler.textMsgHandle(msg);
-								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+								//MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));取消定制消息的回复
 							} else if (msg.getString("Type").equals(MsgTypeEnum.PIC.getType())) {
 								String result = msgHandler.picMsgHandle(msg);
-								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+								//MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
 							} else if (msg.getString("Type").equals(MsgTypeEnum.VOICE.getType())) {
 								String result = msgHandler.voiceMsgHandle(msg);
-								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+								//MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
 							} else if (msg.getString("Type").equals(MsgTypeEnum.VIEDO.getType())) {
 								String result = msgHandler.viedoMsgHandle(msg);
-								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+								//MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
 							} else if (msg.getString("Type").equals(MsgTypeEnum.NAMECARD.getType())) {
 								String result = msgHandler.nameCardMsgHandle(msg);
-								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+								//MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
