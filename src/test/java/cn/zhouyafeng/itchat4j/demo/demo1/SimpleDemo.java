@@ -80,4 +80,10 @@ public class SimpleDemo implements IMsgHandlerFace {
 		return "收到名片消息";
 	}
 
+	@Override
+	public void sysMsgHandle(JSONObject msg) { // 收到系统消息
+		String text = msg.getString("Content");
+		LOG.info(text);
+	}
+
 }
