@@ -399,12 +399,16 @@ public class LoginServiceImpl implements ILoginService {
 			JSONObject obj = JSON.parseObject(text);
 			JSONArray contactList = obj.getJSONArray("ContactList");
 			for (int i = 0; i < contactList.size(); i++) { // 群好友
-				// TODO
+				if (contactList.getJSONObject(i).getString("UserName").indexOf("@@") > -1) { // 群
+					core.getGroupNickNameList().add(contactList.getJSONObject(i).getString("NickName")); // 更新群昵称列表
+					core.getGroupList().add(contactList.getJSONObject(i)); // 更新群信息（所有）列表
+					core.getGroupMemeberMap().put(contactList.getJSONObject(i).getString("UserName"),
+							contactList.getJSONObject(i).getJSONArray("MemberList")); // 更新群成员Map
+				}
 			}
 		} catch (Exception e) {
 			LOG.info(e.getMessage());
 		}
-		// TODO
 	}
 
 	/**
