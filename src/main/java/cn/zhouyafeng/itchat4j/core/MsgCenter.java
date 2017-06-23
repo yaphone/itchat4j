@@ -115,7 +115,7 @@ public class MsgCenter {
 	}
 
 	/**
-	 * 消息处理
+	 * 消息处理1
 	 * 
 	 * @author https://github.com/yaphone
 	 * @date 2017年5月14日 上午10:52:34
