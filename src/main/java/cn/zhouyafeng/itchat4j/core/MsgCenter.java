@@ -117,6 +117,7 @@ public class MsgCenter {
 	 * @date 2017年5月14日 上午10:52:34
 	 * @param msgHandler
 	 */
+
 	public static void handleMsg(IMsgHandlerFace msgHandler) {
 		while (true) {
 			if (core.getMsgList().size() > 0 && core.getMsgList().get(0).getString("Content") != null) {
