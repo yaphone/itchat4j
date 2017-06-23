@@ -115,13 +115,12 @@ public class MsgCenter {
 	}
 
 	/**
-	 * 消息处理1
+	 * 消息处理
 	 * 
 	 * @author https://github.com/yaphone
 	 * @date 2017年5月14日 上午10:52:34
 	 * @param msgHandler
 	 */
-
 	public static void handleMsg(IMsgHandlerFace msgHandler) {
 		while (true) {
 			if (core.getMsgList().size() > 0 && core.getMsgList().get(0).getString("Content") != null) {
@@ -131,19 +130,19 @@ public class MsgCenter {
 						try {
 							if (msg.getString("Type").equals(MsgTypeEnum.TEXT.getType())) {
 								String result = msgHandler.textMsgHandle(msg);
-								//MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));取消定制消息的回复
+								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
 							} else if (msg.getString("Type").equals(MsgTypeEnum.PIC.getType())) {
 								String result = msgHandler.picMsgHandle(msg);
-								//MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
 							} else if (msg.getString("Type").equals(MsgTypeEnum.VOICE.getType())) {
 								String result = msgHandler.voiceMsgHandle(msg);
-								//MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
 							} else if (msg.getString("Type").equals(MsgTypeEnum.VIEDO.getType())) {
 								String result = msgHandler.viedoMsgHandle(msg);
-								//MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
 							} else if (msg.getString("Type").equals(MsgTypeEnum.NAMECARD.getType())) {
 								String result = msgHandler.nameCardMsgHandle(msg);
-								//MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
