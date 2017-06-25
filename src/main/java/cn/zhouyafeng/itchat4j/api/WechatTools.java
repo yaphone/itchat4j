@@ -2,6 +2,7 @@ package cn.zhouyafeng.itchat4j.api;
 
 import java.util.*;
 
+import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
 import cn.zhouyafeng.itchat4j.utils.enums.parameters.BaseParaEnum;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
@@ -30,6 +31,8 @@ public class WechatTools {
 	private static Logger LOG = LoggerFactory.getLogger(WechatTools.class);
 
 	private static Core core = Core.getInstance();
+
+	private static MyHttpClient myHttpClient = core.getMyHttpClient();
 
 	/**
 	 * 根据用户名发送文本消息
