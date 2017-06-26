@@ -92,6 +92,12 @@ public class PicYourFriends implements IMsgHandlerFace {
 		return null;
 	}
 
+	@Override
+	public void sysMsgHandle(JSONObject msg) {
+		// TODO Auto-generated method stub
+
+	}
+
 	public static void main(String[] args) {
 		String qrPath = "D://itchat4j//login"; // 保存登陆二维码图片的路径，这里需要在本地新建目录
 		IMsgHandlerFace msgHandler = new PicYourFriends(); // 实现IMsgHandlerFace接口的类
