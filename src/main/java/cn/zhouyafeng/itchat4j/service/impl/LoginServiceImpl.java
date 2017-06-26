@@ -451,6 +451,7 @@ public class LoginServiceImpl implements ILoginService {
 				fileUrl = "https://" + entry.getValue().get(0) + "/cgi-bin/mmwebwx-bin";
 				syncUrl = "https://" + entry.getValue().get(1) + "/cgi-bin/mmwebwx-bin";
 				if (core.getLoginInfo().get("url").toString().contains(indexUrl)) {
+					core.setIndexUrl(indexUrl);
 					core.getLoginInfo().put("fileUrl", fileUrl);
 					core.getLoginInfo().put("syncUrl", syncUrl);
 					break;

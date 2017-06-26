@@ -1,4 +1,4 @@
-package cn.zhouyafeng.itchat4j.demo.demo3;
+package cn.zhouyafeng.itchat4j.demo.unuseful;
 
 import java.io.IOException;
 

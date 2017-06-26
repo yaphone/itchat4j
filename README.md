@@ -18,7 +18,7 @@
 
 > itchat是一个开源的微信个人号接口，使用Python调用微信从未如此简单。使用短短的几十行代码，你就可以完成一个能够处理所有信息的微信机器人。当然，itchat的使用远不止一个机器人，更多的功能等着你来发现，如今微信已经成为了个人社交的很大一部分，希望这个项目能够帮助你扩展你的个人的微信号、方便自己的生活。(引自itchat项目)
 
-你可以轻松将[itchat4j](https://github.com/yaphone/itchat4j)其集成在你个人的Java应用中，无论是SpringMVC、桌面程序还是嵌入式程序，只要使用的JDK是1.6以上的版本，都可以轻松接入。玩法很多，请打开你的脑洞，比如这些：
+你可以轻松将[itchat4j](https://github.com/yaphone/itchat4j)其集成在你个人的Java应用中，无论是SpringMVC、桌面程序还是嵌入式程序，只要使用的JDK是1.7以上的版本，都可以轻松接入。玩法很多，请打开你的脑洞，比如这些：
 
 - Just for fun，把个人微信号扩展为"公众号"，在朋友面前装个X吧。
 - 集成在你的个人应用（SpringMVC、Servlet、GUI）中，为应用提供更强的服务能力。
@@ -46,15 +46,23 @@
 
 目前在`package cn.zhouyafeng.itchat4j.api`包中有两个静态类，即`MessageTools`和`WechatTools`，目前对外暴露的方法有：
 
-####  1.获取好友列表  WechatTools.getContactList()
+####  1.获取好友昵称列表  WechatTools.getContactNickNameList()
 
 此方法会返回好友昵称列表，其函数声明为：
 
 ```
-public static List<String> getContactList()
+public static List<String> getContactNickNameList()
 ```
 
-#### 2.获取群列表 WechatTools.getGroupIdList()
+#### 2.获取好友完整信息列表 WechatTools.getContactList() 
+
+此方法会返回好友的完整信息，如昵称、备注、地区、头像链接等，其函数声明为：
+
+```java
+public static List<JSONObject> getContactList()
+```
+
+#### 3.获取群列表 WechatTools.getGroupIdList()
 
 群列表与好友列表不同，在登陆后群列表其实是空的，只有主动发送消息或者收到一条群消息时，才能获取到这个群的信息，群列表会记录这个群的id，其格式为`@@d052d34b9c9228830363013ee53deb461404f80ea353dbdd8fc9391cbf5f1c46`。调用此方法会返回已知的群列表。其声明函数为：
 
@@ -62,7 +70,7 @@ public static List<String> getContactList()
 public static List<String> getGroupIdList()
 ```
 
-#### 3.根据群ID获取群成员WechatTools.getMemberListByGroupId()
+#### 4.根据群ID获取群成员WechatTools.getMemberListByGroupId()
 
 此方法根据群ID（格式为`@@d052d34b9c9228830363013ee53deb461404f80ea353dbdd8fc9391cbf5f1c46`）获取群成员列表。其函数声明为：
 
@@ -70,7 +78,7 @@ public static List<String> getGroupIdList()
 public static JSONArray getMemberListByGroupId(String groupId)
 ```
 
-#### 4.退出微信 WechatTools.logout()
+#### 5.退出微信 WechatTools.logout()
 
 退出itchat4j，不再处理消息，其函数声明为:
 
@@ -78,7 +86,7 @@ public static JSONArray getMemberListByGroupId(String groupId)
 public static void logout()
 ```
 
-#### 5.获取微信在线状态WechatTools.getWechatStatus()
+#### 6.获取微信在线状态WechatTools.getWechatStatus()
 
 查询微信在线状态，在线返回`true`，离线返回`false`，其函数声明为
 
@@ -86,7 +94,7 @@ public static void logout()
 public static boolean getWechatStatus()
 ```
 
-#### 6.获取群昵称列表WechatTools.getGroupNickNameList()
+#### 7.获取群昵称列表WechatTools.getGroupNickNameList()
 
 获取群昵称列表,函数声明为：
 
@@ -94,7 +102,7 @@ public static boolean getWechatStatus()
 public static List<String> getGroupNickNameList()
 ```
 
-#### 7.根据用户昵称修改用户备注MessageTools.remarkNameByNickName(String nickName, String remName)
+#### 8.根据用户昵称修改用户备注MessageTools.remarkNameByNickName(String nickName, String remName)
 
 根据用户昵称修改用户备注名称，其函数声明为：
 
@@ -102,7 +110,7 @@ public static List<String> getGroupNickNameList()
 public static void remarkNameByNickName(String nickName, String remName)
 ```
 
-#### 8. 根据好友昵称发送文本消息，MessageTools.sendMsgByNickName(String text, String nickName)
+#### 9. 根据好友昵称发送文本消息，MessageTools.sendMsgByNickName(String text, String nickName)
 
 此方法根据用户昵称发送文本消息，注意，用户需在你的好友列表里，否则发送失败，如果你的好友列表里有存在昵称一样的多个用户，则只会给第一个匹配的好友发送消息。方法接受两个参数，`text`为要发送的文本消息，`nickName`为要发送消息的好友昵称，成功发送时返回true，失败返回false。其函数声明为：
 
@@ -110,7 +118,7 @@ public static void remarkNameByNickName(String nickName, String remName)
 public static boolean sendMsgByNickName(String text, String nickName)
 ```
 
-#### 9.根据ID发送文本消息， MessageTools.sendMsgById(String text, String id)
+#### 10.根据ID发送文本消息， MessageTools.sendMsgById(String text, String id)
 
 根据ID发送文本消息，发送者ID可以从`msg`里通过`msg.getString("FromUserName")`获取，格式为`@@d052d34b9c9228830363013ee53deb461404f80ea353dbdd8fc9391cbf5f1c46`（群消息）或`@a257b99314d8313862cd44ab02fe0f81`（非群消息），调用此方法可向指定id发送消息。其函数声明为：
 
@@ -118,7 +126,7 @@ public static boolean sendMsgByNickName(String text, String nickName)
 public static void sendMsgById(String text, String id)
 ```
 
-#### 10.根据好友昵称发送图片消息，MessageTools.sendPicMsgByNickName(String nickName, String filePath)
+#### 11.根据好友昵称发送图片消息，MessageTools.sendPicMsgByNickName(String nickName, String filePath)
 
 此方法根据好友昵称发送图片消息，`filePath`为图片文件路径，如`D:/itchat4j/pic/test.jpg`，成功返回true，失败返回false。其函数声明为：
 
@@ -126,7 +134,7 @@ public static void sendMsgById(String text, String id)
 public static boolean sendPicMsgByNickName(String nickName, String filePath)
 ```
 
-#### 11.根据ID发送图片消息，MessageTools.sendPicMsgByUserId(String userId, String filePath)
+#### 12.根据ID发送图片消息，MessageTools.sendPicMsgByUserId(String userId, String filePath)
 
 此方法根据好友ID发送图片消息，filePath`为图片文件路径，如`D:/itchat4j/pic/test.jpg`，成功返回true，失败返回false。其函数声明为：
 
@@ -134,7 +142,7 @@ public static boolean sendPicMsgByNickName(String nickName, String filePath)
 public static boolean sendPicMsgByUserId(String userId, String filePath)
 ```
 
-#### 12.根据好友昵称发送文件消息，MessageTools.sendFileMsgByNickName(String nickName, String filePath)
+#### 13.根据好友昵称发送文件消息，MessageTools.sendFileMsgByNickName(String nickName, String filePath)
 
 此方法根据好友昵称发送文件消息，文件可以为多种类型，如txt、PDF、小视频、语音、excel、docx等，发送时请保证文件后缀名正确。成功返回true，失败返回false。其函数声明为：
 
@@ -142,7 +150,7 @@ public static boolean sendPicMsgByUserId(String userId, String filePath)
 public static boolean sendPicFileByNickName(String nickName, String filePath)
 ```
 
-#### 13.根据ID发送文件消息，MessageTools.sendFileMsgByNickName(String nickName, String filePath)
+#### 14.根据ID发送文件消息，MessageTools.sendFileMsgByNickName(String nickName, String filePath)
 
 此方法根据好友昵称发送文件消息，成功返回true，失败返回false。其函数声明为：
 

@@ -76,12 +76,22 @@ public class WechatTools {
 	 * @date 2017年5月4日 下午11:37:20
 	 * @return
 	 */
-	public static List<String> getContactList() {
-		List<String> contactList = new ArrayList<String>();
+	public static List<String> getContactNickNameList() {
+		List<String> contactNickNameList = new ArrayList<String>();
 		for (JSONObject o : core.getContactList()) {
-			contactList.add(o.getString("NickName"));
+			contactNickNameList.add(o.getString("NickName"));
 		}
-		return contactList;
+		return contactNickNameList;
+	}
+
+	/**
+	 * 返回好友完整信息列表
+	 * 
+	 * @date 2017年6月26日 下午9:45:39
+	 * @return
+	 */
+	public static List<JSONObject> getContactList() {
+		return core.getContactList();
 	}
 
 	/**

@@ -39,6 +39,8 @@ public class Core {
 	boolean alive = false;
 	private int memberCount = 0;
 
+	private String indexUrl;
+
 	private String userName;
 	private String nickName;
 	private List<JSONObject> msgList = new ArrayList<JSONObject>();
@@ -260,6 +262,14 @@ public class Core {
 
 	public void setGroupMemeberMap(Map<String, JSONArray> groupMemeberMap) {
 		this.groupMemeberMap = groupMemeberMap;
+	}
+
+	public String getIndexUrl() {
+		return indexUrl;
+	}
+
+	public void setIndexUrl(String indexUrl) {
+		this.indexUrl = indexUrl;
 	}
 
 }
