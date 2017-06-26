@@ -20,11 +20,19 @@ import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
 import cn.zhouyafeng.itchat4j.utils.enums.StorageLoginInfoEnum;
 
+/**
+ * 此示例演示如何获取所有好友的头像
+ * 
+ * @author https://github.com/yaphone
+ * @date 创建时间：2017年6月26日 下午11:27:46
+ * @version 1.0
+ *
+ */
 public class PicYourFriends implements IMsgHandlerFace {
 	private static Logger LOG = LoggerFactory.getLogger(PicYourFriends.class);
 	private static final Core core = Core.getInstance();
 	private static final MyHttpClient myHttpClient = core.getMyHttpClient();
-	private static final String path = "D://itchat4j//head";
+	private static final String path = "D://itchat4j//head"; // 这里需要设置保存头像的路径
 
 	@Override
 	public String textMsgHandle(JSONObject msg) {
@@ -36,34 +44,26 @@ public class PicYourFriends implements IMsgHandlerFace {
 			List<String> headUrlList = new ArrayList<String>(); // 好友头像URL列表
 			if (text.equals("111")) {
 				List<JSONObject> friends = WechatTools.getContactList();
-				for (JSONObject friend : friends) {
-					headUrlList.add(friend.getString("HeadImgUrl"));
-				}
-			}
-			for (int i = 0; i < headUrlList.size(); i++) {
+				for (int i = 0; i < friends.size(); i++) {
+					JSONObject friend = friends.get(i);
+					String url = baseUrl + friend.getString("HeadImgUrl") + skey;
+					// String fileName = friend.getString("NickName");
+					String headPicPath = path + File.separator + i + ".jpg";
 
-				String url = baseUrl + headUrlList.get(i) + skey;
-				LOG.info(url);
-				String headPicPath = path + File.separator + i + ".jpg";
-				HttpEntity entity = myHttpClient.doGet(url, null, true, null);
-				try {
-					OutputStream out = new FileOutputStream(headPicPath);
-					byte[] bytes = EntityUtils.toByteArray(entity);
-					out.write(bytes);
-					out.flush();
-					out.close();
+					HttpEntity entity = myHttpClient.doGet(url, null, true, null);
 					try {
-						// CommonTools.printQr(qrPath); // 打开登陆二维码图片
+						OutputStream out = new FileOutputStream(headPicPath);
+						byte[] bytes = EntityUtils.toByteArray(entity);
+						out.write(bytes);
+						out.flush();
+						out.close();
+
 					} catch (Exception e) {
 						LOG.info(e.getMessage());
 					}
 
-				} catch (Exception e) {
-					LOG.info(e.getMessage());
 				}
-
 			}
-			System.out.println(headUrlList);
 		}
 		return null;
 	}
