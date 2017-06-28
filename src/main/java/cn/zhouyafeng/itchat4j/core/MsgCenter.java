@@ -1,8 +1,19 @@
 package cn.zhouyafeng.itchat4j.core;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 
+import cn.zhouyafeng.itchat4j.utils.enums.StorageLoginInfoEnum;
+import cn.zhouyafeng.itchat4j.utils.enums.URLEnum;
+import com.alibaba.fastjson.JSON;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Consts;
+import org.apache.http.HttpEntity;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,6 +95,10 @@ public class MsgCenter {
 				m.put("Type", MsgTypeEnum.VOICE.getType());
 			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_VERIFYMSG.getCode())) {// friends
 				// 好友确认消息
+				JSONObject recommendInfo = m.getJSONObject("RecommendInfo");
+				String userName = recommendInfo.getString("UserName");
+				String ticket = recommendInfo.getString("Ticket");
+				MessageTools.addFriend(core,userName,3,ticket);
 
 			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_SHARECARD.getCode())) { // 共享名片
 				m.put("Type", MsgTypeEnum.NAMECARD.getType());
@@ -166,5 +181,8 @@ public class MsgCenter {
 			}
 		}
 	}
+
+
+
 
 }
