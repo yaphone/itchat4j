@@ -2,13 +2,13 @@ package cn.zhouyafeng.itchat4j.api;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import javax.activation.MimetypesFileTypeMap;
 
+import cn.zhouyafeng.itchat4j.utils.enums.StorageLoginInfoEnum;
+import com.sun.xml.internal.bind.v2.TODO;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
@@ -75,8 +75,8 @@ public class MessageTools {
 	 * 
 	 * @author https://github.com/yaphone
 	 * @date 2017年5月4日 下午11:17:38
-	 * @param msg
-	 * @param toUserName
+	 * @param text
+	 * @param nickName
 	 */
 	public static boolean sendMsgByNickName(String text, String nickName) {
 		if (nickName != null) {
@@ -362,6 +362,56 @@ public class MessageTools {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * 被动添加好友
+	 * @param core
+	 * @param userName 对方用户名
+	 * @param status	2 是添加  3是接受
+	 * @param ticket
+	 */
+	public static void addFriend(Core core,String userName, Integer status,String ticket) {
+
+		String url = String.format(URLEnum.WEB_WX_VERIFYUSER.getUrl(),
+				core.getLoginInfo().get("url"),
+				String.valueOf(System.currentTimeMillis() / 3158L),
+				core.getLoginInfo().get("pass_ticket"));
+
+		List<Map<String,Object>> verifyUserList = new ArrayList<>();
+		Map<String,Object>  verifyUser = new HashMap<String,Object>();
+		verifyUser.put("Value",userName);
+		verifyUser.put("VerifyUserTicket",ticket);
+		verifyUserList.add(verifyUser);
+
+		List<Integer> sceneList = new ArrayList<>();
+		sceneList.add(33);
+
+		JSONObject body = new JSONObject();
+		body.put("BaseRequest", core.getParamMap().get("BaseRequest"));
+		body.put("Opcode",status);
+		body.put("VerifyUserListSize",1);
+		body.put("VerifyUserList",verifyUserList);
+		body.put("VerifyContent","");
+		body.put("SceneListCount",1);
+		body.put("SceneList",sceneList);
+		body.put("skey", (String) core.getLoginInfo().get(StorageLoginInfoEnum.skey.getKey()));
+
+		String result = null;
+		try {
+			String paramStr = JSON.toJSONString(body);
+			HttpEntity entity = myHttpClient.doPost(url, paramStr);
+			result = EntityUtils.toString(entity, Consts.UTF_8);
+		} catch (Exception e) {
+			LOG.error("webWxSendMsg", e);
+		}
+
+		if (StringUtils.isBlank(result)) {
+			LOG.error("被动添加好友失败");
+		}
+
+		LOG.debug(result);
+
 	}
 
 }
