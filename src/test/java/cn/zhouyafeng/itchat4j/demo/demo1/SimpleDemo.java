@@ -8,8 +8,6 @@ import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSONObject;
 
-import cn.zhouyafeng.itchat4j.api.WechatTools;
-import cn.zhouyafeng.itchat4j.core.Core;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
 import cn.zhouyafeng.itchat4j.utils.tools.DownloadTools;
@@ -27,24 +25,8 @@ public class SimpleDemo implements IMsgHandlerFace {
 
 	@Override
 	public String textMsgHandle(JSONObject msg) {
-		// String docFilePath = "D:/itchat4j/pic/1.jpg"; // 这里是需要发送的文件的路径
 		if (!msg.getBoolean("groupMsg")) { // 群消息不处理
-			// String userId = msg.getString("FromUserName");
-			// MessageTools.sendFileMsgByUserId(userId, docFilePath); // 发送文件
-			// MessageTools.sendPicMsgByUserId(userId, docFilePath);
 			String text = msg.getString("Text"); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
-			LOG.info(text);
-			if (text.equals("111")) {
-				WechatTools.logout();
-			}
-			if (text.equals("222")) {
-				WechatTools.remarkNameByNickName("yaphone", "Hello");
-			}
-			if (text.equals("333")) { // 测试群列表
-				System.out.print(WechatTools.getGroupNickNameList());
-				System.out.print(WechatTools.getGroupIdList());
-				System.out.print(Core.getInstance().getGroupMemeberMap());
-			}
 			return text;
 		}
 		return null;
@@ -83,6 +65,13 @@ public class SimpleDemo implements IMsgHandlerFace {
 	public void sysMsgHandle(JSONObject msg) { // 收到系统消息
 		String text = msg.getString("Content");
 		LOG.info(text);
+	}
+
+	@Override
+	public String verifyAddFriendMsgHandle(JSONObject msg) {
+		String nickName = msg.getJSONObject("RecommendInfo").getString("NickName");
+		String text = "你好" + nickName + "， 欢迎添加我为好友！";
+		return text;
 	}
 
 }

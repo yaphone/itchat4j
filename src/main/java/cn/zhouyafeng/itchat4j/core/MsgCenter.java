@@ -1,19 +1,8 @@
 package cn.zhouyafeng.itchat4j.core;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 
-import cn.zhouyafeng.itchat4j.utils.enums.StorageLoginInfoEnum;
-import cn.zhouyafeng.itchat4j.utils.enums.URLEnum;
-import com.alibaba.fastjson.JSON;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Consts;
-import org.apache.http.HttpEntity;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,7 +87,8 @@ public class MsgCenter {
 				JSONObject recommendInfo = m.getJSONObject("RecommendInfo");
 				String userName = recommendInfo.getString("UserName");
 				String ticket = recommendInfo.getString("Ticket");
-				MessageTools.addFriend(core,userName,3,ticket);
+				MessageTools.addFriend(core, userName, 3, ticket); // 确认添加好友
+				m.put("Type", MsgTypeEnum.VERIFYMSG.getType());
 
 			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_SHARECARD.getCode())) { // 共享名片
 				m.put("Type", MsgTypeEnum.NAMECARD.getType());
@@ -166,6 +156,13 @@ public class MsgCenter {
 								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
 							} else if (msg.getString("Type").equals(MsgTypeEnum.SYS.getType())) { // 系统消息
 								msgHandler.sysMsgHandle(msg);
+							} else if (msg.getString("Type").equals(MsgTypeEnum.VERIFYMSG.getType())) { // 确认添加好友消息
+								// 更新好友列表
+								core.getContactList().add(msg.getJSONObject("RecommendInfo"));
+
+								String result = msgHandler.verifyAddFriendMsgHandle(msg);
+								MessageTools.sendMsgById(result,
+										core.getMsgList().get(0).getJSONObject("RecommendInfo").getString("UserName"));
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -181,8 +178,5 @@ public class MsgCenter {
 			}
 		}
 	}
-
-
-
 
 }

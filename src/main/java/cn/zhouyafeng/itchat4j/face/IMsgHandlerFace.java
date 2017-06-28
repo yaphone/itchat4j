@@ -70,4 +70,13 @@ public interface IMsgHandlerFace {
 	 */
 	public void sysMsgHandle(JSONObject msg);
 
+	/**
+	 * 处理确认添加好友消息
+	 * 
+	 * @date 2017年6月28日 下午10:15:30
+	 * @param msg
+	 * @return
+	 */
+	public String verifyAddFriendMsgHandle(JSONObject msg);
+
 }

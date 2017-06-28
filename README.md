@@ -32,6 +32,8 @@
 
 ## 更新日志
 
+- 2017-6-28：增加被动添加好友功能
+
 - 2017-6-23：增加获取群好友昵称功能，修复已知问题。
 
 - 2017-6-16：增加微信状态维护
@@ -242,7 +244,7 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
 }
 ```
 
-### 图片消息
+### 2.图片消息
 
 ```json
 {
@@ -296,7 +298,7 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
 }
 ```
 
-### 语音消息
+### 3.语音消息
 
 ```Json
 {
@@ -350,7 +352,7 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
 }
 ```
 
-### 小视频消息
+### 4.小视频消息
 
 ```Json
 {
@@ -404,7 +406,7 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
 }
 ```
 
-### 名片消息
+### 5.名片消息
 
 ```Json
 {
@@ -453,6 +455,59 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
     "Content": "&lt;?xml version=\"1.0\"?&gt;\n&lt;msg bigheadimgurl=\"http://wx.qlogo.cn/mmhead/ver_1/ajX7IquRvt16WXDJYrYsBuGy5HoicQ1ibNbLKKHu744ic2WnxSaRtEQCgibSP8S2MdyIsqTWsKUUEZydsias9UR55nSQE7n6ibXChx4DQZQf5xh0M/0\" smallheadimgurl=\"http://wx.qlogo.cn/mmhead/ver_1/ajX7IquRvt16WXDJYrYsBuGy5HoicQ1ibNbLKKHu744ic2WnxSaRtEQCgibSP8S2MdyIsqTWsKUUEZydsias9UR55nSQE7n6ibXChx4DQZQf5xh0M/132\" username=\"v1_183ca2ddb6369f35d74ea56046fcdf33d3a769352d9e125b44d26c18c0063ff537f6d66ea415db7648605aabf65b7b98@stranger\" nickname=\"LittleCoder机器人\"  shortpy=\"LITTLECODERJQR\" alias=\"\" imagestatus=\"3\" scene=\"17\" province=\"\" city=\"\" sign=\"\" sex=\"0\" certflag=\"0\" certinfo=\"\" brandIconUrl=\"\" brandHomeUrl=\"\" brandSubscriptConfigUrl=\"\" brandFlags=\"0\" regionCode=\"\" antispamticket=\"v2_6b780d55a1b949e161126df27729c85fd8b136d673ec7de475b0b5d811737502657129df8f19cd705cd90dc74bc12c09@stranger\" /&gt;\n",
     "StatusNotifyUserName": "",
     "FromUserName": "@a257b99314d8313862cd44ab02fe0f81",
+    "OriContent": "",
+    "FileSize": ""
+}
+```
+
+### 6.被动添加好友消息
+
+```json
+{
+    "SubMsgType": 0,
+    "VoiceLength": 0,
+    "FileName": "",
+    "ImgHeight": 0,
+    "ToUserName": "@5ce504de33c5105c599277b603e9d02c",
+    "HasProductId": 0,
+    "ImgStatus": 1,
+    "Url": "",
+    "ImgWidth": 0,
+    "ForwardFlag": 0,
+    "Status": 3,
+    "Ticket": "",
+    "RecommendInfo": {
+        "Ticket": "v2_7b244cf55b35daf113c16efb4db83ca0a38a4ca40a01a375d4f36b64fb7f597429495e333ebdb1673164fad0e0ec1aca1fbb90043d410360e29c2277caf7f8f1@stranger",
+        "UserName": "@8703fa509d1e91f2eb9d9b4e9a2946ded04d9ee1bba002908981270b75200b12",
+        "Sex": 2,
+        "AttrStatus": 102497,
+        "City": "南岸",
+        "NickName": "yaphone",
+        "Scene": 6,
+        "Province": "重庆",
+        "Content": "",
+        "Alias": "",
+        "Signature": "",
+        "OpCode": 2,
+        "QQNum": 0,
+        "VerifyFlag": 0
+    },
+    "CreateTime": 1498658433,
+    "NewMsgId": 1801473737376226000,
+    "MsgType": 37,
+    "groupMsg": false,
+    "MsgId": "1801473737376226019",
+    "StatusNotifyCode": 0,
+    "AppInfo": {
+        "Type": 0,
+        "AppID": ""
+    },
+    "AppMsgType": 0,
+    "PlayLength": 0,
+    "MediaId": "",
+    "Content": "&lt;msg fromusername=\"wxid_a6p74rz9ovbz21\" encryptusername=\"v1_361333ea6e854479810494826e82e9e2a49fb0107ed702186afe900cc88470d94788df3e30945d5e46cf87edfc4dcbff@stranger\" fromnickname=\"yaphone\" content=\"\"  shortpy=\"YAPHONE\" imagestatus=\"3\" scene=\"6\" country=\"CN\" province=\"Chongqing\" city=\"South Bank\" sign=\"\" percard=\"1\" sex=\"2\" alias=\"\" weibo=\"\" weibonickname=\"\" albumflag=\"0\" albumstyle=\"0\" albumbgimgid=\"\" snsflag=\"17\" snsbgimgid=\"http://mmsns.qpic.cn/mmsns/4376ae1e0cf0ccced233def9ad1560d0dec29d64941ab85a46d7c13c5df14f3338c7290aefc758d1960b91bbb372abf030e795b4c2d050f7/0\" snsbgobjectid=\"11749457640825893599\" mhash=\"\" mfullhash=\"\" bigheadimgurl=\"http://wx.qlogo.cn/mmhead/ver_1/rA30HUEYRfMW5Se0ib95ZT8XMY24IicxPY2QPblbK6UNzicwUIIE9CGmgKh4WOUuo8PLeAsPwiaNfLVGDOAOUADZ9VHOzyC8th7iavQwnCw3Fuos/0\" smallheadimgurl=\"http://wx.qlogo.cn/mmhead/ver_1/rA30HUEYRfMW5Se0ib95ZT8XMY24IicxPY2QPblbK6UNzicwUIIE9CGmgKh4WOUuo8PLeAsPwiaNfLVGDOAOUADZ9VHOzyC8th7iavQwnCw3Fuos/132\" ticket=\"v2_7b244cf55b35daf113c16efb4db83ca0a38a4ca40a01a375d4f36b64fb7f597429495e333ebdb1673164fad0e0ec1aca1fbb90043d410360e29c2277caf7f8f1@stranger\" opcode=\"2\" googlecontact=\"\" qrticket=\"\" chatroomusername=\"\" sourceusername=\"\" sourcenickname=\"\"&gt;&lt;brandlist count=\"0\" ver=\"656202095\"&gt;&lt;/brandlist&gt;&lt;/msg&gt;",
+    "StatusNotifyUserName": "",
+    "FromUserName": "fmessage",
     "OriContent": "",
     "FileSize": ""
 }

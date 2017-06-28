@@ -2,12 +2,15 @@ package cn.zhouyafeng.itchat4j.api;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import javax.activation.MimetypesFileTypeMap;
 
-import cn.zhouyafeng.itchat4j.utils.enums.StorageLoginInfoEnum;
-import com.sun.xml.internal.bind.v2.TODO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
@@ -24,6 +27,7 @@ import com.alibaba.fastjson.JSONObject;
 import cn.zhouyafeng.itchat4j.core.Core;
 import cn.zhouyafeng.itchat4j.utils.Config;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
+import cn.zhouyafeng.itchat4j.utils.enums.StorageLoginInfoEnum;
 import cn.zhouyafeng.itchat4j.utils.enums.URLEnum;
 
 /**
@@ -366,36 +370,37 @@ public class MessageTools {
 
 	/**
 	 * 被动添加好友
+	 * 
 	 * @param core
-	 * @param userName 对方用户名
-	 * @param status	2 是添加  3是接受
+	 * @param userName
+	 *            对方用户名
+	 * @param status
+	 *            2 是添加 3是接受
 	 * @param ticket
 	 */
-	public static void addFriend(Core core,String userName, Integer status,String ticket) {
+	public static void addFriend(Core core, String userName, Integer status, String ticket) {
 
-		String url = String.format(URLEnum.WEB_WX_VERIFYUSER.getUrl(),
-				core.getLoginInfo().get("url"),
-				String.valueOf(System.currentTimeMillis() / 3158L),
-				core.getLoginInfo().get("pass_ticket"));
+		String url = String.format(URLEnum.WEB_WX_VERIFYUSER.getUrl(), core.getLoginInfo().get("url"),
+				String.valueOf(System.currentTimeMillis() / 3158L), core.getLoginInfo().get("pass_ticket"));
 
-		List<Map<String,Object>> verifyUserList = new ArrayList<>();
-		Map<String,Object>  verifyUser = new HashMap<String,Object>();
-		verifyUser.put("Value",userName);
-		verifyUser.put("VerifyUserTicket",ticket);
+		List<Map<String, Object>> verifyUserList = new ArrayList<Map<String, Object>>();
+		Map<String, Object> verifyUser = new HashMap<String, Object>();
+		verifyUser.put("Value", userName);
+		verifyUser.put("VerifyUserTicket", ticket);
 		verifyUserList.add(verifyUser);
 
-		List<Integer> sceneList = new ArrayList<>();
+		List<Integer> sceneList = new ArrayList<Integer>();
 		sceneList.add(33);
 
 		JSONObject body = new JSONObject();
 		body.put("BaseRequest", core.getParamMap().get("BaseRequest"));
-		body.put("Opcode",status);
-		body.put("VerifyUserListSize",1);
-		body.put("VerifyUserList",verifyUserList);
-		body.put("VerifyContent","");
-		body.put("SceneListCount",1);
-		body.put("SceneList",sceneList);
-		body.put("skey", (String) core.getLoginInfo().get(StorageLoginInfoEnum.skey.getKey()));
+		body.put("Opcode", status);
+		body.put("VerifyUserListSize", 1);
+		body.put("VerifyUserList", verifyUserList);
+		body.put("VerifyContent", "");
+		body.put("SceneListCount", 1);
+		body.put("SceneList", sceneList);
+		body.put("skey", core.getLoginInfo().get(StorageLoginInfoEnum.skey.getKey()));
 
 		String result = null;
 		try {

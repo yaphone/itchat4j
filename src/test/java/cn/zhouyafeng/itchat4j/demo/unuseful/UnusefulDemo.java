@@ -73,4 +73,10 @@ public class UnusefulDemo implements IMsgHandlerFace {
 		// TODO Auto-generated method stub
 	}
 
+	@Override
+	public String verifyAddFriendMsgHandle(JSONObject msg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
