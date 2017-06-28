@@ -90,4 +90,9 @@ public class TulingRobot implements IMsgHandlerFace {
 		return null;
 	}
 
+	@Override
+	public void sysMsgHandle(JSONObject msg) {
+		// TODO Auto-generated method stub
+	}
+
 }

@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSONObject;
 import cn.zhouyafeng.itchat4j.api.MessageTools;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.MsgCodeEnum;
+import cn.zhouyafeng.itchat4j.utils.MsgKeywords;
 import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
 import cn.zhouyafeng.itchat4j.utils.tools.CommonTools;
 
@@ -59,8 +60,8 @@ public class MsgCenter {
 			} else {
 				CommonTools.msgFormatter(m, "Content");
 			}
-			if (m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_TEXT.getCode()) { // words
-																					// 文本消息
+			if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_TEXT.getCode())) { // words
+																						// 文本消息
 				if (m.getString("Url").length() != 0) {
 					String regEx = "(.+?\\(.+?\\))";
 					Matcher matcher = CommonTools.getMatcher(regEx, m.getString("Content"));
@@ -76,30 +77,30 @@ public class MsgCenter {
 				}
 				m.put("Type", msg.getString("Type"));
 				m.put("Text", msg.getString("Text"));
-			} else if (m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_IMAGE.getCode()
-					|| m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_EMOTICON.getCode()) { // 图片消息
+			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_IMAGE.getCode())
+					|| m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_EMOTICON.getCode())) { // 图片消息
 				m.put("Type", MsgTypeEnum.PIC.getType());
-			} else if (m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_VOICE.getCode()) { // 语音消息
+			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_VOICE.getCode())) { // 语音消息
 				m.put("Type", MsgTypeEnum.VOICE.getType());
-			} else if (m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_VERIFYMSG.getCode()) {// friends
-																							// 好友确认消息
+			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_VERIFYMSG.getCode())) {// friends
+				// 好友确认消息
 
-			} else if (m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_SHARECARD.getCode()) { // 共享名片
+			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_SHARECARD.getCode())) { // 共享名片
 				m.put("Type", MsgTypeEnum.NAMECARD.getType());
 
-			} else if (m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_VIDEO.getCode()
-					|| m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_MICROVIDEO.getCode()) {// viedo
+			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_VIDEO.getCode())
+					|| m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_MICROVIDEO.getCode())) {// viedo
 				m.put("Type", MsgTypeEnum.VIEDO.getType());
-			} else if (m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_APP.getCode()) { // sharing
-																						// 分享链接
+			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_APP.getCode())) { // sharing
+				// 分享链接
 
-			} else if (m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_STATUSNOTIFY.getCode()) {// phone
-																								// init
-																								// 微信初始化消息
+			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_STATUSNOTIFY.getCode())) {// phone
+				// init
+				// 微信初始化消息
 
-			} else if (m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_SYS.getCode()) {// 系统消息
-
-			} else if (m.getInteger("MsgType") == MsgCodeEnum.MSGTYPE_RECALLED.getCode()) { // 撤回消息
+			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_SYS.getCode())) {// 系统消息
+				m.put("Type", MsgTypeEnum.SYS.getType());
+			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_RECALLED.getCode())) { // 撤回消息
 
 			} else {
 				LOG.info("Useless msg");
@@ -125,14 +126,16 @@ public class MsgCenter {
 					if (msg.getString("Type") != null) {
 						try {
 							if (msg.getString("Type").equals(MsgTypeEnum.TEXT.getType())) {
-								//存在主动加好友之后的同步联系人到本地
+								// 存在主动加好友之后的同步联系人到本地
 								String text = msg.getString("Text");
-								if (text.contains("我通过了你的朋友验证请求，现在我们可以开始聊天了")) {
+								System.out.println(text);
+								if (text.contains(MsgKeywords.newFriendStr)) {
 									JSONObject userInfo = msg.getJSONObject("userInfo");
 									core.getContactList().add(userInfo);
-								}else {
+								} else {
 									String result = msgHandler.textMsgHandle(msg);
-									MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+									MessageTools.sendMsgById(result,
+											core.getMsgList().get(0).getString("FromUserName"));
 								}
 							} else if (msg.getString("Type").equals(MsgTypeEnum.PIC.getType())) {
 								String result = msgHandler.picMsgHandle(msg);
@@ -146,6 +149,8 @@ public class MsgCenter {
 							} else if (msg.getString("Type").equals(MsgTypeEnum.NAMECARD.getType())) {
 								String result = msgHandler.nameCardMsgHandle(msg);
 								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
+							} else if (msg.getString("Type").equals(MsgTypeEnum.SYS.getType())) { // 系统消息
+								msgHandler.sysMsgHandle(msg);
 							}
 						} catch (Exception e) {
 							e.printStackTrace();

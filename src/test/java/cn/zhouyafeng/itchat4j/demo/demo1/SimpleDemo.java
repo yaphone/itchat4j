@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.zhouyafeng.itchat4j.api.WechatTools;
+import cn.zhouyafeng.itchat4j.core.Core;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
 import cn.zhouyafeng.itchat4j.utils.tools.DownloadTools;
@@ -40,11 +41,9 @@ public class SimpleDemo implements IMsgHandlerFace {
 				WechatTools.remarkNameByNickName("yaphone", "Hello");
 			}
 			if (text.equals("333")) { // 测试群列表
-				LOG.info(WechatTools.getGroupIdList());
-				LOG.info(WechatTools.getGroupList().size());
-				LOG.info("********************");
-				LOG.info(WechatTools.getMemberListByGroupId(WechatTools.getGroupIdList().get(0)));
-				LOG.info("*********************");
+				System.out.print(WechatTools.getGroupNickNameList());
+				System.out.print(WechatTools.getGroupIdList());
+				System.out.print(Core.getInstance().getGroupMemeberMap());
 			}
 			return text;
 		}
@@ -78,6 +77,12 @@ public class SimpleDemo implements IMsgHandlerFace {
 	@Override
 	public String nameCardMsgHandle(JSONObject msg) {
 		return "收到名片消息";
+	}
+
+	@Override
+	public void sysMsgHandle(JSONObject msg) { // 收到系统消息
+		String text = msg.getString("Content");
+		LOG.info(text);
 	}
 
 }

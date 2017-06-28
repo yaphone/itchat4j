@@ -1,4 +1,4 @@
-package cn.zhouyafeng.itchat4j.demo.demo3;
+package cn.zhouyafeng.itchat4j.demo.unuseful;
 
 import java.io.IOException;
 
@@ -66,6 +66,11 @@ public class UnusefulDemo implements IMsgHandlerFace {
 		IMsgHandlerFace msgHandler = new UnusefulDemo();
 		Wechat wechat = new Wechat(msgHandler, "D://itchat4j/login");
 		wechat.start();
+	}
+
+	@Override
+	public void sysMsgHandle(JSONObject msg) {
+		// TODO Auto-generated method stub
 	}
 
 }
