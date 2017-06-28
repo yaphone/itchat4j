@@ -899,6 +899,8 @@ itchat4j开源后，收到很多朋友的建议，对ithcat4j改进做出了很�
 
 @QQ群好友（beyond_12345@126.com）
 
+以及[每位PR的朋友](https://github.com/yaphone/itchat4j/graphs/contributors)！
+
 ## 问题和建议
 
 本项目长期更新、维护，功能不断扩展与完善中，欢迎star。
