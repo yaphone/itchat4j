@@ -126,15 +126,9 @@ public class MessageTools {
 
 	/**
 	 * 上传多媒体文件到 微信服务器，目前应该支持3种类型:
-	 * <p>
 	 * 1. pic 直接显示，包含图片，表情
-	 * </p>
-	 * <p>
 	 * 2.video
-	 * </p>
-	 * <p>
 	 * 3.doc 显示为文件，包含PDF等
-	 * </p>
 	 * 
 	 * @author https://github.com/yaphone
 	 * @date 2017年5月7日 上午12:41:13

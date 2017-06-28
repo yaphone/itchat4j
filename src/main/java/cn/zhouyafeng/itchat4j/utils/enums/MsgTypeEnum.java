@@ -1,6 +1,5 @@
 package cn.zhouyafeng.itchat4j.utils.enums;
 
-import cn.zhouyafeng.itchat4j.utils.MsgCodeEnum;
 
 /**
  * 消息类型枚举类

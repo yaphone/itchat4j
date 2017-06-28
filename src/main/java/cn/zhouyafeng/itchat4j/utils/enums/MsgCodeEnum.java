@@ -1,4 +1,4 @@
-package cn.zhouyafeng.itchat4j.utils;
+package cn.zhouyafeng.itchat4j.utils.enums;
 
 /**
  * 消息类型
