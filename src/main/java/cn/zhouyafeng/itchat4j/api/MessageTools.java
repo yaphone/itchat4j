@@ -29,6 +29,7 @@ import cn.zhouyafeng.itchat4j.utils.Config;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
 import cn.zhouyafeng.itchat4j.utils.enums.StorageLoginInfoEnum;
 import cn.zhouyafeng.itchat4j.utils.enums.URLEnum;
+import cn.zhouyafeng.itchat4j.utils.enums.VerifyFriendEnum;
 
 /**
  * 消息处理类
@@ -125,10 +126,7 @@ public class MessageTools {
 	}
 
 	/**
-	 * 上传多媒体文件到 微信服务器，目前应该支持3种类型:
-	 * 1. pic 直接显示，包含图片，表情
-	 * 2.video
-	 * 3.doc 显示为文件，包含PDF等
+	 * 上传多媒体文件到 微信服务器，目前应该支持3种类型: 1. pic 直接显示，包含图片，表情 2.video 3.doc 显示为文件，包含PDF等
 	 * 
 	 * @author https://github.com/yaphone
 	 * @date 2017年5月7日 上午12:41:13
@@ -365,14 +363,21 @@ public class MessageTools {
 	/**
 	 * 被动添加好友
 	 * 
-	 * @param core
-	 * @param userName
-	 *            对方用户名
-	 * @param status
-	 *            2 是添加 3是接受
-	 * @param ticket
+	 * @date 2017年6月29日 下午10:08:43
+	 * @param msg
+	 * @param accept
+	 *            true 接受 false 拒绝
 	 */
-	public static void addFriend(Core core, String userName, Integer status, String ticket) {
+	public static void addFriend(JSONObject msg, boolean accept) {
+		if (!accept) { // 不添加
+			return;
+		}
+		int status = VerifyFriendEnum.ACCEPT.getCode(); // 接受好友请求
+		JSONObject recommendInfo = msg.getJSONObject("RecommendInfo");
+		String userName = recommendInfo.getString("UserName");
+		String ticket = recommendInfo.getString("Ticket");
+		// 更新好友列表
+		core.getContactList().add(msg.getJSONObject("RecommendInfo"));
 
 		String url = String.format(URLEnum.WEB_WX_VERIFYUSER.getUrl(), core.getLoginInfo().get("url"),
 				String.valueOf(System.currentTimeMillis() / 3158L), core.getLoginInfo().get("pass_ticket"));

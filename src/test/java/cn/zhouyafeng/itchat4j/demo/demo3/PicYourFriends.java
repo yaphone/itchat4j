@@ -3,7 +3,6 @@ package cn.zhouyafeng.itchat4j.demo.demo3;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -41,7 +40,6 @@ public class PicYourFriends implements IMsgHandlerFace {
 			String text = msg.getString("Text"); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
 			String baseUrl = "https://" + core.getIndexUrl(); // 基础URL
 			String skey = (String) core.getLoginInfo().get(StorageLoginInfoEnum.skey.getKey());
-			List<String> headUrlList = new ArrayList<String>(); // 好友头像URL列表
 			if (text.equals("111")) {
 				List<JSONObject> friends = WechatTools.getContactList();
 				for (int i = 0; i < friends.size(); i++) {

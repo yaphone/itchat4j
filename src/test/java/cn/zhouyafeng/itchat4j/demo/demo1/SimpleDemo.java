@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSONObject;
 
+import cn.zhouyafeng.itchat4j.api.MessageTools;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
 import cn.zhouyafeng.itchat4j.utils.tools.DownloadTools;
@@ -69,8 +70,12 @@ public class SimpleDemo implements IMsgHandlerFace {
 
 	@Override
 	public String verifyAddFriendMsgHandle(JSONObject msg) {
-		String nickName = msg.getJSONObject("RecommendInfo").getString("NickName");
-		String text = "你好" + nickName + "， 欢迎添加我为好友！";
+		MessageTools.addFriend(msg, true); // 同意好友请求，false为不接受好友请求
+		JSONObject recommendInfo = msg.getJSONObject("RecommendInfo");
+		String nickName = recommendInfo.getString("NickName");
+		String province = recommendInfo.getString("Province");
+		String city = recommendInfo.getString("City");
+		String text = "你好，来自" + province + city + "的" + nickName + "， 欢迎添加我为好友！";
 		return text;
 	}
 

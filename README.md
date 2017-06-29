@@ -32,13 +32,13 @@
 
 ## 更新日志
 
-- 2017-6-28：增加被动添加好友功能
+- 2017-6-28：增加被动添加好友功能。
 
 - 2017-6-23：增加获取群好友昵称功能，修复已知问题。
 
-- 2017-6-16：增加微信状态维护
+- 2017-6-16：增加微信状态维护。
 
-- 2017-6-13：修复获取群列表为空问题，增加根据群ID获取群成员列表方法
+- 2017-6-13：修复获取群列表为空问题，增加根据群ID获取群成员列表方法。
 
   ​
 
@@ -159,6 +159,16 @@ public static boolean sendPicFileByNickName(String nickName, String filePath)
 ```
 public static boolean sendFileMsgByUserId(String userId, String filePath)
 ```
+
+#### 15.处理好友添加请求，MessageTools.addFriend(JSONObject msg, boolean accept)
+
+当收到好友添加请求时，可调用此函数进行处理，msg为收到的好友添加请求消息，accept传true为接受好友请求，false为拒绝，其函数声明为：
+
+```java
+public static void addFriend(JSONObject msg, boolean accept)
+```
+
+
 
 ## TODO List 即将支持/正在开发
 

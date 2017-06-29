@@ -84,10 +84,7 @@ public class MsgCenter {
 				m.put("Type", MsgTypeEnum.VOICE.getType());
 			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_VERIFYMSG.getCode())) {// friends
 				// 好友确认消息
-				JSONObject recommendInfo = m.getJSONObject("RecommendInfo");
-				String userName = recommendInfo.getString("UserName");
-				String ticket = recommendInfo.getString("Ticket");
-				MessageTools.addFriend(core, userName, 3, ticket); // 确认添加好友
+				// MessageTools.addFriend(core, userName, 3, ticket); // 确认添加好友
 				m.put("Type", MsgTypeEnum.VERIFYMSG.getType());
 
 			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_SHARECARD.getCode())) { // 共享名片
@@ -133,7 +130,6 @@ public class MsgCenter {
 							if (msg.getString("Type").equals(MsgTypeEnum.TEXT.getType())) {
 								// 存在主动加好友之后的同步联系人到本地
 								String text = msg.getString("Text");
-								System.out.println(text);
 								if (text.contains(MsgKeywords.newFriendStr)) {
 									JSONObject userInfo = msg.getJSONObject("userInfo");
 									core.getContactList().add(userInfo);
@@ -157,9 +153,6 @@ public class MsgCenter {
 							} else if (msg.getString("Type").equals(MsgTypeEnum.SYS.getType())) { // 系统消息
 								msgHandler.sysMsgHandle(msg);
 							} else if (msg.getString("Type").equals(MsgTypeEnum.VERIFYMSG.getType())) { // 确认添加好友消息
-								// 更新好友列表
-								core.getContactList().add(msg.getJSONObject("RecommendInfo"));
-
 								String result = msgHandler.verifyAddFriendMsgHandle(msg);
 								MessageTools.sendMsgById(result,
 										core.getMsgList().get(0).getJSONObject("RecommendInfo").getString("UserName"));
