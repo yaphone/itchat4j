@@ -1,4 +1,4 @@
-package cn.zhouyafeng.itchat4j.demo.demo3;
+package cn.zhouyafeng.itchat4j.demo.unuseful;
 
 import java.io.IOException;
 
@@ -71,6 +71,12 @@ public class UnusefulDemo implements IMsgHandlerFace {
 	@Override
 	public void sysMsgHandle(JSONObject msg) {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public String verifyAddFriendMsgHandle(JSONObject msg) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -192,20 +192,29 @@ public class LoginServiceImpl implements ILoginService {
 			core.setNickName(user.getString("NickName"));
 			core.setUserSelf(obj.getJSONObject("User"));
 
-			JSONArray contactListArray = obj.getJSONArray("ContactList");
-			for (int i = 0; i < contactListArray.size(); i++) {
-				JSONObject o = contactListArray.getJSONObject(i);
-				if (o.getString("UserName").indexOf("@@") != -1) {
-					core.getGroupIdList().add(o.getString("UserName")); // 更新GroupIdList
-					core.getGroupList().add(o); // 更新GroupList
+			String chatSet = obj.getString("ChatSet");
+			String[] chatSetArray = chatSet.split(",");
+			for (int i = 0; i < chatSetArray.length; i++) {
+				if (chatSetArray[i].indexOf("@@") != -1) {
+					// 更新GroupIdList
+					core.getGroupIdList().add(chatSetArray[i]); //
 				}
 			}
-
-			return true;
+			// JSONArray contactListArray = obj.getJSONArray("ContactList");
+			// for (int i = 0; i < contactListArray.size(); i++) {
+			// JSONObject o = contactListArray.getJSONObject(i);
+			// if (o.getString("UserName").indexOf("@@") != -1) {
+			// core.getGroupIdList().add(o.getString("UserName")); //
+			// // 更新GroupIdList
+			// core.getGroupList().add(o); // 更新GroupList
+			// core.getGroupNickNameList().add(o.getString("NickName"));
+			// }
+			// }
 		} catch (Exception e) {
 			e.printStackTrace();
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	@Override
@@ -283,7 +292,7 @@ public class LoginServiceImpl implements ILoginService {
 									try {
 										JSONArray msgList = new JSONArray();
 										msgList = msgObj.getJSONArray("AddMsgList");
-										JSONArray modContactList = msgObj.getJSONArray("ModContactList"); // 存有删除或者新增的好友信息
+										JSONArray modContactList = msgObj.getJSONArray("ModContactList"); // 存在删除或者新增的好友信息
 										msgList = MsgCenter.produceMsg(msgList);
 										for (int j = 0; j < msgList.size(); j++) {
 											JSONObject msg = msgList.getJSONObject(j);
@@ -340,7 +349,6 @@ public class LoginServiceImpl implements ILoginService {
 			}
 			core.setMemberCount(fullFriendsJsonList.getInteger(StorageLoginInfoEnum.MemberCount.getKey()));
 			JSONArray member = fullFriendsJsonList.getJSONArray(StorageLoginInfoEnum.MemberList.getKey());
-
 			// 循环获取seq直到为0，即获取全部好友列表 ==0：好友获取完毕 >0：好友未获取完毕，此时seq为已获取的字节数
 			while (seq > 0) {
 				// 设置seq传参
@@ -371,6 +379,7 @@ public class LoginServiceImpl implements ILoginService {
 					core.getSpecialUsersList().add(o);
 				} else if (o.getString("UserName").indexOf("@@") != -1) { // 群聊
 					if (!core.getGroupIdList().contains(o.getString("UserName"))) {
+						core.getGroupNickNameList().add(o.getString("NickName"));
 						core.getGroupIdList().add(o.getString("UserName"));
 						core.getGroupList().add(o);
 					}
@@ -385,6 +394,39 @@ public class LoginServiceImpl implements ILoginService {
 			LOG.error(e.getMessage(), e);
 		}
 		return;
+	}
+
+	@Override
+	public void WebWxBatchGetContact() {
+		String url = String.format(URLEnum.WEB_WX_BATCH_GET_CONTACT.getUrl(),
+				core.getLoginInfo().get(StorageLoginInfoEnum.url.getKey()), new Date().getTime(),
+				core.getLoginInfo().get(StorageLoginInfoEnum.pass_ticket.getKey()));
+		Map<String, Object> paramMap = core.getParamMap();
+		paramMap.put("Count", core.getGroupIdList().size());
+		List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+		for (int i = 0; i < core.getGroupIdList().size(); i++) {
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put("UserName", core.getGroupIdList().get(i));
+			map.put("EncryChatRoomId", "");
+			list.add(map);
+		}
+		paramMap.put("List", list);
+		HttpEntity entity = httpClient.doPost(url, JSON.toJSONString(paramMap));
+		try {
+			String text = EntityUtils.toString(entity, Consts.UTF_8);
+			JSONObject obj = JSON.parseObject(text);
+			JSONArray contactList = obj.getJSONArray("ContactList");
+			for (int i = 0; i < contactList.size(); i++) { // 群好友
+				if (contactList.getJSONObject(i).getString("UserName").indexOf("@@") > -1) { // 群
+					core.getGroupNickNameList().add(contactList.getJSONObject(i).getString("NickName")); // 更新群昵称列表
+					core.getGroupList().add(contactList.getJSONObject(i)); // 更新群信息（所有）列表
+					core.getGroupMemeberMap().put(contactList.getJSONObject(i).getString("UserName"),
+							contactList.getJSONObject(i).getJSONArray("MemberList")); // 更新群成员Map
+				}
+			}
+		} catch (Exception e) {
+			LOG.info(e.getMessage());
+		}
 	}
 
 	/**
@@ -427,6 +469,7 @@ public class LoginServiceImpl implements ILoginService {
 				fileUrl = "https://" + entry.getValue().get(0) + "/cgi-bin/mmwebwx-bin";
 				syncUrl = "https://" + entry.getValue().get(1) + "/cgi-bin/mmwebwx-bin";
 				if (core.getLoginInfo().get("url").toString().contains(indexUrl)) {
+					core.setIndexUrl(indexUrl);
 					core.getLoginInfo().put("fileUrl", fileUrl);
 					core.getLoginInfo().put("syncUrl", syncUrl);
 					break;

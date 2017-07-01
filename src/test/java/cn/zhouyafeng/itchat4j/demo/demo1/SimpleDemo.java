@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSONObject;
 
-import cn.zhouyafeng.itchat4j.api.WechatTools;
+import cn.zhouyafeng.itchat4j.api.MessageTools;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
 import cn.zhouyafeng.itchat4j.utils.tools.DownloadTools;
@@ -26,26 +26,8 @@ public class SimpleDemo implements IMsgHandlerFace {
 
 	@Override
 	public String textMsgHandle(JSONObject msg) {
-		// String docFilePath = "D:/itchat4j/pic/1.jpg"; // 这里是需要发送的文件的路径
 		if (!msg.getBoolean("groupMsg")) { // 群消息不处理
-			// String userId = msg.getString("FromUserName");
-			// MessageTools.sendFileMsgByUserId(userId, docFilePath); // 发送文件
-			// MessageTools.sendPicMsgByUserId(userId, docFilePath);
 			String text = msg.getString("Text"); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
-			LOG.info(text);
-			if (text.equals("111")) {
-				WechatTools.logout();
-			}
-			if (text.equals("222")) {
-				WechatTools.remarkNameByNickName("yaphone", "Hello");
-			}
-			if (text.equals("333")) { // 测试群列表
-				LOG.info(WechatTools.getGroupIdList());
-				LOG.info(WechatTools.getGroupList().size());
-				LOG.info("********************");
-				LOG.info(WechatTools.getMemberListByGroupId(WechatTools.getGroupIdList().get(0)));
-				LOG.info("*********************");
-			}
 			return text;
 		}
 		return null;
@@ -84,6 +66,17 @@ public class SimpleDemo implements IMsgHandlerFace {
 	public void sysMsgHandle(JSONObject msg) { // 收到系统消息
 		String text = msg.getString("Content");
 		LOG.info(text);
+	}
+
+	@Override
+	public String verifyAddFriendMsgHandle(JSONObject msg) {
+		MessageTools.addFriend(msg, true); // 同意好友请求，false为不接受好友请求
+		JSONObject recommendInfo = msg.getJSONObject("RecommendInfo");
+		String nickName = recommendInfo.getString("NickName");
+		String province = recommendInfo.getString("Province");
+		String city = recommendInfo.getString("City");
+		String text = "你好，来自" + province + city + "的" + nickName + "， 欢迎添加我为好友！";
+		return text;
 	}
 
 }

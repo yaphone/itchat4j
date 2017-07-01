@@ -11,8 +11,8 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.zhouyafeng.itchat4j.api.MessageTools;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
-import cn.zhouyafeng.itchat4j.utils.MsgCodeEnum;
 import cn.zhouyafeng.itchat4j.utils.MsgKeywords;
+import cn.zhouyafeng.itchat4j.utils.enums.MsgCodeEnum;
 import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
 import cn.zhouyafeng.itchat4j.utils.tools.CommonTools;
 
@@ -88,6 +88,8 @@ public class MsgCenter {
 				m.put("Type", MsgTypeEnum.VOICE.getType());
 			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_VERIFYMSG.getCode())) {// friends
 				// 好友确认消息
+				// MessageTools.addFriend(core, userName, 3, ticket); // 确认添加好友
+				m.put("Type", MsgTypeEnum.VERIFYMSG.getType());
 
 			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_SHARECARD.getCode())) { // 共享名片
 				m.put("Type", MsgTypeEnum.NAMECARD.getType());
@@ -132,7 +134,6 @@ public class MsgCenter {
 							if (msg.getString("Type").equals(MsgTypeEnum.TEXT.getType())) {
 								// 存在主动加好友之后的同步联系人到本地
 								String text = msg.getString("Text");
-								System.out.println(text);
 								if (text.contains(MsgKeywords.newFriendStr)) {
 									JSONObject userInfo = msg.getJSONObject("userInfo");
 									core.getContactList().add(userInfo);
@@ -155,6 +156,10 @@ public class MsgCenter {
 								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
 							} else if (msg.getString("Type").equals(MsgTypeEnum.SYS.getType())) { // 系统消息
 								msgHandler.sysMsgHandle(msg);
+							} else if (msg.getString("Type").equals(MsgTypeEnum.VERIFYMSG.getType())) { // 确认添加好友消息
+								String result = msgHandler.verifyAddFriendMsgHandle(msg);
+								MessageTools.sendMsgById(result,
+										core.getMsgList().get(0).getJSONObject("RecommendInfo").getString("UserName"));
 							}
 						} catch (Exception e) {
 							e.printStackTrace();

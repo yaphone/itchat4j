@@ -18,7 +18,7 @@
 
 > itchat是一个开源的微信个人号接口，使用Python调用微信从未如此简单。使用短短的几十行代码，你就可以完成一个能够处理所有信息的微信机器人。当然，itchat的使用远不止一个机器人，更多的功能等着你来发现，如今微信已经成为了个人社交的很大一部分，希望这个项目能够帮助你扩展你的个人的微信号、方便自己的生活。(引自itchat项目)
 
-你可以轻松将[itchat4j](https://github.com/yaphone/itchat4j)其集成在你个人的Java应用中，无论是SpringMVC、桌面程序还是嵌入式程序，只要使用的JDK是1.6以上的版本，都可以轻松接入。玩法很多，请打开你的脑洞，比如这些：
+你可以轻松将[itchat4j](https://github.com/yaphone/itchat4j)其集成在你个人的Java应用中，无论是SpringMVC、桌面程序还是嵌入式程序，只要使用的JDK是1.7以上的版本，都可以轻松接入。玩法很多，请打开你的脑洞，比如这些：
 
 - Just for fun，把个人微信号扩展为"公众号"，在朋友面前装个X吧。
 - 集成在你的个人应用（SpringMVC、Servlet、GUI）中，为应用提供更强的服务能力。
@@ -32,9 +32,13 @@
 
 ## 更新日志
 
-- 2017-6-16：增加微信状态维护
+- 2017-6-28：增加被动添加好友功能。
 
-- 2017-6-13：修复获取群列表为空问题，增加根据群ID获取群成员列表方法
+- 2017-6-23：增加获取群好友昵称功能，修复已知问题。
+
+- 2017-6-16：增加微信状态维护。
+
+- 2017-6-13：修复获取群列表为空问题，增加根据群ID获取群成员列表方法。
 
   ​
 
@@ -44,17 +48,23 @@
 
 目前在`package cn.zhouyafeng.itchat4j.api`包中有两个静态类，即`MessageTools`和`WechatTools`，目前对外暴露的方法有：
 
-####  1.获取好友列表  WechatTools.getContactList()
-
-
+####  1.获取好友昵称列表  WechatTools.getContactNickNameList()
 
 此方法会返回好友昵称列表，其函数声明为：
 
 ```
-public static List<String> getContactList()
+public static List<String> getContactNickNameList()
 ```
 
-#### 2.获取群列表 WechatTools.getGroupIdList()
+#### 2.获取好友完整信息列表 WechatTools.getContactList() 
+
+此方法会返回好友的完整信息，如昵称、备注、地区、头像链接等，其函数声明为：
+
+```java
+public static List<JSONObject> getContactList()
+```
+
+#### 3.获取群列表 WechatTools.getGroupIdList()
 
 群列表与好友列表不同，在登陆后群列表其实是空的，只有主动发送消息或者收到一条群消息时，才能获取到这个群的信息，群列表会记录这个群的id，其格式为`@@d052d34b9c9228830363013ee53deb461404f80ea353dbdd8fc9391cbf5f1c46`。调用此方法会返回已知的群列表。其声明函数为：
 
@@ -62,15 +72,15 @@ public static List<String> getContactList()
 public static List<String> getGroupIdList()
 ```
 
-#### 3.根据群ID获取群成员WechatTools.getMemberListByGroupId()
+#### 4.根据群ID获取群成员WechatTools.getMemberListByGroupId()
 
 此方法根据群ID（格式为`@@d052d34b9c9228830363013ee53deb461404f80ea353dbdd8fc9391cbf5f1c46`）获取群成员列表。其函数声明为：
 
 ```java
-public static JSONArray getMemberListByGroupId(String groupIdList)
+public static JSONArray getMemberListByGroupId(String groupId)
 ```
 
-#### 4.退出微信 WechatTools.logout()
+#### 5.退出微信 WechatTools.logout()
 
 退出itchat4j，不再处理消息，其函数声明为:
 
@@ -78,7 +88,7 @@ public static JSONArray getMemberListByGroupId(String groupIdList)
 public static void logout()
 ```
 
-#### 5.获取微信在线状态WechatTools.getWechatStatus()
+#### 6.获取微信在线状态WechatTools.getWechatStatus()
 
 查询微信在线状态，在线返回`true`，离线返回`false`，其函数声明为
 
@@ -86,7 +96,15 @@ public static void logout()
 public static boolean getWechatStatus()
 ```
 
-#### 6.根据用户昵称修改用户备注MessageTools.remarkNameByNickName(String nickName, String remName)
+#### 7.获取群昵称列表WechatTools.getGroupNickNameList()
+
+获取群昵称列表,函数声明为：
+
+```java
+public static List<String> getGroupNickNameList()
+```
+
+#### 8.根据用户昵称修改用户备注MessageTools.remarkNameByNickName(String nickName, String remName)
 
 根据用户昵称修改用户备注名称，其函数声明为：
 
@@ -94,7 +112,7 @@ public static boolean getWechatStatus()
 public static void remarkNameByNickName(String nickName, String remName)
 ```
 
-#### 7. 根据好友昵称发送文本消息，MessageTools.sendMsgByNickName(String text, String nickName)
+#### 9. 根据好友昵称发送文本消息，MessageTools.sendMsgByNickName(String text, String nickName)
 
 此方法根据用户昵称发送文本消息，注意，用户需在你的好友列表里，否则发送失败，如果你的好友列表里有存在昵称一样的多个用户，则只会给第一个匹配的好友发送消息。方法接受两个参数，`text`为要发送的文本消息，`nickName`为要发送消息的好友昵称，成功发送时返回true，失败返回false。其函数声明为：
 
@@ -102,7 +120,7 @@ public static void remarkNameByNickName(String nickName, String remName)
 public static boolean sendMsgByNickName(String text, String nickName)
 ```
 
-#### 8.根据ID发送文本消息， MessageTools.sendMsgById(String text, String id)
+#### 10.根据ID发送文本消息， MessageTools.sendMsgById(String text, String id)
 
 根据ID发送文本消息，发送者ID可以从`msg`里通过`msg.getString("FromUserName")`获取，格式为`@@d052d34b9c9228830363013ee53deb461404f80ea353dbdd8fc9391cbf5f1c46`（群消息）或`@a257b99314d8313862cd44ab02fe0f81`（非群消息），调用此方法可向指定id发送消息。其函数声明为：
 
@@ -110,7 +128,7 @@ public static boolean sendMsgByNickName(String text, String nickName)
 public static void sendMsgById(String text, String id)
 ```
 
-#### 9.根据好友昵称发送图片消息，MessageTools.sendPicMsgByNickName(String nickName, String filePath)
+#### 11.根据好友昵称发送图片消息，MessageTools.sendPicMsgByNickName(String nickName, String filePath)
 
 此方法根据好友昵称发送图片消息，`filePath`为图片文件路径，如`D:/itchat4j/pic/test.jpg`，成功返回true，失败返回false。其函数声明为：
 
@@ -118,7 +136,7 @@ public static void sendMsgById(String text, String id)
 public static boolean sendPicMsgByNickName(String nickName, String filePath)
 ```
 
-#### 10.根据ID发送图片消息，MessageTools.sendPicMsgByUserId(String userId, String filePath)
+#### 12.根据ID发送图片消息，MessageTools.sendPicMsgByUserId(String userId, String filePath)
 
 此方法根据好友ID发送图片消息，filePath`为图片文件路径，如`D:/itchat4j/pic/test.jpg`，成功返回true，失败返回false。其函数声明为：
 
@@ -126,7 +144,7 @@ public static boolean sendPicMsgByNickName(String nickName, String filePath)
 public static boolean sendPicMsgByUserId(String userId, String filePath)
 ```
 
-#### 11.根据好友昵称发送文件消息，MessageTools.sendFileMsgByNickName(String nickName, String filePath)
+#### 13.根据好友昵称发送文件消息，MessageTools.sendFileMsgByNickName(String nickName, String filePath)
 
 此方法根据好友昵称发送文件消息，文件可以为多种类型，如txt、PDF、小视频、语音、excel、docx等，发送时请保证文件后缀名正确。成功返回true，失败返回false。其函数声明为：
 
@@ -134,13 +152,23 @@ public static boolean sendPicMsgByUserId(String userId, String filePath)
 public static boolean sendPicFileByNickName(String nickName, String filePath)
 ```
 
-#### 12.根据ID发送文件消息，MessageTools.sendFileMsgByNickName(String nickName, String filePath)
+#### 14.根据ID发送文件消息，MessageTools.sendFileMsgByNickName(String nickName, String filePath)
 
 此方法根据好友昵称发送文件消息，成功返回true，失败返回false。其函数声明为：
 
 ```
 public static boolean sendFileMsgByUserId(String userId, String filePath)
 ```
+
+#### 15.处理好友添加请求，MessageTools.addFriend(JSONObject msg, boolean accept)
+
+当收到好友添加请求时，可调用此函数进行处理，msg为收到的好友添加请求消息，accept传true为接受好友请求，false为拒绝，其函数声明为：
+
+```java
+public static void addFriend(JSONObject msg, boolean accept)
+```
+
+
 
 ## TODO List 即将支持/正在开发
 
@@ -226,7 +254,7 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
 }
 ```
 
-### 图片消息
+### 2.图片消息
 
 ```json
 {
@@ -280,7 +308,7 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
 }
 ```
 
-### 语音消息
+### 3.语音消息
 
 ```Json
 {
@@ -334,7 +362,7 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
 }
 ```
 
-### 小视频消息
+### 4.小视频消息
 
 ```Json
 {
@@ -388,7 +416,7 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
 }
 ```
 
-### 名片消息
+### 5.名片消息
 
 ```Json
 {
@@ -437,6 +465,59 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
     "Content": "&lt;?xml version=\"1.0\"?&gt;\n&lt;msg bigheadimgurl=\"http://wx.qlogo.cn/mmhead/ver_1/ajX7IquRvt16WXDJYrYsBuGy5HoicQ1ibNbLKKHu744ic2WnxSaRtEQCgibSP8S2MdyIsqTWsKUUEZydsias9UR55nSQE7n6ibXChx4DQZQf5xh0M/0\" smallheadimgurl=\"http://wx.qlogo.cn/mmhead/ver_1/ajX7IquRvt16WXDJYrYsBuGy5HoicQ1ibNbLKKHu744ic2WnxSaRtEQCgibSP8S2MdyIsqTWsKUUEZydsias9UR55nSQE7n6ibXChx4DQZQf5xh0M/132\" username=\"v1_183ca2ddb6369f35d74ea56046fcdf33d3a769352d9e125b44d26c18c0063ff537f6d66ea415db7648605aabf65b7b98@stranger\" nickname=\"LittleCoder机器人\"  shortpy=\"LITTLECODERJQR\" alias=\"\" imagestatus=\"3\" scene=\"17\" province=\"\" city=\"\" sign=\"\" sex=\"0\" certflag=\"0\" certinfo=\"\" brandIconUrl=\"\" brandHomeUrl=\"\" brandSubscriptConfigUrl=\"\" brandFlags=\"0\" regionCode=\"\" antispamticket=\"v2_6b780d55a1b949e161126df27729c85fd8b136d673ec7de475b0b5d811737502657129df8f19cd705cd90dc74bc12c09@stranger\" /&gt;\n",
     "StatusNotifyUserName": "",
     "FromUserName": "@a257b99314d8313862cd44ab02fe0f81",
+    "OriContent": "",
+    "FileSize": ""
+}
+```
+
+### 6.被动添加好友消息
+
+```json
+{
+    "SubMsgType": 0,
+    "VoiceLength": 0,
+    "FileName": "",
+    "ImgHeight": 0,
+    "ToUserName": "@5ce504de33c5105c599277b603e9d02c",
+    "HasProductId": 0,
+    "ImgStatus": 1,
+    "Url": "",
+    "ImgWidth": 0,
+    "ForwardFlag": 0,
+    "Status": 3,
+    "Ticket": "",
+    "RecommendInfo": {
+        "Ticket": "v2_7b244cf55b35daf113c16efb4db83ca0a38a4ca40a01a375d4f36b64fb7f597429495e333ebdb1673164fad0e0ec1aca1fbb90043d410360e29c2277caf7f8f1@stranger",
+        "UserName": "@8703fa509d1e91f2eb9d9b4e9a2946ded04d9ee1bba002908981270b75200b12",
+        "Sex": 2,
+        "AttrStatus": 102497,
+        "City": "南岸",
+        "NickName": "yaphone",
+        "Scene": 6,
+        "Province": "重庆",
+        "Content": "",
+        "Alias": "",
+        "Signature": "",
+        "OpCode": 2,
+        "QQNum": 0,
+        "VerifyFlag": 0
+    },
+    "CreateTime": 1498658433,
+    "NewMsgId": 1801473737376226000,
+    "MsgType": 37,
+    "groupMsg": false,
+    "MsgId": "1801473737376226019",
+    "StatusNotifyCode": 0,
+    "AppInfo": {
+        "Type": 0,
+        "AppID": ""
+    },
+    "AppMsgType": 0,
+    "PlayLength": 0,
+    "MediaId": "",
+    "Content": "&lt;msg fromusername=\"wxid_a6p74rz9ovbz21\" encryptusername=\"v1_361333ea6e854479810494826e82e9e2a49fb0107ed702186afe900cc88470d94788df3e30945d5e46cf87edfc4dcbff@stranger\" fromnickname=\"yaphone\" content=\"\"  shortpy=\"YAPHONE\" imagestatus=\"3\" scene=\"6\" country=\"CN\" province=\"Chongqing\" city=\"South Bank\" sign=\"\" percard=\"1\" sex=\"2\" alias=\"\" weibo=\"\" weibonickname=\"\" albumflag=\"0\" albumstyle=\"0\" albumbgimgid=\"\" snsflag=\"17\" snsbgimgid=\"http://mmsns.qpic.cn/mmsns/4376ae1e0cf0ccced233def9ad1560d0dec29d64941ab85a46d7c13c5df14f3338c7290aefc758d1960b91bbb372abf030e795b4c2d050f7/0\" snsbgobjectid=\"11749457640825893599\" mhash=\"\" mfullhash=\"\" bigheadimgurl=\"http://wx.qlogo.cn/mmhead/ver_1/rA30HUEYRfMW5Se0ib95ZT8XMY24IicxPY2QPblbK6UNzicwUIIE9CGmgKh4WOUuo8PLeAsPwiaNfLVGDOAOUADZ9VHOzyC8th7iavQwnCw3Fuos/0\" smallheadimgurl=\"http://wx.qlogo.cn/mmhead/ver_1/rA30HUEYRfMW5Se0ib95ZT8XMY24IicxPY2QPblbK6UNzicwUIIE9CGmgKh4WOUuo8PLeAsPwiaNfLVGDOAOUADZ9VHOzyC8th7iavQwnCw3Fuos/132\" ticket=\"v2_7b244cf55b35daf113c16efb4db83ca0a38a4ca40a01a375d4f36b64fb7f597429495e333ebdb1673164fad0e0ec1aca1fbb90043d410360e29c2277caf7f8f1@stranger\" opcode=\"2\" googlecontact=\"\" qrticket=\"\" chatroomusername=\"\" sourceusername=\"\" sourcenickname=\"\"&gt;&lt;brandlist count=\"0\" ver=\"656202095\"&gt;&lt;/brandlist&gt;&lt;/msg&gt;",
+    "StatusNotifyUserName": "",
+    "FromUserName": "fmessage",
     "OriContent": "",
     "FileSize": ""
 }
@@ -660,10 +741,123 @@ public class TulingRobot implements IMsgHandlerFace {
 	}
 
 }
+```
+
+### Demo3 获取好友头像图片示例
+
+代码自释吧，需要注意的是需要自己设定保存头像文件的路径，收到`111`消息后，将会下载所有好友的头像。
+
+```java
+package cn.zhouyafeng.itchat4j.demo.demo3;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSONObject;
+
+import cn.zhouyafeng.itchat4j.Wechat;
+import cn.zhouyafeng.itchat4j.api.WechatTools;
+import cn.zhouyafeng.itchat4j.core.Core;
+import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
+import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
+import cn.zhouyafeng.itchat4j.utils.enums.StorageLoginInfoEnum;
+
+/**
+ * 此示例演示如何获取所有好友的头像
+ * 
+ * @author https://github.com/yaphone
+ * @date 创建时间：2017年6月26日 下午11:27:46
+ * @version 1.0
+ *
+ */
+public class PicYourFriends implements IMsgHandlerFace {
+	private static Logger LOG = LoggerFactory.getLogger(PicYourFriends.class);
+	private static final Core core = Core.getInstance();
+	private static final MyHttpClient myHttpClient = core.getMyHttpClient();
+	private static final String path = "D://itchat4j//head"; // 这里需要设置保存头像的路径
+
+	@Override
+	public String textMsgHandle(JSONObject msg) {
+
+		if (!msg.getBoolean("groupMsg")) { // 群消息不处理
+			String text = msg.getString("Text"); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
+			String baseUrl = "https://" + core.getIndexUrl(); // 基础URL
+			String skey = (String) core.getLoginInfo().get(StorageLoginInfoEnum.skey.getKey());
+			List<String> headUrlList = new ArrayList<String>(); // 好友头像URL列表
+			if (text.equals("111")) {
+				List<JSONObject> friends = WechatTools.getContactList();
+				for (int i = 0; i < friends.size(); i++) {
+					JSONObject friend = friends.get(i);
+					String url = baseUrl + friend.getString("HeadImgUrl") + skey;
+					// String fileName = friend.getString("NickName");
+					String headPicPath = path + File.separator + i + ".jpg";
+
+					HttpEntity entity = myHttpClient.doGet(url, null, true, null);
+					try {
+						OutputStream out = new FileOutputStream(headPicPath);
+						byte[] bytes = EntityUtils.toByteArray(entity);
+						out.write(bytes);
+						out.flush();
+						out.close();
+
+					} catch (Exception e) {
+						LOG.info(e.getMessage());
+					}
+
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public String picMsgHandle(JSONObject msg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String voiceMsgHandle(JSONObject msg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String viedoMsgHandle(JSONObject msg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String nameCardMsgHandle(JSONObject msg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public static void main(String[] args) {
+		String qrPath = "D://itchat4j//login"; // 保存登陆二维码图片的路径，这里需要在本地新建目录
+		IMsgHandlerFace msgHandler = new PicYourFriends(); // 实现IMsgHandlerFace接口的类
+		Wechat wechat = new Wechat(msgHandler, qrPath); // 【注入】
+		wechat.start(); // 启动服务，会在qrPath下生成一张二维码图片，扫描即可登陆，注意，二维码图片如果超过一定时间未扫描会过期，过期时会自动更新，所以你可能需要重新打开图片
+	}
+
+}
 
 ```
 
-### Demo3 itchat4j集成在SpringMVC应用中
+
+
+### itchat4j集成在SpringMVC应用中
+
+若需要将itchat4j集成在自己的应用中，打开项目pom.xml文件所在目录，运行`mvn package`，将生成的itchat4j的jar包引入即可。
 
 这个示例要讲起来就比较困难了，因为SpringMVC本身就是一个复杂的东西，先在这里挖个坑吧。其实在SpringMVC中集成与上面两个示例并没有太大的不同，我的个人博客是基于SpringMVC的，我已经将集成在这个项目里了，这样我就可以通过微信来更新我的博客了。详细的就不多说了，大家先看看这个项目结构吧。
 
@@ -714,6 +908,8 @@ itchat4j开源后，收到很多朋友的建议，对ithcat4j改进做出了很�
 @QQ群好友（北极心 851668663）,增加修改好友备注名方法。
 
 @QQ群好友（beyond_12345@126.com）
+
+以及[每位PR的朋友](https://github.com/yaphone/itchat4j/graphs/contributors)！
 
 ## 问题和建议
 
