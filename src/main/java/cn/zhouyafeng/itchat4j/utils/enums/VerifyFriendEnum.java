@@ -10,7 +10,8 @@ package cn.zhouyafeng.itchat4j.utils.enums;
  */
 public enum VerifyFriendEnum {
 
-	ACCEPT(2, "接受"), ADD(3, "添加");
+	ADD(2, "添加"),
+	ACCEPT(3, "接受");
 
 	private int code;
 	private String desc;
