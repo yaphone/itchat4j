@@ -72,4 +72,10 @@ public class UnusefulDemo implements IMsgHandlerFace {
 		// TODO Auto-generated method stub
 	}
 
+	@Override
+	public String verifyAddFriendMsgHandle(BaseMsg msg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -3,7 +3,6 @@ package cn.zhouyafeng.itchat4j.demo.demo3;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -42,7 +41,6 @@ public class PicYourFriends implements IMsgHandlerFace {
 			String text = msg.getText(); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
 			String baseUrl = "https://" + core.getIndexUrl(); // 基础URL
 			String skey = (String) core.getLoginInfo().get(StorageLoginInfoEnum.skey.getKey());
-			List<String> headUrlList = new ArrayList<String>(); // 好友头像URL列表
 			if (text.equals("111")) {
 				LOG.info("开始下载好友头像");
 				List<JSONObject> friends = WechatTools.getContactList();
@@ -105,6 +103,12 @@ public class PicYourFriends implements IMsgHandlerFace {
 		IMsgHandlerFace msgHandler = new PicYourFriends(); // 实现IMsgHandlerFace接口的类
 		Wechat wechat = new Wechat(msgHandler, qrPath); // 【注入】
 		wechat.start(); // 启动服务，会在qrPath下生成一张二维码图片，扫描即可登陆，注意，二维码图片如果超过一定时间未扫描会过期，过期时会自动更新，所以你可能需要重新打开图片
+	}
+
+	@Override
+	public String verifyAddFriendMsgHandle(BaseMsg msg) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

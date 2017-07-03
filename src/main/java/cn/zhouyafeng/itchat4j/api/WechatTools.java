@@ -173,6 +173,8 @@ public class WechatTools {
 
 	/**
 	 * 
+	 * 根据用户昵称设置备注名称
+	 * 
 	 * @date 2017年5月27日 上午12:21:40
 	 * @param userName
 	 * @param remName

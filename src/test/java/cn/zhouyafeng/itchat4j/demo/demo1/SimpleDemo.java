@@ -8,8 +8,10 @@ import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSON;
 
+import cn.zhouyafeng.itchat4j.api.MessageTools;
 import cn.zhouyafeng.itchat4j.api.WechatTools;
 import cn.zhouyafeng.itchat4j.beans.BaseMsg;
+import cn.zhouyafeng.itchat4j.beans.RecommendInfo;
 import cn.zhouyafeng.itchat4j.core.Core;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
@@ -90,6 +92,17 @@ public class SimpleDemo implements IMsgHandlerFace {
 		LOG.info(JSON.toJSON(msg));
 		String text = msg.getContent();
 		LOG.info(text);
+	}
+
+	@Override
+	public String verifyAddFriendMsgHandle(BaseMsg msg) {
+		MessageTools.addFriend(msg, true); // 同意好友请求，false为不接受好友请求
+		RecommendInfo recommendInfo = msg.getRecommendInfo();
+		String nickName = recommendInfo.getNickName();
+		String province = recommendInfo.getProvince();
+		String city = recommendInfo.getCity();
+		String text = "你好，来自" + province + city + "的" + nickName + "， 欢迎添加我为好友！";
+		return text;
 	}
 
 }

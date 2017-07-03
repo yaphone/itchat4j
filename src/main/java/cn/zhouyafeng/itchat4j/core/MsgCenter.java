@@ -12,7 +12,7 @@ import com.alibaba.fastjson.JSONObject;
 import cn.zhouyafeng.itchat4j.api.MessageTools;
 import cn.zhouyafeng.itchat4j.beans.BaseMsg;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
-import cn.zhouyafeng.itchat4j.utils.MsgCodeEnum;
+import cn.zhouyafeng.itchat4j.utils.enums.MsgCodeEnum;
 import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
 import cn.zhouyafeng.itchat4j.utils.tools.CommonTools;
 
@@ -84,6 +84,8 @@ public class MsgCenter {
 				m.put("Type", MsgTypeEnum.VOICE.getType());
 			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_VERIFYMSG.getCode())) {// friends
 				// 好友确认消息
+				// MessageTools.addFriend(core, userName, 3, ticket); // 确认添加好友
+				m.put("Type", MsgTypeEnum.VERIFYMSG.getType());
 
 			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_SHARECARD.getCode())) { // 共享名片
 				m.put("Type", MsgTypeEnum.NAMECARD.getType());
@@ -129,6 +131,7 @@ public class MsgCenter {
 								String result = msgHandler.textMsgHandle(msg);
 								MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
 							} else if (msg.getType().equals(MsgTypeEnum.PIC.getType())) {
+
 								String result = msgHandler.picMsgHandle(msg);
 								MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
 							} else if (msg.getType().equals(MsgTypeEnum.VOICE.getType())) {
@@ -142,6 +145,10 @@ public class MsgCenter {
 								MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
 							} else if (msg.getType().equals(MsgTypeEnum.SYS.getType())) { // 系统消息
 								msgHandler.sysMsgHandle(msg);
+							} else if (msg.getType().equals(MsgTypeEnum.VERIFYMSG.getType())) { // 确认添加好友消息
+								String result = msgHandler.verifyAddFriendMsgHandle(msg);
+								MessageTools.sendMsgById(result,
+										core.getMsgList().get(0).getRecommendInfo().getUserName());
 							}
 						} catch (Exception e) {
 							e.printStackTrace();

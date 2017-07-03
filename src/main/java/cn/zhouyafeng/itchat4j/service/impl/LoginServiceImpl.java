@@ -295,7 +295,7 @@ public class LoginServiceImpl implements ILoginService {
 									try {
 										JSONArray msgList = new JSONArray();
 										msgList = msgObj.getJSONArray("AddMsgList");
-										JSONArray modContactList = msgObj.getJSONArray("ModContactList"); // 存有删除或者新增的好友信息
+										JSONArray modContactList = msgObj.getJSONArray("ModContactList"); // 存在删除或者新增的好友信息
 										msgList = MsgCenter.produceMsg(msgList);
 										for (int j = 0; j < msgList.size(); j++) {
 											JSONObject userInfo = modContactList.getJSONObject(j);
