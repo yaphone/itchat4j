@@ -25,6 +25,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.zhouyafeng.itchat4j.beans.BaseMsg;
 import cn.zhouyafeng.itchat4j.core.Core;
 import cn.zhouyafeng.itchat4j.core.MsgCenter;
 import cn.zhouyafeng.itchat4j.service.ILoginService;
@@ -275,7 +276,9 @@ public class LoginServiceImpl implements ILoginService {
 										msgList = msgObj.getJSONArray("AddMsgList");
 										msgList = MsgCenter.produceMsg(msgList);
 										for (int j = 0; j < msgList.size(); j++) {
-											core.getMsgList().add(msgList.getJSONObject(j));
+											BaseMsg baseMsg = JSON.toJavaObject(msgList.getJSONObject(j),
+													BaseMsg.class);
+											core.getMsgList().add(baseMsg);
 										}
 									} catch (Exception e) {
 										LOG.info(e.getMessage());
@@ -295,10 +298,9 @@ public class LoginServiceImpl implements ILoginService {
 										JSONArray modContactList = msgObj.getJSONArray("ModContactList"); // 存有删除或者新增的好友信息
 										msgList = MsgCenter.produceMsg(msgList);
 										for (int j = 0; j < msgList.size(); j++) {
-											JSONObject msg = msgList.getJSONObject(j);
 											JSONObject userInfo = modContactList.getJSONObject(j);
-											msg.put("userInfo", userInfo);
-											core.getMsgList().add(msg);
+											// 存在主动加好友之后的同步联系人到本地
+											core.getContactList().add(userInfo);
 										}
 									} catch (Exception e) {
 										LOG.info(e.getMessage());

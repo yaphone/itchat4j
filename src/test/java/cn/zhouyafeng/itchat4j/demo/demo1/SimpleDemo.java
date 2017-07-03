@@ -6,9 +6,10 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSON;
 
 import cn.zhouyafeng.itchat4j.api.WechatTools;
+import cn.zhouyafeng.itchat4j.beans.BaseMsg;
 import cn.zhouyafeng.itchat4j.core.Core;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
@@ -26,13 +27,14 @@ public class SimpleDemo implements IMsgHandlerFace {
 	Logger LOG = Logger.getLogger(SimpleDemo.class);
 
 	@Override
-	public String textMsgHandle(JSONObject msg) {
+	public String textMsgHandle(BaseMsg msg) {
+		LOG.info(JSON.toJSON(msg));
 		// String docFilePath = "D:/itchat4j/pic/1.jpg"; // 这里是需要发送的文件的路径
-		if (!msg.getBoolean("groupMsg")) { // 群消息不处理
+		if (!msg.isGroupMsg()) { // 群消息不处理
 			// String userId = msg.getString("FromUserName");
 			// MessageTools.sendFileMsgByUserId(userId, docFilePath); // 发送文件
 			// MessageTools.sendPicMsgByUserId(userId, docFilePath);
-			String text = msg.getString("Text"); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
+			String text = msg.getText(); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
 			LOG.info(text);
 			if (text.equals("111")) {
 				WechatTools.logout();
@@ -51,7 +53,8 @@ public class SimpleDemo implements IMsgHandlerFace {
 	}
 
 	@Override
-	public String picMsgHandle(JSONObject msg) {
+	public String picMsgHandle(BaseMsg msg) {
+		LOG.info(JSON.toJSON(msg));
 		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());// 这里使用收到图片的时间作为文件名
 		String picPath = "D://itchat4j/pic" + File.separator + fileName + ".jpg"; // 调用此方法来保存图片
 		DownloadTools.getDownloadFn(msg, MsgTypeEnum.PIC.getType(), picPath); // 保存图片的路径
@@ -59,7 +62,8 @@ public class SimpleDemo implements IMsgHandlerFace {
 	}
 
 	@Override
-	public String voiceMsgHandle(JSONObject msg) {
+	public String voiceMsgHandle(BaseMsg msg) {
+		LOG.info(JSON.toJSON(msg));
 		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
 		String voicePath = "D://itchat4j/voice" + File.separator + fileName + ".mp3";
 		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VOICE.getType(), voicePath);
@@ -67,7 +71,8 @@ public class SimpleDemo implements IMsgHandlerFace {
 	}
 
 	@Override
-	public String viedoMsgHandle(JSONObject msg) {
+	public String viedoMsgHandle(BaseMsg msg) {
+		LOG.info(JSON.toJSON(msg));
 		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
 		String viedoPath = "D://itchat4j/viedo" + File.separator + fileName + ".mp4";
 		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VIEDO.getType(), viedoPath);
@@ -75,13 +80,15 @@ public class SimpleDemo implements IMsgHandlerFace {
 	}
 
 	@Override
-	public String nameCardMsgHandle(JSONObject msg) {
+	public String nameCardMsgHandle(BaseMsg msg) {
+		LOG.info(JSON.toJSON(msg));
 		return "收到名片消息";
 	}
 
 	@Override
-	public void sysMsgHandle(JSONObject msg) { // 收到系统消息
-		String text = msg.getString("Content");
+	public void sysMsgHandle(BaseMsg msg) { // 收到系统消息
+		LOG.info(JSON.toJSON(msg));
+		String text = msg.getContent();
 		LOG.info(text);
 	}
 

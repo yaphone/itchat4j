@@ -8,6 +8,7 @@ import java.util.Map;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.zhouyafeng.itchat4j.beans.BaseMsg;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
 import cn.zhouyafeng.itchat4j.utils.enums.parameters.BaseParaEnum;
 
@@ -43,7 +44,7 @@ public class Core {
 
 	private String userName;
 	private String nickName;
-	private List<JSONObject> msgList = new ArrayList<JSONObject>();
+	private List<BaseMsg> msgList = new ArrayList<BaseMsg>();
 
 	private JSONObject userSelf; // 登陆账号自身信息
 	private List<JSONObject> memberList = new ArrayList<JSONObject>(); // 好友+群聊+公众号+特殊账号
@@ -156,11 +157,11 @@ public class Core {
 		return myHttpClient;
 	}
 
-	public List<JSONObject> getMsgList() {
+	public List<BaseMsg> getMsgList() {
 		return msgList;
 	}
 
-	public void setMsgList(List<JSONObject> msgList) {
+	public void setMsgList(List<BaseMsg> msgList) {
 		this.msgList = msgList;
 	}
 
