@@ -13,6 +13,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.zhouyafeng.itchat4j.Wechat;
+import cn.zhouyafeng.itchat4j.beans.BaseMsg;
 import cn.zhouyafeng.itchat4j.core.Core;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
@@ -28,15 +29,15 @@ import cn.zhouyafeng.itchat4j.utils.tools.DownloadTools;
  *
  */
 public class TulingRobot implements IMsgHandlerFace {
-	MyHttpClient myHttpClient = Core.getInstance().getMyHttpClient();
-	String apiKey = "597b34bea4ec4c85a775c469c84b6817"; // 这里是我申请的图灵机器人API接口，每天只能5000次调用，建议自己去申请一个，免费的:)
 	Logger logger = Logger.getLogger("TulingRobot");
+	MyHttpClient myHttpClient = Core.getInstance().getMyHttpClient();
+	String url = "http://www.tuling123.com/openapi/api";
+	String apiKey = "597b34bea4ec4c85a775c469c84b6817"; // 这里是我申请的图灵机器人API接口，每天只能5000次调用，建议自己去申请一个，免费的:)
 
 	@Override
-	public String textMsgHandle(JSONObject msg) {
+	public String textMsgHandle(BaseMsg msg) {
 		String result = "";
-		String text = msg.getString("Text");
-		String url = "http://www.tuling123.com/openapi/api";
+		String text = msg.getText();
 		Map<String, String> paramMap = new HashMap<String, String>();
 		paramMap.put("key", apiKey);
 		paramMap.put("info", text);
@@ -58,12 +59,12 @@ public class TulingRobot implements IMsgHandlerFace {
 	}
 
 	@Override
-	public String picMsgHandle(JSONObject msg) {
+	public String picMsgHandle(BaseMsg msg) {
 		return "收到图片";
 	}
 
 	@Override
-	public String voiceMsgHandle(JSONObject msg) {
+	public String voiceMsgHandle(BaseMsg msg) {
 		String fileName = String.valueOf(new Date().getTime());
 		String voicePath = "D://itchat4j/voice" + File.separator + fileName + ".mp3";
 		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VOICE.getType(), voicePath);
@@ -71,7 +72,7 @@ public class TulingRobot implements IMsgHandlerFace {
 	}
 
 	@Override
-	public String viedoMsgHandle(JSONObject msg) {
+	public String viedoMsgHandle(BaseMsg msg) {
 		String fileName = String.valueOf(new Date().getTime());
 		String viedoPath = "D://itchat4j/viedo" + File.separator + fileName + ".mp4";
 		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VIEDO.getType(), viedoPath);
@@ -85,18 +86,24 @@ public class TulingRobot implements IMsgHandlerFace {
 	}
 
 	@Override
-	public String nameCardMsgHandle(JSONObject msg) {
+	public String nameCardMsgHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void sysMsgHandle(JSONObject msg) {
+	public void sysMsgHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public String verifyAddFriendMsgHandle(JSONObject msg) {
+	public String verifyAddFriendMsgHandle(BaseMsg msg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String mediaMsgHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
 		return null;
 	}

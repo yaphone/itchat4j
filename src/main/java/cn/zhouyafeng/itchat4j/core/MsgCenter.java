@@ -10,8 +10,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.zhouyafeng.itchat4j.api.MessageTools;
+import cn.zhouyafeng.itchat4j.beans.BaseMsg;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
-import cn.zhouyafeng.itchat4j.utils.MsgKeywords;
 import cn.zhouyafeng.itchat4j.utils.enums.MsgCodeEnum;
 import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
 import cn.zhouyafeng.itchat4j.utils.tools.CommonTools;
@@ -93,9 +93,8 @@ public class MsgCenter {
 			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_VIDEO.getCode())
 					|| m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_MICROVIDEO.getCode())) {// viedo
 				m.put("Type", MsgTypeEnum.VIEDO.getType());
-			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_APP.getCode())) { // sharing
-				// 分享链接
-
+			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_MEDIA.getCode())) { // 多媒体消息
+				m.put("Type", MsgTypeEnum.MEDIA.getType());
 			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_STATUSNOTIFY.getCode())) {// phone
 				// init
 				// 微信初始化消息
@@ -122,40 +121,36 @@ public class MsgCenter {
 	 */
 	public static void handleMsg(IMsgHandlerFace msgHandler) {
 		while (true) {
-			if (core.getMsgList().size() > 0 && core.getMsgList().get(0).getString("Content") != null) {
-				if (core.getMsgList().get(0).getString("Content").length() > 0) {
-					JSONObject msg = core.getMsgList().get(0);
-					if (msg.getString("Type") != null) {
+			if (core.getMsgList().size() > 0 && core.getMsgList().get(0).getContent() != null) {
+				if (core.getMsgList().get(0).getContent().length() > 0) {
+					BaseMsg msg = core.getMsgList().get(0);
+					if (msg.getType() != null) {
 						try {
-							if (msg.getString("Type").equals(MsgTypeEnum.TEXT.getType())) {
-								// 存在主动加好友之后的同步联系人到本地
-								String text = msg.getString("Text");
-								if (text.contains(MsgKeywords.newFriendStr)) {
-									JSONObject userInfo = msg.getJSONObject("userInfo");
-									core.getContactList().add(userInfo);
-								} else {
-									String result = msgHandler.textMsgHandle(msg);
-									MessageTools.sendMsgById(result,
-											core.getMsgList().get(0).getString("FromUserName"));
-								}
-							} else if (msg.getString("Type").equals(MsgTypeEnum.PIC.getType())) {
+							if (msg.getType().equals(MsgTypeEnum.TEXT.getType())) {
+								String result = msgHandler.textMsgHandle(msg);
+								MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
+							} else if (msg.getType().equals(MsgTypeEnum.PIC.getType())) {
+
 								String result = msgHandler.picMsgHandle(msg);
-								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
-							} else if (msg.getString("Type").equals(MsgTypeEnum.VOICE.getType())) {
+								MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
+							} else if (msg.getType().equals(MsgTypeEnum.VOICE.getType())) {
 								String result = msgHandler.voiceMsgHandle(msg);
-								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
-							} else if (msg.getString("Type").equals(MsgTypeEnum.VIEDO.getType())) {
+								MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
+							} else if (msg.getType().equals(MsgTypeEnum.VIEDO.getType())) {
 								String result = msgHandler.viedoMsgHandle(msg);
-								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
-							} else if (msg.getString("Type").equals(MsgTypeEnum.NAMECARD.getType())) {
+								MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
+							} else if (msg.getType().equals(MsgTypeEnum.NAMECARD.getType())) {
 								String result = msgHandler.nameCardMsgHandle(msg);
-								MessageTools.sendMsgById(result, core.getMsgList().get(0).getString("FromUserName"));
-							} else if (msg.getString("Type").equals(MsgTypeEnum.SYS.getType())) { // 系统消息
+								MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
+							} else if (msg.getType().equals(MsgTypeEnum.SYS.getType())) { // 系统消息
 								msgHandler.sysMsgHandle(msg);
-							} else if (msg.getString("Type").equals(MsgTypeEnum.VERIFYMSG.getType())) { // 确认添加好友消息
+							} else if (msg.getType().equals(MsgTypeEnum.VERIFYMSG.getType())) { // 确认添加好友消息
 								String result = msgHandler.verifyAddFriendMsgHandle(msg);
 								MessageTools.sendMsgById(result,
-										core.getMsgList().get(0).getJSONObject("RecommendInfo").getString("UserName"));
+										core.getMsgList().get(0).getRecommendInfo().getUserName());
+							} else if (msg.getType().equals(MsgTypeEnum.MEDIA.getType())) { // 多媒体消息
+								String result = msgHandler.mediaMsgHandle(msg);
+								MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
 							}
 						} catch (Exception e) {
 							e.printStackTrace();

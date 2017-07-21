@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.zhouyafeng.itchat4j.beans.BaseMsg;
+import cn.zhouyafeng.itchat4j.beans.RecommendInfo;
 import cn.zhouyafeng.itchat4j.core.Core;
 import cn.zhouyafeng.itchat4j.utils.Config;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
@@ -368,16 +370,17 @@ public class MessageTools {
 	 * @param accept
 	 *            true 接受 false 拒绝
 	 */
-	public static void addFriend(JSONObject msg, boolean accept) {
+	public static void addFriend(BaseMsg msg, boolean accept) {
 		if (!accept) { // 不添加
 			return;
 		}
 		int status = VerifyFriendEnum.ACCEPT.getCode(); // 接受好友请求
-		JSONObject recommendInfo = msg.getJSONObject("RecommendInfo");
-		String userName = recommendInfo.getString("UserName");
-		String ticket = recommendInfo.getString("Ticket");
+		RecommendInfo recommendInfo = msg.getRecommendInfo();
+		String userName = recommendInfo.getUserName();
+		String ticket = recommendInfo.getTicket();
 		// 更新好友列表
-		core.getContactList().add(msg.getJSONObject("RecommendInfo"));
+		// TODO 此处需要更新好友列表
+		// core.getContactList().add(msg.getJSONObject("RecommendInfo"));
 
 		String url = String.format(URLEnum.WEB_WX_VERIFYUSER.getUrl(), core.getLoginInfo().get("url"),
 				String.valueOf(System.currentTimeMillis() / 3158L), core.getLoginInfo().get("pass_ticket"));

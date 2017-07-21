@@ -34,7 +34,7 @@ public enum MsgCodeEnum {
 	MSGTYPE_VIDEO(43, "小视频消息"),
 	MSGTYPE_MICROVIDEO(62, "短视频消息"),
 	MSGTYPE_EMOTICON(47, "表情消息"),
-	MSGTYPE_APP(49, ""),
+	MSGTYPE_MEDIA(49, "多媒体消息"),
 	MSGTYPE_VOIPMSG(50, ""),
 	MSGTYPE_VOIPNOTIFY(52, ""),
 	MSGTYPE_VOIPINVITE(53, ""),

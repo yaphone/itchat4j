@@ -2,10 +2,9 @@ package cn.zhouyafeng.itchat4j.demo.unuseful;
 
 import java.io.IOException;
 
-import com.alibaba.fastjson.JSONObject;
-
 import cn.zhouyafeng.itchat4j.Wechat;
 import cn.zhouyafeng.itchat4j.api.AssistTools;
+import cn.zhouyafeng.itchat4j.beans.BaseMsg;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 
 /**
@@ -19,9 +18,9 @@ import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 public class UnusefulDemo implements IMsgHandlerFace {
 
 	@Override
-	public String textMsgHandle(JSONObject msg) {
-		if (!msg.getBoolean("groupMsg")) { // 群消息不处理
-			String text = msg.getString("Text"); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
+	public String textMsgHandle(BaseMsg msg) {
+		if (!msg.isGroupMsg()) { // 群消息不处理
+			String text = msg.getText(); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
 			if (text.equals("111")) {
 				String username = "yaphone";
 				String password = "123456";
@@ -39,25 +38,25 @@ public class UnusefulDemo implements IMsgHandlerFace {
 	}
 
 	@Override
-	public String picMsgHandle(JSONObject msg) {
+	public String picMsgHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String voiceMsgHandle(JSONObject msg) {
+	public String voiceMsgHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String viedoMsgHandle(JSONObject msg) {
+	public String viedoMsgHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String nameCardMsgHandle(JSONObject msg) {
+	public String nameCardMsgHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -69,12 +68,18 @@ public class UnusefulDemo implements IMsgHandlerFace {
 	}
 
 	@Override
-	public void sysMsgHandle(JSONObject msg) {
+	public void sysMsgHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public String verifyAddFriendMsgHandle(JSONObject msg) {
+	public String verifyAddFriendMsgHandle(BaseMsg msg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String mediaMsgHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -14,6 +14,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.zhouyafeng.itchat4j.Wechat;
 import cn.zhouyafeng.itchat4j.api.WechatTools;
+import cn.zhouyafeng.itchat4j.beans.BaseMsg;
 import cn.zhouyafeng.itchat4j.core.Core;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
@@ -34,13 +35,14 @@ public class PicYourFriends implements IMsgHandlerFace {
 	private static final String path = "D://itchat4j//head"; // 这里需要设置保存头像的路径
 
 	@Override
-	public String textMsgHandle(JSONObject msg) {
+	public String textMsgHandle(BaseMsg msg) {
 
-		if (!msg.getBoolean("groupMsg")) { // 群消息不处理
-			String text = msg.getString("Text"); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
+		if (!msg.isGroupMsg()) { // 群消息不处理
+			String text = msg.getText(); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
 			String baseUrl = "https://" + core.getIndexUrl(); // 基础URL
 			String skey = (String) core.getLoginInfo().get(StorageLoginInfoEnum.skey.getKey());
 			if (text.equals("111")) {
+				LOG.info("开始下载好友头像");
 				List<JSONObject> friends = WechatTools.getContactList();
 				for (int i = 0; i < friends.size(); i++) {
 					JSONObject friend = friends.get(i);
@@ -67,31 +69,31 @@ public class PicYourFriends implements IMsgHandlerFace {
 	}
 
 	@Override
-	public String picMsgHandle(JSONObject msg) {
+	public String picMsgHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String voiceMsgHandle(JSONObject msg) {
+	public String voiceMsgHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String viedoMsgHandle(JSONObject msg) {
+	public String viedoMsgHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String nameCardMsgHandle(JSONObject msg) {
+	public String nameCardMsgHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void sysMsgHandle(JSONObject msg) {
+	public void sysMsgHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
 
 	}
@@ -104,7 +106,13 @@ public class PicYourFriends implements IMsgHandlerFace {
 	}
 
 	@Override
-	public String verifyAddFriendMsgHandle(JSONObject msg) {
+	public String verifyAddFriendMsgHandle(BaseMsg msg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String mediaMsgHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
 		return null;
 	}

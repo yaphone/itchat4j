@@ -1,6 +1,6 @@
 package cn.zhouyafeng.itchat4j.face;
 
-import com.alibaba.fastjson.JSONObject;
+import cn.zhouyafeng.itchat4j.beans.BaseMsg;
 
 /**
  * 消息处理接口
@@ -18,7 +18,7 @@ public interface IMsgHandlerFace {
 	 * @param msg
 	 * @return
 	 */
-	public String textMsgHandle(JSONObject msg);
+	public String textMsgHandle(BaseMsg msg);
 
 	/**
 	 * 处理图片消息
@@ -28,7 +28,7 @@ public interface IMsgHandlerFace {
 	 * @param msg
 	 * @return
 	 */
-	public String picMsgHandle(JSONObject msg);
+	public String picMsgHandle(BaseMsg msg);
 
 	/**
 	 * 处理声音消息
@@ -38,7 +38,7 @@ public interface IMsgHandlerFace {
 	 * @param msg
 	 * @return
 	 */
-	public String voiceMsgHandle(JSONObject msg);
+	public String voiceMsgHandle(BaseMsg msg);
 
 	/**
 	 * 处理小视频消息
@@ -48,7 +48,7 @@ public interface IMsgHandlerFace {
 	 * @param msg
 	 * @return
 	 */
-	public String viedoMsgHandle(JSONObject msg);
+	public String viedoMsgHandle(BaseMsg msg);
 
 	/**
 	 * 处理名片消息
@@ -58,7 +58,7 @@ public interface IMsgHandlerFace {
 	 * @param msg
 	 * @return
 	 */
-	public String nameCardMsgHandle(JSONObject msg);
+	public String nameCardMsgHandle(BaseMsg msg);
 
 	/**
 	 * 处理系统消息
@@ -68,7 +68,7 @@ public interface IMsgHandlerFace {
 	 * @param msg
 	 * @return
 	 */
-	public void sysMsgHandle(JSONObject msg);
+	public void sysMsgHandle(BaseMsg msg);
 
 	/**
 	 * 处理确认添加好友消息
@@ -77,6 +77,15 @@ public interface IMsgHandlerFace {
 	 * @param msg
 	 * @return
 	 */
-	public String verifyAddFriendMsgHandle(JSONObject msg);
+	public String verifyAddFriendMsgHandle(BaseMsg msg);
+
+	/**
+	 * 处理收到的文件消息
+	 * 
+	 * @date 2017年7月21日 下午11:59:14
+	 * @param msg
+	 * @return
+	 */
+	public String mediaMsgHandle(BaseMsg msg);
 
 }
