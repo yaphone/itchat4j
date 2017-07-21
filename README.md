@@ -32,6 +32,8 @@
 
 ## 更新日志
 
+- 2017-7-21：消息体封装为POJO类，更易操作。
+
 - 2017-6-28：增加被动添加好友功能。
 
 - 2017-6-23：增加获取群好友昵称功能，修复已知问题。
@@ -160,13 +162,15 @@ public static boolean sendPicFileByNickName(String nickName, String filePath)
 public static boolean sendFileMsgByUserId(String userId, String filePath)
 ```
 
-#### 15.处理好友添加请求，MessageTools.addFriend(JSONObject msg, boolean accept)
+#### 15.处理好友添加请求，MessageTools.addFriend(BaseMsg msg, boolean accept)
 
 当收到好友添加请求时，可调用此函数进行处理，msg为收到的好友添加请求消息，accept传true为接受好友请求，false为拒绝，其函数声明为：
 
 ```java
-public static void addFriend(JSONObject msg, boolean accept)
+public static void addFriend(BaseMsg msg, boolean accept)
 ```
+
+
 
 
 
@@ -197,329 +201,60 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
 
 ## 消息格式
 
-这里简要介绍一下`msg`各种消息，msg均为`json`格式的数据，可使用各自工具进行解析，在itchat4j中我通过alibaba的`fastjosn`工具库进行了解析，每种`msg`均为`fastjson`的标准`JSONObject`对象，后续处理起来非常方便，例如获取文本消息的消息内容：`msg.getString("Text")`，获取名片消息的被推荐人昵称：`msg.getJSONObject("RecommendInfo").getString("NickName")`。有时候可能不需要处理群消息，因此在构造`msg`消息体里我添加了一个判断是否群消息的字段`groupMsg`，可通过`msg.getBoolean("groupMsg")`获取字段的值，如果是群消息，返回true，如果非群消息，返回false。
+对于收到的消息，itchat4j将其以POJO类的形式进行了封装，即在`package cn.zhouyafeng.itchat4j.beans`包中的`BaseMsg类`，其声明如下：
 
-### 1.文本消息
+```java
+/**
+ * 收到的微信消息
+ * 
+ * @author https://github.com/yaphone
+ * @date 创建时间：2017年7月3日 下午10:28:06
+ * @version 1.0
+ *
+ */
+public class BaseMsg implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private int subMsgType;
+	private int voiceLength;
+	private String fileName;
+	private int imgHeight;
+	private String toUserName;
+	private int hasProductId;
+	private int imgStatus;
+	private String url;
+	private int imgWidth;
+	private int forwardFlag;
+	private int status;
+	private String Ticket;
+	/** 推荐消息报文 **/
+	private RecommendInfo recommendInfo;
+	private long createTime;
+	private String newMsgId;
+	/** 文本消息内容 **/
+	private String text;
+	/** 消息类型 **/
+	private int msgType;
+	/** 是否为群消息 **/
+	private boolean groupMsg;
+	private String msgId;
+	private int statusNotifyCode;
+	private AppInfo appInfo;
+	private int appMsgType;
+	private String Type;
+	private int playLength;
+	private String mediaId;
+	private String content;
+	private String statusNotifyUserName;
+	/** 消息发送者ID **/
+	private String fromUserName;
+	private String oriContent;
+	private String fileSize;
 
-```Json
-{
-    "SubMsgType": 0,
-    "VoiceLength": 0,
-    "FileName": "",
-    "ImgHeight": 0,
-    "ToUserName": "@58b8651e056f8937f7a4eaa386be0c16d2583a0fdb5741b874cedffe3e13e723",
-    "HasProductId": 0,
-    "ImgStatus": 1,
-    "Url": "",
-    "ImgWidth": 0,
-    "ForwardFlag": 0,
-    "Status": 3,
-    "Ticket": "",
-    "RecommendInfo": {
-        "Ticket": "",
-        "UserName": "",
-        "Sex": 0,
-        "AttrStatus": 0,
-        "City": "",
-        "NickName": "",
-        "Scene": 0,
-        "Province": "",
-        "Content": "",
-        "Alias": "",
-        "Signature": "",
-        "OpCode": 0,
-        "QQNum": 0,
-        "VerifyFlag": 0
-    },
-    "CreateTime": 1494079411,
-    "NewMsgId": 6942811558026846000,
-    "Text": "你好",
-    "MsgType": 1,
-    "groupMsg": false,
-    "MsgId": "6942811558026845859",
-    "StatusNotifyCode": 0,
-    "AppInfo": {
-        "Type": 0,
-        "AppID": ""
-    },
-    "AppMsgType": 0,
-    "Type": "Text",
-    "PlayLength": 0,
-    "MediaId": "",
-    "Content": "你好",
-    "StatusNotifyUserName": "",
-    "FromUserName": "@a257b99314d8313862cd44ab02fe0f81",
-    "OriContent": "",
-    "FileSize": ""
-}
-```
+  //省略getter/setter方法
 
-### 2.图片消息
-
-```json
-{
-    "SubMsgType": 0,
-    "VoiceLength": 0,
-    "FileName": "",
-    "ImgHeight": 120,
-    "ToUserName": "@58b8651e056f8937f7a4eaa386be0c16d2583a0fdb5741b874cedffe3e13e723",
-    "HasProductId": 0,
-    "ImgStatus": 2,
-    "Url": "",
-    "ImgWidth": 90,
-    "ForwardFlag": 0,
-    "Status": 3,
-    "Ticket": "",
-    "RecommendInfo": {
-        "Ticket": "",
-        "UserName": "",
-        "Sex": 0,
-        "AttrStatus": 0,
-        "City": "",
-        "NickName": "",
-        "Scene": 0,
-        "Province": "",
-        "Content": "",
-        "Alias": "",
-        "Signature": "",
-        "OpCode": 0,
-        "QQNum": 0,
-        "VerifyFlag": 0
-    },
-    "CreateTime": 1494079495,
-    "NewMsgId": 6081337643309445000,
-    "MsgType": 3,
-    "groupMsg": false,
-    "MsgId": "6081337643309445027",
-    "StatusNotifyCode": 0,
-    "AppInfo": {
-        "Type": 0,
-        "AppID": ""
-    },
-    "AppMsgType": 0,
-    "Type": "Pic",
-    "PlayLength": 0,
-    "MediaId": "",
-    "Content": "&lt;?xml version=\"1.0\"?&gt;\n&lt;msg&gt;\n\t&lt;img aeskey=\"2384ec2f417e4066a23522635d76b86a\" encryver=\"0\" cdnthumbaeskey=\"2384ec2f417e4066a23522635d76b86a\" cdnthumburl=\"3050020100044930470201000204577f6a2c02030f48810204a5b88cb60204590cac9e0425617570696d675f633337313936633333656466343463635f313439343030323834363430340201000201000400\" cdnthumblength=\"12204\" cdnthumbheight=\"120\" cdnthumbwidth=\"90\" cdnmidheight=\"0\" cdnmidwidth=\"0\" cdnhdheight=\"0\" cdnhdwidth=\"0\" cdnmidimgurl=\"3050020100044930470201000204577f6a2c02030f48810204a5b88cb60204590cac9e0425617570696d675f633337313936633333656466343463635f313439343030323834363430340201000201000400\" length=\"139120\" md5=\"5a774ad813f40fb3ca81349d82101423\" /&gt;\n&lt;/msg&gt;\n",
-    "StatusNotifyUserName": "",
-    "FromUserName": "@a257b99314d8313862cd44ab02fe0f81",
-    "OriContent": "",
-    "FileSize": ""
-}
-```
-
-### 3.语音消息
-
-```Json
-{
-    "SubMsgType": 0,
-    "VoiceLength": 2112,
-    "FileName": "",
-    "ImgHeight": 0,
-    "ToUserName": "@58b8651e056f8937f7a4eaa386be0c16d2583a0fdb5741b874cedffe3e13e723",
-    "HasProductId": 0,
-    "ImgStatus": 1,
-    "Url": "",
-    "ImgWidth": 0,
-    "ForwardFlag": 0,
-    "Status": 3,
-    "Ticket": "",
-    "RecommendInfo": {
-        "Ticket": "",
-        "UserName": "",
-        "Sex": 0,
-        "AttrStatus": 0,
-        "City": "",
-        "NickName": "",
-        "Scene": 0,
-        "Province": "",
-        "Content": "",
-        "Alias": "",
-        "Signature": "",
-        "OpCode": 0,
-        "QQNum": 0,
-        "VerifyFlag": 0
-    },
-    "CreateTime": 1494079534,
-    "NewMsgId": 1038534170192835800,
-    "MsgType": 34,
-    "groupMsg": false,
-    "MsgId": "1038534170192835842",
-    "StatusNotifyCode": 0,
-    "AppInfo": {
-        "Type": 0,
-        "AppID": ""
-    },
-    "AppMsgType": 0,
-    "Type": "Voice",
-    "PlayLength": 0,
-    "MediaId": "",
-    "Content": "&lt;msg&gt;&lt;voicemsg endflag=\"1\" cancelflag=\"0\" forwardflag=\"0\" voiceformat=\"4\" voicelength=\"2112\" length=\"4051\" bufid=\"291965468715843925\" clientmsgid=\"41393631336234386239346262373200302205050617d9115824727105\" fromusername=\"zyfandlzz\" /&gt;&lt;/msg&gt;",
-    "StatusNotifyUserName": "",
-    "FromUserName": "@a257b99314d8313862cd44ab02fe0f81",
-    "OriContent": "",
-    "FileSize": ""
-}
-```
-
-### 4.小视频消息
-
-```Json
-{
-    "SubMsgType": 0,
-    "VoiceLength": 0,
-    "FileName": "",
-    "ImgHeight": 540,
-    "ToUserName": "@58b8651e056f8937f7a4eaa386be0c16d2583a0fdb5741b874cedffe3e13e723",
-    "HasProductId": 0,
-    "ImgStatus": 1,
-    "Url": "",
-    "ImgWidth": 960,
-    "ForwardFlag": 0,
-    "Status": 3,
-    "Ticket": "",
-    "RecommendInfo": {
-        "Ticket": "",
-        "UserName": "",
-        "Sex": 0,
-        "AttrStatus": 0,
-        "City": "",
-        "NickName": "",
-        "Scene": 0,
-        "Province": "",
-        "Content": "",
-        "Alias": "",
-        "Signature": "",
-        "OpCode": 0,
-        "QQNum": 0,
-        "VerifyFlag": 0
-    },
-    "CreateTime": 1494079644,
-    "NewMsgId": 1478649195821152000,
-    "MsgType": 43,
-    "groupMsg": false,
-    "MsgId": "1478649195821152019",
-    "StatusNotifyCode": 0,
-    "AppInfo": {
-        "Type": 0,
-        "AppID": ""
-    },
-    "AppMsgType": 0,
-    "Type": "Video",
-    "PlayLength": 2,
-    "MediaId": "",
-    "Content": "&lt;?xml version=\"1.0\"?&gt;\n&lt;msg&gt;\n\t&lt;videomsg aeskey=\"d9770f7f38f04888a96f95faa548dbd8\" cdnthumbaeskey=\"d9770f7f38f04888a96f95faa548dbd8\" cdnvideourl=\"30680201000461305f0201000204577f6a2c02032dcd0102041e0a96b60204590dd89c043d617570766964656f5f313530306338303339326430363161645f313439343037393634325f3232303731353036303531373331653863316435333233300201000201000400\" cdnthumburl=\"30680201000461305f0201000204577f6a2c02032dcd0102041e0a96b60204590dd89c043d617570766964656f5f313530306338303339326430363161645f313439343037393634325f3232303731353036303531373331653863316435333233300201000201000400\" length=\"328666\" playlength=\"2\" cdnthumblength=\"10398\" cdnthumbwidth=\"960\" cdnthumbheight=\"540\" fromusername=\"zyfandlzz\" md5=\"555c3efc0e065ba83c3fed942fea81b5\" newmd5=\"33389ec240de3e125f9f319c011781dd\" isad=\"0\" /&gt;\n&lt;/msg&gt;\n",
-    "StatusNotifyUserName": "",
-    "FromUserName": "@a257b99314d8313862cd44ab02fe0f81",
-    "OriContent": "",
-    "FileSize": ""
-}
-```
-
-### 5.名片消息
-
-```Json
-{
-    "SubMsgType": 0,
-    "VoiceLength": 0,
-    "FileName": "",
-    "ImgHeight": 0,
-    "ToUserName": "@58b8651e056f8937f7a4eaa386be0c16d2583a0fdb5741b874cedffe3e13e723",
-    "HasProductId": 0,
-    "ImgStatus": 1,
-    "Url": "",
-    "ImgWidth": 0,
-    "ForwardFlag": 0,
-    "Status": 3,
-    "Ticket": "",
-    "RecommendInfo": {
-        "Ticket": "",
-        "UserName": "@173bd4ce01b725f327c221a06017260734d4607001d1dc82ba6b99c1ef77fb92",
-        "Sex": 0,
-        "AttrStatus": 32,
-        "City": "",
-        "NickName": "LittleCoder机器人",
-        "Scene": 17,
-        "Province": "",
-        "Content": "",
-        "Alias": "",
-        "Signature": "",
-        "OpCode": 0,
-        "QQNum": 0,
-        "VerifyFlag": 0
-    },
-    "CreateTime": 1494079592,
-    "NewMsgId": 6687290426846395000,
-    "MsgType": 42,
-    "groupMsg": false,
-    "MsgId": "6687290426846395587",
-    "StatusNotifyCode": 0,
-    "AppInfo": {
-        "Type": 0,
-        "AppID": ""
-    },
-    "AppMsgType": 0,
-    "Type": "NameCard",
-    "PlayLength": 0,
-    "MediaId": "",
-    "Content": "&lt;?xml version=\"1.0\"?&gt;\n&lt;msg bigheadimgurl=\"http://wx.qlogo.cn/mmhead/ver_1/ajX7IquRvt16WXDJYrYsBuGy5HoicQ1ibNbLKKHu744ic2WnxSaRtEQCgibSP8S2MdyIsqTWsKUUEZydsias9UR55nSQE7n6ibXChx4DQZQf5xh0M/0\" smallheadimgurl=\"http://wx.qlogo.cn/mmhead/ver_1/ajX7IquRvt16WXDJYrYsBuGy5HoicQ1ibNbLKKHu744ic2WnxSaRtEQCgibSP8S2MdyIsqTWsKUUEZydsias9UR55nSQE7n6ibXChx4DQZQf5xh0M/132\" username=\"v1_183ca2ddb6369f35d74ea56046fcdf33d3a769352d9e125b44d26c18c0063ff537f6d66ea415db7648605aabf65b7b98@stranger\" nickname=\"LittleCoder机器人\"  shortpy=\"LITTLECODERJQR\" alias=\"\" imagestatus=\"3\" scene=\"17\" province=\"\" city=\"\" sign=\"\" sex=\"0\" certflag=\"0\" certinfo=\"\" brandIconUrl=\"\" brandHomeUrl=\"\" brandSubscriptConfigUrl=\"\" brandFlags=\"0\" regionCode=\"\" antispamticket=\"v2_6b780d55a1b949e161126df27729c85fd8b136d673ec7de475b0b5d811737502657129df8f19cd705cd90dc74bc12c09@stranger\" /&gt;\n",
-    "StatusNotifyUserName": "",
-    "FromUserName": "@a257b99314d8313862cd44ab02fe0f81",
-    "OriContent": "",
-    "FileSize": ""
-}
-```
-
-### 6.被动添加好友消息
-
-```json
-{
-    "SubMsgType": 0,
-    "VoiceLength": 0,
-    "FileName": "",
-    "ImgHeight": 0,
-    "ToUserName": "@5ce504de33c5105c599277b603e9d02c",
-    "HasProductId": 0,
-    "ImgStatus": 1,
-    "Url": "",
-    "ImgWidth": 0,
-    "ForwardFlag": 0,
-    "Status": 3,
-    "Ticket": "",
-    "RecommendInfo": {
-        "Ticket": "v2_7b244cf55b35daf113c16efb4db83ca0a38a4ca40a01a375d4f36b64fb7f597429495e333ebdb1673164fad0e0ec1aca1fbb90043d410360e29c2277caf7f8f1@stranger",
-        "UserName": "@8703fa509d1e91f2eb9d9b4e9a2946ded04d9ee1bba002908981270b75200b12",
-        "Sex": 2,
-        "AttrStatus": 102497,
-        "City": "南岸",
-        "NickName": "yaphone",
-        "Scene": 6,
-        "Province": "重庆",
-        "Content": "",
-        "Alias": "",
-        "Signature": "",
-        "OpCode": 2,
-        "QQNum": 0,
-        "VerifyFlag": 0
-    },
-    "CreateTime": 1498658433,
-    "NewMsgId": 1801473737376226000,
-    "MsgType": 37,
-    "groupMsg": false,
-    "MsgId": "1801473737376226019",
-    "StatusNotifyCode": 0,
-    "AppInfo": {
-        "Type": 0,
-        "AppID": ""
-    },
-    "AppMsgType": 0,
-    "PlayLength": 0,
-    "MediaId": "",
-    "Content": "&lt;msg fromusername=\"wxid_a6p74rz9ovbz21\" encryptusername=\"v1_361333ea6e854479810494826e82e9e2a49fb0107ed702186afe900cc88470d94788df3e30945d5e46cf87edfc4dcbff@stranger\" fromnickname=\"yaphone\" content=\"\"  shortpy=\"YAPHONE\" imagestatus=\"3\" scene=\"6\" country=\"CN\" province=\"Chongqing\" city=\"South Bank\" sign=\"\" percard=\"1\" sex=\"2\" alias=\"\" weibo=\"\" weibonickname=\"\" albumflag=\"0\" albumstyle=\"0\" albumbgimgid=\"\" snsflag=\"17\" snsbgimgid=\"http://mmsns.qpic.cn/mmsns/4376ae1e0cf0ccced233def9ad1560d0dec29d64941ab85a46d7c13c5df14f3338c7290aefc758d1960b91bbb372abf030e795b4c2d050f7/0\" snsbgobjectid=\"11749457640825893599\" mhash=\"\" mfullhash=\"\" bigheadimgurl=\"http://wx.qlogo.cn/mmhead/ver_1/rA30HUEYRfMW5Se0ib95ZT8XMY24IicxPY2QPblbK6UNzicwUIIE9CGmgKh4WOUuo8PLeAsPwiaNfLVGDOAOUADZ9VHOzyC8th7iavQwnCw3Fuos/0\" smallheadimgurl=\"http://wx.qlogo.cn/mmhead/ver_1/rA30HUEYRfMW5Se0ib95ZT8XMY24IicxPY2QPblbK6UNzicwUIIE9CGmgKh4WOUuo8PLeAsPwiaNfLVGDOAOUADZ9VHOzyC8th7iavQwnCw3Fuos/132\" ticket=\"v2_7b244cf55b35daf113c16efb4db83ca0a38a4ca40a01a375d4f36b64fb7f597429495e333ebdb1673164fad0e0ec1aca1fbb90043d410360e29c2277caf7f8f1@stranger\" opcode=\"2\" googlecontact=\"\" qrticket=\"\" chatroomusername=\"\" sourceusername=\"\" sourcenickname=\"\"&gt;&lt;brandlist count=\"0\" ver=\"656202095\"&gt;&lt;/brandlist&gt;&lt;/msg&gt;",
-    "StatusNotifyUserName": "",
-    "FromUserName": "fmessage",
-    "OriContent": "",
-    "FileSize": ""
 }
 ```
 
@@ -527,7 +262,7 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
 
 ## 如何使用
 
-如果你想引入自己的项目，请切换到`pom.xml`目录，执行`mvn package`命令，将生成的`itchat4j`的jar包收入即可。
+如果你想引入自己的项目，请切换到`pom.xml`目录，执行`mvn package`命令，将生成的`itchat4j`的jar包引入即可。
 
 
 
@@ -535,53 +270,126 @@ src/main/java是itchat4j的项目源码，在src/test/java目录下有两个小D
 
 *项目不断更新中，教程仅供参考*
 
-接下来，通过两个小Demo来演示一下如何使用itchat4j来扩展你的个人微信号，入门教程的项目源码可以从[此处下载](https://github.com/yaphone/itchat4jdemo)。
+接下来，通过两个小Demo来演示一下如何使用itchat4j来扩展你的个人微信号，入门教程的项目源码可以从[此处下载](https://github.com/yaphone/itchat4jdemo)。以下几个demo在项目的`src/test/java`路径下可以找到，项目不断更新，请以实际代码为准。
 
 ### Demo1: SimpleDemo
 
 这个小Demo将会将收到的文本消息发送给发件人，如果是图片、语音或者小视频消息，将会保存在我们指定的路径下。
 
-首先需要新建一个类来实现`IMsgHandlerFace`这个接口，这个类要做的就是我们需要完成的逻辑，该接口有四个方法需要实现，`textMsgHandle`用于处理文本信息，`picMsgHandle`用于处理图片信息，`viedoMsgHandle`用于处理小视频信息，`voiceMsgHandle`用于处理语音信息，代码如下：
+首先需要新建一个类来实现`IMsgHandlerFace`这个接口，这个类要做的就是我们需要完成的逻辑，该接口有若干个需要自己实现的方法，如`textMsgHandle`用于处理文本信息，`picMsgHandle`用于处理图片信息，`viedoMsgHandle`用于处理小视频信息，`voiceMsgHandle`用于处理语音信息等，代码如下：
 
 ```java
-public class MsgHandler implements IMsgHandlerFace {
+package cn.zhouyafeng.itchat4j.face;
 
-	@Override
-	public String picMsgHandle(JSONObject arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+import cn.zhouyafeng.itchat4j.beans.BaseMsg;
 
-	@Override
-	public String textMsgHandle(JSONObject arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+/**
+ * 消息处理接口
+ * 
+ * @author https://github.com/yaphone
+ * @date 创建时间：2017年4月20日 上午12:13:49
+ * @version 1.0
+ *
+ */
+public interface IMsgHandlerFace {
+	/**
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年4月20日 上午12:15:00
+	 * @param msg
+	 * @return
+	 */
+	public String textMsgHandle(BaseMsg msg);
 
-	@Override
-	public String viedoMsgHandle(JSONObject arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	/**
+	 * 处理图片消息
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年4月21日 下午11:07:06
+	 * @param msg
+	 * @return
+	 */
+	public String picMsgHandle(BaseMsg msg);
 
-	@Override
-	public String voiceMsgHandle(JSONObject arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	/**
+	 * 处理声音消息
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年4月22日 上午12:09:44
+	 * @param msg
+	 * @return
+	 */
+	public String voiceMsgHandle(BaseMsg msg);
+
+	/**
+	 * 处理小视频消息
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年4月23日 下午12:19:50
+	 * @param msg
+	 * @return
+	 */
+	public String viedoMsgHandle(BaseMsg msg);
+
+	/**
+	 * 处理名片消息
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月1日 上午12:50:50
+	 * @param msg
+	 * @return
+	 */
+	public String nameCardMsgHandle(BaseMsg msg);
+
+	/**
+	 * 处理系统消息
+	 * 
+	 * @author Relyn
+	 * @date 2017年6月21日17:43:51
+	 * @param msg
+	 * @return
+	 */
+	public void sysMsgHandle(BaseMsg msg);
+
+	/**
+	 * 处理确认添加好友消息
+	 * 
+	 * @date 2017年6月28日 下午10:15:30
+	 * @param msg
+	 * @return
+	 */
+	public String verifyAddFriendMsgHandle(BaseMsg msg);
 
 }
+
 ```
 
-由于没有关联源码，所以接口中的参数都变成了`arg0`这种，建议关联一下源码，源码可在[release](https://github.com/yaphone/itchat4j/releases)中下载，当然不关联也不会有啥影响，`arg0`其实是我们需要处理的消息体，为了更直观，建议把`arg0`修改为`msg`，msg是fastjson的JSONObject类型，这个其实不用关心，我们只需要知道如何来获取需要的消息就可以了，下面的Demo中有示例。然后我们来写处理逻辑。
-
-在`textMsgHandler`中，通过`msg.getString("Text")`就可以获取收到的文本信息，然后作进一步处理，比如接入图灵机器人、消息自动回复等，我们需要在这个方法中返回一个字符串，即是需要回复给好友的消息，在SimpleDemo这个示例中，我们直接回复收到的原文本消息。
+在每个接口方法中，需要处理的消息均为上面介绍的BaseMsg的POJO类，在`textMsgHandler`中，通过`msg.getText()`就可以获取收到的文本信息，然后作进一步处理，比如接入图灵机器人、消息自动回复等，我们需要在这个方法中返回一个字符串，即是需要回复给好友的消息，在SimpleDemo这个示例中，我们直接回复收到的原文本消息。
 
 在`picMsgHandle`、`voiceMsgHandle`、`viedoMsgHandle`这三个方法中，我们需要将这些消息下载下来，然后再作进一步处理，所以需要为每种类型的消息提供一个保存路径，然后调用`DownloadTools.getDownloadFn`方法可以将这三种类型的消息下载下来。`DownloadTools.getDownloadFn`方法提供下载图片、语音、小视频的功能，需要三个参数，第一个参数为我们收到的msg，第二个参数为`MsgType`，也就是消息类型，图片、语音、小视频分别对应`MsgTypeEnum.PIC.getType()`、`MsgTypeEnum.VOICE.getType()`、`MsgTypeEnum.VIEDO.getType()`，然后第三个参数就是保存这些消息的路径了。
+
+另外还有一些需要处理的其它消息，如系统消息、名片消息、处理好友请求消息等，按业务需求进行实现即可。
 
 就不多说了，让代码和注释君自述吧，有不明白的地方，可以在Issue中提出来。
 
 ```java
+package cn.zhouyafeng.itchat4j.demo.demo1;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.apache.log4j.Logger;
+
+import cn.zhouyafeng.itchat4j.api.MessageTools;
+import cn.zhouyafeng.itchat4j.api.WechatTools;
+import cn.zhouyafeng.itchat4j.beans.BaseMsg;
+import cn.zhouyafeng.itchat4j.beans.RecommendInfo;
+import cn.zhouyafeng.itchat4j.core.Core;
+import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
+import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
+import cn.zhouyafeng.itchat4j.utils.tools.DownloadTools;
+
 /**
  * 简单示例程序，收到文本信息自动回复原信息，收到图片、语音、小视频后根据路径自动保存
  * 
@@ -594,19 +402,32 @@ public class SimpleDemo implements IMsgHandlerFace {
 	Logger LOG = Logger.getLogger(SimpleDemo.class);
 
 	@Override
-	public String textMsgHandle(JSONObject msg) {
-		String docFilePath = "D:/itchat4j/pic/test.docx"; // 这里是需要发送的文件的路径
-		if (!msg.getBoolean("groupMsg")) { // 群消息不处理
-			String userId = msg.getString("FromUserName");
-			MessageTools.sendFileMsgByUserId(userId, docFilePath); // 发送文件
-			String text = msg.getString("Text"); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
+	public String textMsgHandle(BaseMsg msg) {
+		// String docFilePath = "D:/itchat4j/pic/1.jpg"; // 这里是需要发送的文件的路径
+		if (!msg.isGroupMsg()) { // 群消息不处理
+			// String userId = msg.getString("FromUserName");
+			// MessageTools.sendFileMsgByUserId(userId, docFilePath); // 发送文件
+			// MessageTools.sendPicMsgByUserId(userId, docFilePath);
+			String text = msg.getText(); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
+			LOG.info(text);
+			if (text.equals("111")) {
+				WechatTools.logout();
+			}
+			if (text.equals("222")) {
+				WechatTools.remarkNameByNickName("yaphone", "Hello");
+			}
+			if (text.equals("333")) { // 测试群列表
+				System.out.print(WechatTools.getGroupNickNameList());
+				System.out.print(WechatTools.getGroupIdList());
+				System.out.print(Core.getInstance().getGroupMemeberMap());
+			}
 			return text;
 		}
 		return null;
 	}
 
 	@Override
-	public String picMsgHandle(JSONObject msg) {
+	public String picMsgHandle(BaseMsg msg) {
 		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());// 这里使用收到图片的时间作为文件名
 		String picPath = "D://itchat4j/pic" + File.separator + fileName + ".jpg"; // 调用此方法来保存图片
 		DownloadTools.getDownloadFn(msg, MsgTypeEnum.PIC.getType(), picPath); // 保存图片的路径
@@ -614,7 +435,7 @@ public class SimpleDemo implements IMsgHandlerFace {
 	}
 
 	@Override
-	public String voiceMsgHandle(JSONObject msg) {
+	public String voiceMsgHandle(BaseMsg msg) {
 		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
 		String voicePath = "D://itchat4j/voice" + File.separator + fileName + ".mp3";
 		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VOICE.getType(), voicePath);
@@ -622,8 +443,7 @@ public class SimpleDemo implements IMsgHandlerFace {
 	}
 
 	@Override
-	public String viedoMsgHandle(JSONObject msg) {
-		System.out.println(msg);
+	public String viedoMsgHandle(BaseMsg msg) {
 		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
 		String viedoPath = "D://itchat4j/viedo" + File.separator + fileName + ".mp4";
 		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VIEDO.getType(), viedoPath);
@@ -631,11 +451,29 @@ public class SimpleDemo implements IMsgHandlerFace {
 	}
 
 	@Override
-	public String nameCardMsgHandle(JSONObject msg) {
+	public String nameCardMsgHandle(BaseMsg msg) {
 		return "收到名片消息";
 	}
 
+	@Override
+	public void sysMsgHandle(BaseMsg msg) { // 收到系统消息
+		String text = msg.getContent();
+		LOG.info(text);
+	}
+
+	@Override
+	public String verifyAddFriendMsgHandle(BaseMsg msg) {
+		MessageTools.addFriend(msg, true); // 同意好友请求，false为不接受好友请求
+		RecommendInfo recommendInfo = msg.getRecommendInfo();
+		String nickName = recommendInfo.getNickName();
+		String province = recommendInfo.getProvince();
+		String city = recommendInfo.getCity();
+		String text = "你好，来自" + province + city + "的" + nickName + "， 欢迎添加我为好友！";
+		return text;
+	}
+
 }
+
 ```
 
 之后我们需要将实现`IMsgHandlerFace`接口的类【注入】到`Wechat`中来启动服务，`Wechat`是服务的主入口，其构造函数接受两个参数，一个是我们刚才实现`IMsgHandlerFace`接口的类，另一个是保存登陆二维码图片的路径。之后在`Wechat`对象上调用`start()`方法来启动服务，会在我们刚才传入的路径下生成一个`QR.jpg`文件，即是登陆二维码，通过手机微信扫描后即可登陆，服务启动，处理逻辑开始工作。这里有一点需要注意：*二维码图片如果超过一定时间未扫描会过期，过期时会自动更新，所以你可能需要重新打开图片*。
@@ -643,8 +481,9 @@ public class SimpleDemo implements IMsgHandlerFace {
 额，文字还是太苍白，让代码和注释君自述吧。
 
 ```Java
+
 /**
- * 
+ *
  * @author https://github.com/yaphone
  * @date 创建时间：2017年4月28日 上午12:44:10
  * @version 1.0
@@ -652,13 +491,12 @@ public class SimpleDemo implements IMsgHandlerFace {
  */
 public class MyTest {
 	public static void main(String[] args) {
-		String qrPath = "D://itchat4j//login"; // 保存登陆二维码图片的路径
+		String qrPath = "D://itchat4j//login"; // 保存登陆二维码图片的路径，这里需要在本地新建目录
 		IMsgHandlerFace msgHandler = new SimpleDemo(); // 实现IMsgHandlerFace接口的类
 		Wechat wechat = new Wechat(msgHandler, qrPath); // 【注入】
 		wechat.start(); // 启动服务，会在qrPath下生成一张二维码图片，扫描即可登陆，注意，二维码图片如果超过一定时间未扫描会过期，过期时会自动更新，所以你可能需要重新打开图片
 	}
 }
-
 ```
 
 ### Demo2 图灵机器人
@@ -668,6 +506,27 @@ public class MyTest {
 这个示例中我们接入图灵机器人的API，将收到的好友的文本信息发送给图灵机器人，并将机器人回复的消息发送给好友，接下来还是把舞台交代码和注释君吧。
 
 ```Java
+package cn.zhouyafeng.itchat4j.demo.demo2;
+
+import java.io.File;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.util.EntityUtils;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
+import cn.zhouyafeng.itchat4j.Wechat;
+import cn.zhouyafeng.itchat4j.beans.BaseMsg;
+import cn.zhouyafeng.itchat4j.core.Core;
+import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
+import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
+import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
+import cn.zhouyafeng.itchat4j.utils.tools.DownloadTools;
 
 /**
  * 图灵机器人示例
@@ -678,15 +537,15 @@ public class MyTest {
  *
  */
 public class TulingRobot implements IMsgHandlerFace {
-	MyHttpClient myHttpClient = Core.getInstance().getMyHttpClient();
-	String apiKey = "597b34bea4ec4c85a775c469c84b6817"; // 这里是我申请的图灵机器人API接口，每天只能5000次调用，建议自己去申请一个，免费的:)
 	Logger logger = Logger.getLogger("TulingRobot");
+	MyHttpClient myHttpClient = Core.getInstance().getMyHttpClient();
+	String url = "http://www.tuling123.com/openapi/api";
+	String apiKey = "597b34bea4ec4c85a775c469c84b6817"; // 这里是我申请的图灵机器人API接口，每天只能5000次调用，建议自己去申请一个，免费的:)
 
 	@Override
-	public String textMsgHandle(JSONObject msg) {
+	public String textMsgHandle(BaseMsg msg) {
 		String result = "";
-		String text = msg.getString("Text");
-		String url = "http://www.tuling123.com/openapi/api";
+		String text = msg.getText();
 		Map<String, String> paramMap = new HashMap<String, String>();
 		paramMap.put("key", apiKey);
 		paramMap.put("info", text);
@@ -708,12 +567,12 @@ public class TulingRobot implements IMsgHandlerFace {
 	}
 
 	@Override
-	public String picMsgHandle(JSONObject msg) {
+	public String picMsgHandle(BaseMsg msg) {
 		return "收到图片";
 	}
 
 	@Override
-	public String voiceMsgHandle(JSONObject msg) {
+	public String voiceMsgHandle(BaseMsg msg) {
 		String fileName = String.valueOf(new Date().getTime());
 		String voicePath = "D://itchat4j/voice" + File.separator + fileName + ".mp3";
 		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VOICE.getType(), voicePath);
@@ -721,7 +580,7 @@ public class TulingRobot implements IMsgHandlerFace {
 	}
 
 	@Override
-	public String viedoMsgHandle(JSONObject msg) {
+	public String viedoMsgHandle(BaseMsg msg) {
 		String fileName = String.valueOf(new Date().getTime());
 		String viedoPath = "D://itchat4j/viedo" + File.separator + fileName + ".mp4";
 		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VIEDO.getType(), viedoPath);
@@ -735,12 +594,24 @@ public class TulingRobot implements IMsgHandlerFace {
 	}
 
 	@Override
-	public String nameCardMsgHandle(JSONObject msg) {
+	public String nameCardMsgHandle(BaseMsg msg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void sysMsgHandle(BaseMsg msg) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public String verifyAddFriendMsgHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 }
+
 ```
 
 ### Demo3 获取好友头像图片示例
@@ -753,7 +624,6 @@ package cn.zhouyafeng.itchat4j.demo.demo3;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -765,6 +635,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.zhouyafeng.itchat4j.Wechat;
 import cn.zhouyafeng.itchat4j.api.WechatTools;
+import cn.zhouyafeng.itchat4j.beans.BaseMsg;
 import cn.zhouyafeng.itchat4j.core.Core;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
@@ -785,14 +656,14 @@ public class PicYourFriends implements IMsgHandlerFace {
 	private static final String path = "D://itchat4j//head"; // 这里需要设置保存头像的路径
 
 	@Override
-	public String textMsgHandle(JSONObject msg) {
+	public String textMsgHandle(BaseMsg msg) {
 
-		if (!msg.getBoolean("groupMsg")) { // 群消息不处理
-			String text = msg.getString("Text"); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
+		if (!msg.isGroupMsg()) { // 群消息不处理
+			String text = msg.getText(); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
 			String baseUrl = "https://" + core.getIndexUrl(); // 基础URL
 			String skey = (String) core.getLoginInfo().get(StorageLoginInfoEnum.skey.getKey());
-			List<String> headUrlList = new ArrayList<String>(); // 好友头像URL列表
 			if (text.equals("111")) {
+				LOG.info("开始下载好友头像");
 				List<JSONObject> friends = WechatTools.getContactList();
 				for (int i = 0; i < friends.size(); i++) {
 					JSONObject friend = friends.get(i);
@@ -819,27 +690,33 @@ public class PicYourFriends implements IMsgHandlerFace {
 	}
 
 	@Override
-	public String picMsgHandle(JSONObject msg) {
+	public String picMsgHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String voiceMsgHandle(JSONObject msg) {
+	public String voiceMsgHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String viedoMsgHandle(JSONObject msg) {
+	public String viedoMsgHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String nameCardMsgHandle(JSONObject msg) {
+	public String nameCardMsgHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void sysMsgHandle(BaseMsg msg) {
+		// TODO Auto-generated method stub
+
 	}
 
 	public static void main(String[] args) {
@@ -849,11 +726,20 @@ public class PicYourFriends implements IMsgHandlerFace {
 		wechat.start(); // 启动服务，会在qrPath下生成一张二维码图片，扫描即可登陆，注意，二维码图片如果超过一定时间未扫描会过期，过期时会自动更新，所以你可能需要重新打开图片
 	}
 
-}
+	@Override
+	public String verifyAddFriendMsgHandle(BaseMsg msg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
+}
 ```
 
 
+
+### 其它
+
+以上几个小Demo只是起到抛砖引玉的作用，请打开你的脑洞吧，朋友。
 
 ### itchat4j集成在SpringMVC应用中
 

@@ -96,7 +96,6 @@
   <!-- build all dependencies in one jar -->
   <build>
     <plugins>
-      <!-- any other plugins -->
       
       <plugin>
           <groupId>org.apache.maven.plugins</groupId>

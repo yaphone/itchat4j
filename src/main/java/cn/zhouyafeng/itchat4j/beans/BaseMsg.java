@@ -27,11 +27,15 @@ public class BaseMsg implements Serializable {
 	private int forwardFlag;
 	private int status;
 	private String Ticket;
+	/** 推荐消息报文 **/
 	private RecommendInfo recommendInfo;
 	private long createTime;
 	private String newMsgId;
+	/** 文本消息内容 **/
 	private String text;
+	/** 消息类型 **/
 	private int msgType;
+	/** 是否为群消息 **/
 	private boolean groupMsg;
 	private String msgId;
 	private int statusNotifyCode;
@@ -42,6 +46,7 @@ public class BaseMsg implements Serializable {
 	private String mediaId;
 	private String content;
 	private String statusNotifyUserName;
+	/** 消息发送者ID **/
 	private String fromUserName;
 	private String oriContent;
 	private String fileSize;
