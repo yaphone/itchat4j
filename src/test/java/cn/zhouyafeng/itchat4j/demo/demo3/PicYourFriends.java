@@ -111,4 +111,10 @@ public class PicYourFriends implements IMsgHandlerFace {
 		return null;
 	}
 
+	@Override
+	public String mediaMsgHandle(BaseMsg msg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

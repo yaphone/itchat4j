@@ -32,7 +32,7 @@
 
 ## 更新日志
 
-- 2017-7-21：消息体封装为POJO类，更易操作。
+- 2017-7-21：1.消息体封装为POJO类，更易操作。 2.增加处理文件消息接口。
 
 - 2017-6-28：增加被动添加好友功能。
 
@@ -360,8 +360,16 @@ public interface IMsgHandlerFace {
 	 */
 	public String verifyAddFriendMsgHandle(BaseMsg msg);
 
-}
+	/**
+	 * 处理收到的文件消息
+	 * 
+	 * @date 2017年7月21日 下午11:59:14
+	 * @param msg
+	 * @return
+	 */
+	public String mediaMsgHandle(BaseMsg msg);
 
+}
 ```
 
 在每个接口方法中，需要处理的消息均为上面介绍的BaseMsg的POJO类，在`textMsgHandler`中，通过`msg.getText()`就可以获取收到的文本信息，然后作进一步处理，比如接入图灵机器人、消息自动回复等，我们需要在这个方法中返回一个字符串，即是需要回复给好友的消息，在SimpleDemo这个示例中，我们直接回复收到的原文本消息。
@@ -610,6 +618,12 @@ public class TulingRobot implements IMsgHandlerFace {
 		return null;
 	}
 
+	@Override
+	public String mediaMsgHandle(BaseMsg msg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
 
 ```
@@ -732,7 +746,14 @@ public class PicYourFriends implements IMsgHandlerFace {
 		return null;
 	}
 
+	@Override
+	public String mediaMsgHandle(BaseMsg msg) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
+
 ```
 
 

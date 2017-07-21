@@ -79,4 +79,13 @@ public interface IMsgHandlerFace {
 	 */
 	public String verifyAddFriendMsgHandle(BaseMsg msg);
 
+	/**
+	 * 处理收到的文件消息
+	 * 
+	 * @date 2017年7月21日 下午11:59:14
+	 * @param msg
+	 * @return
+	 */
+	public String mediaMsgHandle(BaseMsg msg);
+
 }

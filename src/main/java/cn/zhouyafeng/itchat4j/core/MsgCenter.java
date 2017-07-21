@@ -93,9 +93,8 @@ public class MsgCenter {
 			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_VIDEO.getCode())
 					|| m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_MICROVIDEO.getCode())) {// viedo
 				m.put("Type", MsgTypeEnum.VIEDO.getType());
-			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_APP.getCode())) { // sharing
-				// 分享链接
-
+			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_MEDIA.getCode())) { // 多媒体消息
+				m.put("Type", MsgTypeEnum.MEDIA.getType());
 			} else if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_STATUSNOTIFY.getCode())) {// phone
 				// init
 				// 微信初始化消息
@@ -149,6 +148,9 @@ public class MsgCenter {
 								String result = msgHandler.verifyAddFriendMsgHandle(msg);
 								MessageTools.sendMsgById(result,
 										core.getMsgList().get(0).getRecommendInfo().getUserName());
+							} else if (msg.getType().equals(MsgTypeEnum.MEDIA.getType())) { // 多媒体消息
+								String result = msgHandler.mediaMsgHandle(msg);
+								MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
 							}
 						} catch (Exception e) {
 							e.printStackTrace();

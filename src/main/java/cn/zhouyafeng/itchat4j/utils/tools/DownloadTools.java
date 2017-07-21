@@ -52,6 +52,12 @@ public class DownloadTools {
 		} else if (type.equals(MsgTypeEnum.VIEDO.getType())) {
 			headerMap.put("Range", "bytes=0-");
 			url = String.format(URLEnum.WEB_WX_GET_VIEDO.getUrl(), (String) core.getLoginInfo().get("url"));
+		} else if (type.equals(MsgTypeEnum.MEDIA.getType())) {
+			headerMap.put("Range", "bytes=0-");
+			url = String.format(URLEnum.WEB_WX_GET_MEDIA.getUrl(), (String) core.getLoginInfo().get("fileUrl"));
+			params.add(new BasicNameValuePair("sender", msg.getFromUserName()));
+			params.add(new BasicNameValuePair("mediaid", msg.getMediaId()));
+			params.add(new BasicNameValuePair("filename", msg.getFileName()));
 		}
 		params.add(new BasicNameValuePair("msgid", msg.getNewMsgId()));
 		params.add(new BasicNameValuePair("skey", (String) core.getLoginInfo().get("skey")));

@@ -16,7 +16,8 @@ public enum MsgTypeEnum {
 	VIEDO("Viedo", "小视频消息"),
 	NAMECARD("NameCard", "名片消息"),
 	SYS("Sys", "系统消息"),
-	VERIFYMSG("VerifyMsg", "添加好友");
+	VERIFYMSG("VerifyMsg", "添加好友"),
+	MEDIA("app", "文件消息");
 
 	private String type;
 	private String code;

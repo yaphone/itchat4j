@@ -97,4 +97,12 @@ public class SimpleDemo implements IMsgHandlerFace {
 		return text;
 	}
 
+	@Override
+	public String mediaMsgHandle(BaseMsg msg) {
+		String fileName = msg.getFileName();
+		String filePath = "D://itchat4j/file" + File.separator + fileName; // 这里是需要保存收到的文件路径，文件可以是任何格式如PDF，WORD，EXCEL等。
+		DownloadTools.getDownloadFn(msg, MsgTypeEnum.MEDIA.getType(), filePath);
+		return "文件" + fileName + "保存成功";
+	}
+
 }
