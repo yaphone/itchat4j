@@ -233,7 +233,11 @@ public class CommonTools {
 	 * @param k
 	 */
 	public static void msgFormatter(JSONObject d, String k) {
-		d.put(k, d.getString(k).replace("<br/>", "\n"));
+		String content = d.getString(k);
+		if(content.startsWith("@")){
+			content=content.substring(content.indexOf(":")+1);
+		}
+		d.put(k, content.replace("<br/>", "\n"));
 		emojiFormatter(d, k);
 		// TODO 与emoji表情有部分兼容问题，目前暂未处理解码处理 d.put(k,
 		// StringEscapeUtils.unescapeHtml4(d.getString(k)));
