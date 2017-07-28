@@ -233,9 +233,9 @@ public class CommonTools {
 	 * @param k
 	 */
 	public static void msgFormatter(JSONObject d, String k) {
-		String content =d.getString(k);
+		String content = d.getString(k);
 		if(content.startsWith("@")){
-			content=content.substring(66);
+			content=content.substring(content.indexOf(":")+1);
 		}
 		d.put(k, content.replace("<br/>", "\n"));
 		emojiFormatter(d, k);
