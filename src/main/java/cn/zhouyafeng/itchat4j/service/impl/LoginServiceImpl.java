@@ -619,7 +619,6 @@ public class LoginServiceImpl implements ILoginService {
 				core.getLoginInfo().put(StorageLoginInfoEnum.synckey.getKey(),
 						synckey.substring(0, synckey.length() - 1));// 1_656161336|2_656161626|3_656161313|11_656159955|13_656120033|201_1492273724|1000_1492265953|1001_1492250432|1004_1491805192
 			}
-			LOG.info("webWxSync()-----》"+text);
 		} catch (Exception e) {
 			LOG.info(e.getMessage());
 			e.printStackTrace();
