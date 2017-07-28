@@ -285,7 +285,6 @@ public class LoginServiceImpl implements ILoginService {
 										}
 									} catch (Exception e) {
 										LOG.info(e.getMessage());
-										e.printStackTrace();
 									}
 								}
 							} else if (selector.equals("7")) {
@@ -308,7 +307,6 @@ public class LoginServiceImpl implements ILoginService {
 										}
 									} catch (Exception e) {
 										LOG.info(e.getMessage());
-										e.printStackTrace();
 									}
 								}
 
@@ -327,7 +325,6 @@ public class LoginServiceImpl implements ILoginService {
 								Thread.sleep(1000);
 							} catch (InterruptedException e1) {
 								LOG.info(e.getMessage());
-								e.printStackTrace();
 							}
 						}
 					}
@@ -400,7 +397,6 @@ public class LoginServiceImpl implements ILoginService {
 			}
 			return;
 		} catch (Exception e) {
-			e.printStackTrace();
 			LOG.error(e.getMessage(), e);
 		}
 		return;
@@ -435,7 +431,6 @@ public class LoginServiceImpl implements ILoginService {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			LOG.info(e.getMessage());
 		}
 	}
@@ -621,7 +616,6 @@ public class LoginServiceImpl implements ILoginService {
 			}
 		} catch (Exception e) {
 			LOG.info(e.getMessage());
-			e.printStackTrace();
 		}
 		return result;
 
