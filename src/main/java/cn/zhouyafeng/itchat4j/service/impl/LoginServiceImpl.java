@@ -21,16 +21,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-
 import cn.zhouyafeng.itchat4j.beans.BaseMsg;
 import cn.zhouyafeng.itchat4j.core.Core;
 import cn.zhouyafeng.itchat4j.core.MsgCenter;
 import cn.zhouyafeng.itchat4j.service.ILoginService;
 import cn.zhouyafeng.itchat4j.utils.Config;
 import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
+import cn.zhouyafeng.itchat4j.utils.QRterminal;
 import cn.zhouyafeng.itchat4j.utils.SleepUtils;
 import cn.zhouyafeng.itchat4j.utils.enums.ResultEnum;
 import cn.zhouyafeng.itchat4j.utils.enums.RetCodeEnum;
@@ -41,6 +38,10 @@ import cn.zhouyafeng.itchat4j.utils.enums.parameters.LoginParaEnum;
 import cn.zhouyafeng.itchat4j.utils.enums.parameters.StatusNotifyParaEnum;
 import cn.zhouyafeng.itchat4j.utils.enums.parameters.UUIDParaEnum;
 import cn.zhouyafeng.itchat4j.utils.tools.CommonTools;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * 登陆服务实现类
@@ -130,26 +131,28 @@ public class LoginServiceImpl implements ILoginService {
 
 	@Override
 	public boolean getQR(String qrPath) {
-		qrPath = qrPath + File.separator + "QR.jpg";
-		String qrUrl = URLEnum.QRCODE_URL.getUrl() + core.getUuid();
-		HttpEntity entity = myHttpClient.doGet(qrUrl, null, true, null);
+		
+	//	qrPath = qrPath + File.separator + "QR.jpg";
+	//	String qrUrl = URLEnum.QRCODE_URL.getUrl() + core.getUuid();
+	//	HttpEntity entity = myHttpClient.doGet(qrUrl, null, true, null);
 		try {
-			OutputStream out = new FileOutputStream(qrPath);
-			byte[] bytes = EntityUtils.toByteArray(entity);
-			out.write(bytes);
-			out.flush();
-			out.close();
-			try {
-				CommonTools.printQr(qrPath); // 打开登陆二维码图片
-			} catch (Exception e) {
-				LOG.info(e.getMessage());
-			}
-
+//			OutputStream out = new FileOutputStream(qrPath);
+//			byte[] bytes = EntityUtils.toByteArray(entity);
+//			out.write(bytes);
+//			out.flush();
+//			out.close();
+//			try {
+//				CommonTools.printQr(qrPath); // 打开登陆二维码图片
+//			} catch (Exception e) {
+//				LOG.info(e.getMessage());
+//			}
+			String qrUrl2 = URLEnum.cAPI_qrcode.getUrl() + core.getUuid();
+			String qrString=QRterminal.getQr(qrUrl2);
+			LOG.error(qrString);
 		} catch (Exception e) {
 			LOG.info(e.getMessage());
 			return false;
 		}
-
 		return true;
 	}
 
@@ -251,7 +254,7 @@ public class LoginServiceImpl implements ILoginService {
 				while (core.isAlive()) {
 					try {
 						Map<String, String> resultMap = syncCheck();
-						LOG.info(JSONObject.toJSONString(resultMap));
+						LOG.info("startReceiving()--->" +JSONObject.toJSONString(resultMap));
 						String retcode = resultMap.get("retcode");
 						String selector = resultMap.get("selector");
 						if (retcode.equals(RetCodeEnum.UNKOWN.getCode())) {
@@ -312,6 +315,7 @@ public class LoginServiceImpl implements ILoginService {
 							JSONObject obj = webWxSync();
 						}
 					} catch (Exception e) {
+						e.printStackTrace();
 						LOG.info(e.getMessage());
 						retryCount += 1;
 						if (core.getReceivingRetryCount() < retryCount) {
@@ -451,7 +455,6 @@ public class LoginServiceImpl implements ILoginService {
 	 *
 	 * @author https://github.com/yaphone
 	 * @date 2017年4月9日 下午12:16:26
-	 * @param result
 	 */
 	private void processLoginInfo(String loginContent) {
 		String regEx = "window.redirect_uri=\"(\\S+)\";";

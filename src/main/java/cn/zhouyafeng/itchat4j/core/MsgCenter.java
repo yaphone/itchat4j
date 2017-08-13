@@ -51,15 +51,12 @@ public class MsgCenter {
 						&& !core.getGroupIdList().contains(m.getString("ToUserName"))) {
 					core.getGroupIdList().add((m.getString("ToUserName")));
 				}
-				// 群消息与普通消息不同的是在其消息体（Content）中会包含发送者id及":<br/>"消息，这里需要处理一下，去掉多余信息，只保留消息内容
-				if (m.getString("Content").contains("<br/>")) {
-					String content = m.getString("Content").substring(m.getString("Content").indexOf("<br/>") + 5);
-					m.put("Content", content);
-					m.put("groupMsg", true);
-				}
-			} else {
-				CommonTools.msgFormatter(m, "Content");
+
+				m.put("groupMsg", true);
 			}
+			CommonTools.msgFormatter(m, "Content");
+
+
 			if (m.getInteger("MsgType").equals(MsgCodeEnum.MSGTYPE_TEXT.getCode())) { // words
 																						// 文本消息
 				if (m.getString("Url").length() != 0) {
