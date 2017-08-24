@@ -13,16 +13,48 @@ public class TryRetryClient {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TryRetryClient.class);
 	private MyHttpClient httpClient = MyHttpClient.getInstance();
 
+	public <IN, OUT> OUT get(IN in, RetryHandler<IN, OUT> handler) {
+		if (handler == null) {
+			return null;
+		}
+		Request request = handler.createRequest(in);
+		Callback<OUT> callback = (entity) -> {
+			return handler.createResponse(entity, in);
+		};
+		if (handler.retryTimes() > -1) {
+			return tryRetryGet(request, handler.retryTimes(),
+					handler.retryTimeoutMillis() > -1 ? handler.retryTimeoutMillis() : 100, callback);
+		} else {
+			return get(request, callback);
+		}
+	}
+
+	public <IN, OUT> OUT post(IN in, RetryHandler<IN, OUT> handler) {
+		if (handler == null) {
+			return null;
+		}
+		Request request = handler.createRequest(in);
+		Callback<OUT> callback = (entity) -> {
+			return handler.createResponse(entity, in);
+		};
+		if (handler.retryTimes() > -1) {
+			return tryRetryPost(request, handler.retryTimes(),
+					handler.retryTimeoutMillis() > -1 ? handler.retryTimeoutMillis() : 100, callback);
+		} else {
+			return post(request, callback);
+		}
+	}
+
 	public <T> T get(Request request, Callback<T> callback) {
 		HttpEntity entity = get(request);
 		Response<T> response = doResponse(entity, callback);
-		return response != null ?  response.getData(): null;
+		return response != null ? response.getData() : null;
 	}
 
 	public <T> T post(Request request, Callback<T> callback) {
 		HttpEntity entity = post(request);
 		Response<T> response = doResponse(entity, callback);
-		return response != null ?  response.getData(): null;
+		return response != null ? response.getData() : null;
 	}
 
 	public <T> T tryRetryGet(Request request, int tryTimes, long tryTimeoutMillis, Callback<T> callback) {

@@ -63,6 +63,14 @@ public class Request {
 		this.parameters.put(key, value);
 		return this;
 	}
+	
+	public Request addAll(Map<String, Object> values) {
+		if (this.parameters == null) {
+			this.parameters = new HashMap<>();
+		}
+		this.parameters.putAll(values);
+		return this;
+	}
 
 	public Request addHeader(String key, String value) {
 		if (this.headers == null) {

@@ -1,6 +1,9 @@
 package com.yachat.wechat;
 
 import java.io.InputStream;
+import java.util.Map;
+
+import com.alibaba.fastjson.JSONObject;
 
 public interface WechatSystem {
 	
@@ -50,14 +53,22 @@ public interface WechatSystem {
 	 * @date 2017年5月13日 上午12:14:24
 	 */
 	void wxStatusNotify(Account account);
-
+	
 	/**
-	 * 接收消息
+	 * 同步消息
 	 * 
 	 * @author https://github.com/yaphone
 	 * @date 2017年5月13日 上午12:14:37
 	 */
-	void startReceiving(Account account);
+	JSONObject sync(Account account);
+	
+	/**
+	 * 同步消息状态
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年5月13日 上午12:14:37
+	 */
+	Map<String, String> syncStatus(Account account);
 
 	/**
 	 * 获取微信联系人

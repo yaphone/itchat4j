@@ -47,7 +47,7 @@ public class Wechat {
 		LOGGER.info(String.format("欢迎回来， %s", this.account.getNickName()));
 
 		LOGGER.info("8. 开始接收消息");
-		this.system.startReceiving(this.account);
+//		this.system.startReceiving(this.account);
 
 		LOGGER.info("9. 获取联系人信息");
 		this.system.webWxGetContact(this.account);

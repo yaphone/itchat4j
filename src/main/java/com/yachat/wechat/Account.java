@@ -20,7 +20,7 @@ import cn.zhouyafeng.itchat4j.utils.enums.parameters.BaseParaEnum;
  */
 public class Account {
 
-	private boolean alive = false;
+	private volatile boolean alive = false;
 	private int memberCount = 0;
 	private long uid; // uid标识
 	private String indexUrl;
@@ -217,6 +217,14 @@ public class Account {
 	public Map<String, Object> getLoginInfo() {
 		return loginInfo;
 	}
+	
+	public <T> T getLoginInfo(String key) {
+		return this.loginInfo.containsKey(key) ? (T) this.loginInfo.get(key) : null;
+	}
+	
+	public void setLoginInfo(String key , Object value) {
+		this.loginInfo.put(key, value);
+	}
 
 	public void setLoginInfo(Map<String, Object> loginInfo) {
 		this.loginInfo = loginInfo;
@@ -243,17 +251,13 @@ public class Account {
 	 * 请求参数
 	 */
 	public Map<String, Object> getParamMap() {
-		return new HashMap<String, Object>(1) {
-			private static final long serialVersionUID = 1L;
-
-			{
-				Map<String, String> map = new HashMap<String, String>();
-				for (BaseParaEnum baseRequest : BaseParaEnum.values()) {
-					map.put(baseRequest.para(), getLoginInfo().get(baseRequest.value()).toString());
-				}
-				put("BaseRequest", map);
-			}
-		};
+		Map<String, String> map = new HashMap<String, String>();
+		for (BaseParaEnum baseRequest : BaseParaEnum.values()) {
+			map.put(baseRequest.para(), getLoginInfo().get(baseRequest.value()).toString());
+		}
+		HashMap<String, Object>  params = new HashMap<String, Object>(1);
+		params.put("BaseRequest", map);
+		return params;
 	}
 
 }
