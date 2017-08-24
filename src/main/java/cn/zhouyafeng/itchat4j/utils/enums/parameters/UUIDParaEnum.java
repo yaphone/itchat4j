@@ -10,7 +10,8 @@ public enum UUIDParaEnum {
     APP_ID("appid", "wx782c26e4c19acffb"),
     FUN("fun", "new"),
     LANG("lang", "zh_CN"),
-    _("_", "时间戳");
+    _("_", "时间戳") ,
+    UNDERLINE("_" , "时间戳");
 
     private String para;
     private String value;

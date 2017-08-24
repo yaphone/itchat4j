@@ -1,6 +1,7 @@
 package cn.zhouyafeng.itchat4j.utils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,6 +24,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+
+import cn.zhouyafeng.itchat4j.utils.enums.parameters.UUIDParaEnum;
 
 /**
  * HTTP访问类，对Apache HttpClient进行简单封装，适配器模式
@@ -60,7 +63,7 @@ public class MyHttpClient {
 	}
 
 	private MyHttpClient() {
-
+		System.setProperty("jsse.enableSNIExtension", "false"); // 防止SSL错误
 	}
 
 	/**
@@ -121,6 +124,29 @@ public class MyHttpClient {
 		}
 
 		return entity;
+	}
+	
+	
+	/**
+	 * 处理GET请求
+	 * 
+	 * @author https://github.com/yaphone
+	 * @date 2017年4月9日 下午7:06:19
+	 * @param url
+	 * @param params
+	 * @return
+	 */
+	public HttpEntity doGet(String url, boolean redirect, 
+			Map<String,String> params , 
+			Map<String, String> headerMap) {
+		if( params == null ) {
+			return doGet(url, null, redirect, headerMap);
+		}
+		List<BasicNameValuePair> paramsList = new ArrayList<BasicNameValuePair>();
+		for(Entry<String, String> entry :  params.entrySet()) {
+			paramsList.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+		}
+		return doGet(url, paramsList, redirect, headerMap);
 	}
 
 	/**
