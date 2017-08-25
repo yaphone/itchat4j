@@ -4,12 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.http.client.CookieStore;
+
 public class Request {
 
 	private String url;
 	private Map<String, Object> parameters;
 	private boolean redirect;
 	private Map<String, String> headers;
+	private CookieStore cookie;
 
 	public Request(String url) {
 		this(url, false, null, null);
@@ -30,15 +33,14 @@ public class Request {
 	public Map<String, Object> getParameters() {
 		return parameters;
 	}
-	
-	
+
 	public Map<String, String> getStringParameters() {
-		if( this.parameters == null) {
+		if (this.parameters == null) {
 			return null;
 		}
 		HashMap<String, String> stringParams = new HashMap<>();
-		for(Entry<String, Object> entry : this.parameters.entrySet()) {
-			stringParams.put(entry.getKey(), (String)entry.getValue());
+		for (Entry<String, Object> entry : this.parameters.entrySet()) {
+			stringParams.put(entry.getKey(), (String) entry.getValue());
 		}
 		return stringParams;
 	}
@@ -49,6 +51,15 @@ public class Request {
 
 	public Map<String, String> getHeaders() {
 		return headers;
+	}
+
+	public CookieStore getCookie() {
+		return cookie;
+	}
+
+	public Request setCookie(CookieStore cookie) {
+		this.cookie = cookie;
+		return this;
 	}
 
 	public Request enableRedirect() {
@@ -63,8 +74,16 @@ public class Request {
 		this.parameters.put(key, value);
 		return this;
 	}
-	
+
 	public Request addAll(Map<String, Object> values) {
+		if (this.parameters == null) {
+			this.parameters = new HashMap<>();
+		}
+		this.parameters.putAll(values);
+		return this;
+	}
+
+	public Request addStringAll(Map<String, String> values) {
 		if (this.parameters == null) {
 			this.parameters = new HashMap<>();
 		}

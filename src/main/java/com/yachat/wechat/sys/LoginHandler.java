@@ -1,4 +1,4 @@
-package com.yachat.wechat.support;
+package com.yachat.wechat.sys;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,12 +44,12 @@ public class LoginHandler extends AbstractAccountHandler<Boolean> {
 
 	@Override
 	public int retryTimes() {
-		return 20;
+		return 60;
 	}
 
 	@Override
 	public long retryTimeoutMillis() {
-		return 500;
+		return 1000;
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package com.yachat.wechat.support;
+package com.yachat.wechat.sys;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

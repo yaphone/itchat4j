@@ -1,4 +1,4 @@
-package com.yachat.wechat.support;
+package com.yachat.wechat.sys;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -6,6 +6,8 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 
+import com.yachat.wechat.MessageHandler;
+
 import cn.zhouyafeng.itchat4j.api.MessageTools;
 import cn.zhouyafeng.itchat4j.api.WechatTools;
 import cn.zhouyafeng.itchat4j.beans.BaseMsg;
@@ -23,7 +25,7 @@ import cn.zhouyafeng.itchat4j.utils.tools.DownloadTools;
  * @version 1.0
  *
  */
-public class SimpleDemo implements IMsgHandlerFace {
+public class SimpleDemo implements IMsgHandlerFace , MessageHandler {
 	Logger LOG = Logger.getLogger(SimpleDemo.class);
 
 	@Override

@@ -11,7 +11,13 @@ public interface RetryHandler<IN, OUT> {
 
 	Request createRequest(IN in);
 
-	Response<OUT> createResponse(HttpEntity entity, IN in) throws Exception;
+	default Response<OUT> createResponse(HttpEntity entity, IN in) throws Exception {
+		return this.createResponse(getEntity(entity), in);
+	};
+	
+	default Response<OUT> createResponse(String text, IN in) throws Exception {
+		return this.buildError();
+	}
 
 	default int retryTimes() {
 		return -1;

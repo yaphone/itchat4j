@@ -1,4 +1,4 @@
-package com.yachat.wechat.support;
+package com.yachat.wechat.sys;
 
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;

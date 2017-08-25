@@ -8,11 +8,13 @@ public class WechatFactory {
 
 	private Map<Long, Wechat> wechats;
 	private WechatSystem system;
+	private WechatTaskManager taskManager;
 	private MessageHandler defaultMessageHandler;
 
-	public WechatFactory(WechatSystem system, MessageHandler defaultMessageHandler) {
+	public WechatFactory(WechatSystem system, WechatTaskManager taskManager, MessageHandler defaultMessageHandler) {
 		super();
 		this.system = system;
+		this.taskManager = taskManager;
 		this.defaultMessageHandler = defaultMessageHandler;
 		this.wechats = new ConcurrentHashMap<>();
 	}
@@ -40,7 +42,7 @@ public class WechatFactory {
 		account.setUid(uid);
 		account.setUuid(uuid);
 		account.setQrStream(inputStream);
-		Wechat wechat = new Wechat(account, system, messageHandler);
+		Wechat wechat = new Wechat(account, system, messageHandler, this.taskManager);
 		this.wechats.put(uid, wechat);
 		return wechat;
 	}

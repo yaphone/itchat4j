@@ -2,15 +2,14 @@ package cn.zhouyafeng.itchat4j.utils.enums;
 
 public enum RetCodeEnum {
 
-	NORMAL("0", "普通"),
-	LOGIN_OUT("1102", "退出"),
-	LOGIN_OTHERWHERE("1101", "其它地方登陆"),
-	MOBILE_LOGIN_OUT("1102", "移动端退出"),
+	NORMAL("0", "普通"), 
+	LOGIN_OUT("1102", "退出"), 
+	LOGIN_OTHERWHERE("1101", "其它地方登陆"), 
+	MOBILE_LOGIN_OUT("1102", "移动端退出"), 
 	UNKOWN("9999", "未知")
-	
+
 	;
-	
-	
+
 	private String code;
 	private String type;
 
@@ -25,6 +24,15 @@ public enum RetCodeEnum {
 
 	public String getType() {
 		return type;
+	}
+
+	public static RetCodeEnum of(String code) {
+		for (RetCodeEnum enum1 : values()) {
+			if (code.equals(enum1.code)) {
+				return enum1;
+			}
+		}
+		return null;
 	}
 
 }

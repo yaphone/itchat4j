@@ -1,4 +1,4 @@
-package com.yachat.wechat.support;
+package com.yachat.wechat.sys;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

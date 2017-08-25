@@ -4,14 +4,10 @@ import org.apache.http.HttpEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson.JSON;
-
-import cn.zhouyafeng.itchat4j.utils.MyHttpClient;
-
 public class TryRetryClient {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TryRetryClient.class);
-	private MyHttpClient httpClient = MyHttpClient.getInstance();
+	private RetryHttpClient httpClient = new RetryHttpClient();
 
 	public <IN, OUT> OUT get(IN in, RetryHandler<IN, OUT> handler) {
 		if (handler == null) {
@@ -90,13 +86,18 @@ public class TryRetryClient {
 	}
 
 	private HttpEntity get(Request request) {
-		HttpEntity entity = httpClient.doGet(request.getUrl(), request.isRedirect(), request.getStringParameters(),
-				request.getHeaders());
+		HttpEntity entity = httpClient.get(request.getUrl(), 
+				request.isRedirect(), request.getStringParameters(),
+				request.getHeaders() ,
+				request.getCookie());
 		return entity;
 	}
 
 	private HttpEntity post(Request request) {
-		HttpEntity entity = httpClient.doPost(request.getUrl(), JSON.toJSONString(request.getParameters()));
+		HttpEntity entity = httpClient.post(request.getUrl(), 
+				request.getParameters() , 
+				request.getHeaders() , 
+				request.getCookie());
 		return entity;
 	}
 

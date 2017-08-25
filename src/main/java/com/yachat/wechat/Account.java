@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.client.CookieStore;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
@@ -45,6 +47,7 @@ public class Account {
 	private Map<String, JSONObject> userInfoMap = new HashMap<String, JSONObject>();
 	private Map<String, Object> loginInfo = new HashMap<String, Object>();
 	private InputStream qrStream; // 二维码
+	private CookieStore cookie;
 
 	public boolean isAlive() {
 		return alive;
@@ -217,12 +220,12 @@ public class Account {
 	public Map<String, Object> getLoginInfo() {
 		return loginInfo;
 	}
-	
+
 	public <T> T getLoginInfo(String key) {
 		return this.loginInfo.containsKey(key) ? (T) this.loginInfo.get(key) : null;
 	}
-	
-	public void setLoginInfo(String key , Object value) {
+
+	public void setLoginInfo(String key, Object value) {
 		this.loginInfo.put(key, value);
 	}
 
@@ -245,8 +248,15 @@ public class Account {
 	public void setQrStream(InputStream qrStream) {
 		this.qrStream = qrStream;
 	}
-	
-	
+
+	public CookieStore getCookie() {
+		return cookie;
+	}
+
+	public void setCookie(CookieStore cookie) {
+		this.cookie = cookie;
+	}
+
 	/**
 	 * 请求参数
 	 */
@@ -255,7 +265,7 @@ public class Account {
 		for (BaseParaEnum baseRequest : BaseParaEnum.values()) {
 			map.put(baseRequest.para(), getLoginInfo().get(baseRequest.value()).toString());
 		}
-		HashMap<String, Object>  params = new HashMap<String, Object>(1);
+		HashMap<String, Object> params = new HashMap<String, Object>(1);
 		params.put("BaseRequest", map);
 		return params;
 	}
