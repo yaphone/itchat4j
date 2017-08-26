@@ -15,7 +15,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.StringEntity;
@@ -36,11 +36,14 @@ public class RetryHttpClient {
 
 	private final Logger LOGGER = LoggerFactory.getLogger(RetryHttpClient.class);
 	private PoolingHttpClientConnectionManager connectionManager;
+	private CloseableHttpClient httpClient;
+	private ThreadLocal<HttpRequestBase> holder;
 
 	public RetryHttpClient() {
 		System.setProperty("jsse.enableSNIExtension", "false"); // 防止SSL错误
 		this.connectionManager = new PoolingHttpClientConnectionManager();
 		this.initConnectionManager();
+		this.holder = new ThreadLocal<>();
 	}
 
 	private void initConnectionManager() {
@@ -60,6 +63,7 @@ public class RetryHttpClient {
 
 	public HttpEntity get(String url, boolean redirect, Map<String, String> params, Map<String, String> headerMap,
 			CookieStore cookie) {
+		HttpGet httpGet = null;
 		try {
 			String requestUrl = url;
 			if (params != null) {
@@ -69,7 +73,7 @@ public class RetryHttpClient {
 				}
 				requestUrl += "?" + EntityUtils.toString(new UrlEncodedFormEntity(paramsList, Consts.UTF_8));
 			}
-			HttpGet httpGet = new HttpGet(requestUrl);
+			httpGet = new HttpGet(requestUrl);
 			if (!redirect) {
 				httpGet.setConfig(RequestConfig.custom().setRedirectsEnabled(false).build()); // 禁止重定向
 			}
@@ -85,8 +89,8 @@ public class RetryHttpClient {
 
 	public HttpEntity post(String url, Map<String, Object> params, Map<String, String> headerMap,
 			CookieStore cookieStore) {
-		StringEntity body = new StringEntity(JSON.toJSONString(params), Consts.UTF_8);
 		HttpPost post = new HttpPost(url);
+		StringEntity body = new StringEntity(JSON.toJSONString(params), Consts.UTF_8);
 		post.setEntity(body);
 		post.setHeader("Content-type", "application/json; charset=utf-8");
 		this.setHeaders(post, headerMap);
@@ -100,7 +104,7 @@ public class RetryHttpClient {
 		return this.execute(post, null);
 	}
 
-	private void setHeaders(HttpUriRequest request, Map<String, String> headerMap) {
+	private void setHeaders(HttpRequestBase request, Map<String, String> headerMap) {
 		request.setHeader("User-Agent", Constants.USER_AGENT);
 		if (headerMap != null) {
 			for (Entry<String, String> entry : headerMap.entrySet()) {
@@ -109,10 +113,10 @@ public class RetryHttpClient {
 		}
 	}
 
-	private HttpEntity execute(HttpUriRequest request, CookieStore cookieStore) {
-		CloseableHttpClient httpClient = null;
+	private HttpEntity execute(HttpRequestBase request, CookieStore cookieStore) {
 		try {
-			httpClient = this.createClient();
+			CloseableHttpClient httpClient = this.createClient();
+			holder.set(request);
 			if (cookieStore != null) {
 				HttpContext context = new BasicHttpContext();
 				context.setAttribute(HttpClientContext.COOKIE_STORE, cookieStore);
@@ -124,20 +128,21 @@ public class RetryHttpClient {
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
-		} finally {
-//			if (httpClient != null) {
-//				try {
-//					httpClient.close();
-//				} catch (IOException e) {
-//					LOGGER.error(e.getMessage(), e);
-//				}
-//			}
 		}
 		return null;
 	}
 
 	private CloseableHttpClient createClient() {
-		return HttpClients.custom().setConnectionManager(this.connectionManager).build();
+		if (httpClient == null) {
+			httpClient = HttpClients.custom().setConnectionManager(this.connectionManager).build();
+		}
+		return httpClient;
+	}
+
+	public void close() {
+		if (holder.get() != null) {
+			holder.get().releaseConnection();
+		}
 	}
 
 }

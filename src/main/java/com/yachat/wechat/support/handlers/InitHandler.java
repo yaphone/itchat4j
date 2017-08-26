@@ -21,7 +21,8 @@ public class InitHandler extends AbstractAccountHandler<Boolean> {
 				String.valueOf(System.currentTimeMillis() / 3158L) ,
 				WechatKeys.pass_ticket.get(account))
 			.build()
-			.addAll(account.getParamMap());
+			.addAll(account.getParamMap())
+			.setCookie(account.getCookie());
 	}
 
 	

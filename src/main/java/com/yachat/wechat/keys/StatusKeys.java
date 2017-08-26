@@ -7,9 +7,19 @@ public enum StatusKeys implements KeyValue {
 	WAIT_SCAN("400", "请扫描二维码") ,
 	
 	NORMAL("0", "普通"), 
-	LOGIN_OUT("1102", "退出"), 
+	LOGIN_OUT("1102", "退出") {
+		@Override
+		public boolean isOffline() {
+			return true;
+		}
+	}, 
 	LOGIN_OTHERWHERE("1101", "其它地方登陆"), 
-	MOBILE_LOGIN_OUT("1102", "移动端退出"), 
+	MOBILE_LOGIN_OUT("1102", "移动端退出") {
+		@Override
+		public boolean isOffline() {
+			return true;
+		}
+	}, 
 	UNKOWN("9999", "未知")
 	;
 
@@ -33,6 +43,10 @@ public enum StatusKeys implements KeyValue {
 	
 	public boolean is(String value) {
 		return value != null && this.status.equals(value);
+	}
+	
+	public boolean isOffline() {
+		return false;
 	}
 	
 	public static StatusKeys of(String key) {

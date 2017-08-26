@@ -1,6 +1,7 @@
 package com.yachat.wechat.support;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
@@ -50,24 +51,40 @@ public class WechatTaskManagerSupport implements WechatTaskManager {
 	}
 
 	private void checkWechatOnlineStatus() {
-		for (Wechat wechat : this.wechats.values()) {
+		for (Entry<String, Wechat> entry : this.wechats.entrySet()) {
+			Wechat wechat = entry.getValue();
 			if (wechat.isOnline()) {
+				if (wechat.isChecking()) {
+					continue;
+				}
+				wechat.enableChecking();
 				this.statusWorker.submit(() -> {
 					if (System.currentTimeMillis() - wechat.getAccount().getLastNormalRetcodeTime() > 60 * 1000) { // 超过60秒，判为离线
 						wechat.offline();
 						LOGGER.info("微信已离线");
 					}
+					wechat.disableChecking();
 				});
+			} else {
+				this.wechats.remove(entry.getKey());
 			}
 		}
 	}
 
 	private void checkWechatMessages() {
-		for (Wechat wechat : this.wechats.values()) {
+		for (Entry<String, Wechat> entry : this.wechats.entrySet()) {
+			Wechat wechat = entry.getValue();
 			if (wechat.isOnline()) {
+				if (wechat.isReading()) {
+					continue;
+				}
+				wechat.enableReading();
 				this.messageWorker.submit(() -> {
 					wechat.receivingMessage();
+					wechat.disableReading();
 				});
+			} else {
+				this.wechats.remove(entry.getKey());
 			}
 		}
 	}

@@ -30,7 +30,8 @@ public class GetContactHandler extends AbstractAccountHandler<Void> {
 	public Request createRequest(Account account) {
 		return Builders.of(UrlKeys.WEB_WX_GET_CONTACT, WechatKeys.url.get(account))
 				.build()
-				.addAll(account.getParamMap());
+				.addAll(account.getParamMap())
+				.setCookie(account.getCookie());
 	}
 
 	@Override
@@ -79,7 +80,7 @@ public class GetContactHandler extends AbstractAccountHandler<Void> {
 		Request request = this.createRequest(account);
 		request.add("r", String.valueOf(System.currentTimeMillis()));
 		request.add("seq", String.valueOf(seq));
-		return retryClient.get2(request , (entity)-> {
+		return retryClient.get(request , (entity)-> {
 			String text = getEntity(entity);
 			JSONObject fullFriendsJsonList = JSON.parseObject(text);
 			return Response.success(fullFriendsJsonList);

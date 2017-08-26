@@ -26,7 +26,8 @@ public class SyncStatusHandler extends AbstractAccountHandler<Map<String, String
 			.add(WechatKeys.synckey , WechatKeys.synckey.get(account))
 			.add(WechatKeys.underline, String.valueOf(System.currentTimeMillis()))
 			.build()
-			.addStringAll(WechatKeys.getBaseMap(account));
+			.addStringAll(WechatKeys.getBaseMap(account))
+			.setCookie(account.getCookie());
 	}
 
 	@Override

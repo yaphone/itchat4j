@@ -38,7 +38,8 @@ public class BatchGetContactHandler extends AbstractAccountHandler<Void> {
 				System.currentTimeMillis() , 
 				WechatKeys.pass_ticket.get(account))
 			.build()
-			.addAll(paramMap);
+			.addAll(paramMap)
+			.setCookie(account.getCookie());
 		return request;
 	}
 

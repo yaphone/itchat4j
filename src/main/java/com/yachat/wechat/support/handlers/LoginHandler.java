@@ -48,7 +48,9 @@ public class LoginHandler extends AbstractAccountHandler<Boolean> {
 				.addAll(loginicon, tip)
 				.add(uuid, account.getUuid())
 				.add(r, String.valueOf(millis / 1579L))
-				.add(underline, String.valueOf(millis)).build();
+				.add(underline, String.valueOf(millis))
+				.build()
+				.setCookie(account.getCookie());
 	}
 
 	@Override
@@ -107,7 +109,7 @@ public class LoginHandler extends AbstractAccountHandler<Boolean> {
 		deviceid.set(account, "e" + String.valueOf(new Random().nextLong()).substring(1, 16)); // 生成15位随机数
 		BaseRequest.set(account, new ArrayList<String>());
 		
-		boolean isLogined = retryClient.get2(new Request(originalUrl), (entity) -> {
+		boolean isLogined = retryClient.get(new Request(originalUrl).setCookie(account.getCookie()) , (entity) -> {
 			String text = getEntity(entity);
 			// add by 默非默 2017-08-01 22:28:09
 			// 如果登录被禁止时，则登录返回的message内容不为空，下面代码则判断登录内容是否为空，不为空则退出程序

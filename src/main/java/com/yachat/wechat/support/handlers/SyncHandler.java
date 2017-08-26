@@ -14,15 +14,17 @@ public class SyncHandler extends AbstractAccountHandler<JSONObject> {
 
 	@Override
 	public Request createRequest(Account account) {
+		
 		return Builders.of(UrlKeys.WEB_WX_SYNC_URL, 
 				WechatKeys.url.get(account) , 
 				WechatKeys.wxsid.get(account) , 
 				WechatKeys.skey.get(account) ,
 				WechatKeys.pass_ticket.get(account))
-			.add(WechatKeys.SyncKey , WechatKeys.SyncKey.get(account))
+			.add(WechatKeys.SyncKey , WechatKeys.SyncKey.getObject(account))
 			.add(WechatKeys.rr , -System.currentTimeMillis() / 1000)
 			.build()
-			.addAll(account.getParamMap());
+			.addAll(account.getParamMap())
+			.setCookie(account.getCookie());
 	}
 	
 	@Override

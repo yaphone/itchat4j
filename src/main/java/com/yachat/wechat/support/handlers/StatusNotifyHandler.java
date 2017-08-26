@@ -16,7 +16,9 @@ public class StatusNotifyHandler extends AbstractAccountHandler<Void> {
 				.addAll(WechatKeys.CODE , WechatKeys.FROM_USERNAME , WechatKeys.TO_USERNAME)
 				.add(WechatKeys.CLIENT_MSG_ID, System.currentTimeMillis())
 				.build();
-		request.addAll(account.getParamMap());
+		request
+			.addAll(account.getParamMap())
+			.setCookie(account.getCookie());
 		return request;
 	}
 	

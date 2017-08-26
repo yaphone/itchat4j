@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,7 +88,7 @@ public class WechatSystemWebSupport implements WechatInterface {
 		if( !this.handlers.containsKey(operationType)) {
 			return null;
 		}
-		return retryClient.get(in, getHandler(operationType));
+		return retryClient.retryGet(in, getHandler(operationType));
 	}
 
 	private <IN, OUT> OUT post(IN account, WechatOperationType operationType) {
@@ -97,7 +98,7 @@ public class WechatSystemWebSupport implements WechatInterface {
 		if( !this.handlers.containsKey(operationType)) {
 			return null;
 		}
-		return retryClient.post(account, getHandler(operationType));
+		return retryClient.retryPost(account, getHandler(operationType));
 	}
 
 	@Override
@@ -107,12 +108,13 @@ public class WechatSystemWebSupport implements WechatInterface {
 
 	@Override
 	public InputStream getQR(String uuid) {
-		InputStream stream = get(uuid, WechatOperationType.QR);
+		InputStream stream = post(uuid, WechatOperationType.QR);
 		return stream;
 	}
 
 	@Override
 	public boolean login(Account account) {
+		account.setCookie(new BasicCookieStore());
 		return get(account, WechatOperationType.LOGIN);
 	}
 
@@ -168,6 +170,9 @@ public class WechatSystemWebSupport implements WechatInterface {
 			StatusKeys enum1 = StatusKeys.of(retcode);
 			if (enum1 != null) {
 				LOGGER.info(enum1.getValue());
+				if(enum1.isOffline() ) {
+					account.offline();
+				}
 			} else {
 				this.sync(account);
 			}
@@ -271,11 +276,9 @@ public class WechatSystemWebSupport implements WechatInterface {
 					} else if (MessageKeys.VIEDO.is(msg)) {
 						String result = messageHandler.video(msg);
 						LOGGER.info(result);
-//						MessageTools.sendMsgById(result, account.getMsgList().get(0).getFromUserName());
 					} else if (MessageKeys.NAMECARD.is(msg)) {
 						String result = messageHandler.card(msg);
 						LOGGER.info(result);
-//						MessageTools.sendMsgById(result, account.getMsgList().get(0).getFromUserName());
 					} else if (MessageKeys.SYS.is(msg)) { // 系统消息
 						messageHandler.sys(msg);
 					} else if ( MessageKeys.VERIFYMSG.is(msg)) { // 确认添加好友消息

@@ -50,7 +50,9 @@ public class Builders {
 	}
 
 	public Builders add(KeyValue key, Object value) {
-		this.parametersMap.put(key.getKey(), value);
+		if(value != null) {
+			this.parametersMap.put(key.getKey(), value);
+		}
 		return this;
 	}
 

@@ -13,7 +13,7 @@ public class WechatFactoryTest {
 		WechatInterface system = new WechatSystemWebSupport();
 		WechatTaskManager taskManager = new WechatTaskManagerSupport(Executors.newScheduledThreadPool(4),
 				Executors.newFixedThreadPool(10), Executors.newFixedThreadPool(32));
-		WechatFactory factory = new WechatFactory(system, taskManager  , null);		
+		WechatFactory factory = new WechatFactory(system, taskManager  , new SimpleMessageHandler());		
 		Wechat wechat = factory.createAccountRequest(1);
 		LocalFileUtils.open("/Users/louis/Downloads", wechat.getAccount());
 		wechat.start();

@@ -14,24 +14,27 @@ import com.alibaba.fastjson.JSONObject;
 public class Wechat {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Wechat.class);
+	private volatile boolean reading;
+	private volatile boolean checking;
 	private Account account;
 	private WechatInterface system;
 	private MessageHandler messageHandler;
 	private WechatTaskManager wechatTaskManager;
 
-	public Wechat(Account account, WechatInterface system, 
-			MessageHandler messageHandler,
+	public Wechat(Account account, WechatInterface system, MessageHandler messageHandler,
 			WechatTaskManager wechatTaskManager) {
 		super();
 		this.account = account;
 		this.system = system;
 		this.messageHandler = messageHandler;
 		this.wechatTaskManager = wechatTaskManager;
+		this.reading = false;
 	}
 
 	private boolean isLogin() {
 		return this.system.login(this.account);
 	}
+
 
 	public void start() {
 		if (this.isLogin()) {
@@ -83,20 +86,45 @@ public class Wechat {
 		this.account.setAlive(false);
 	}
 
-	public synchronized Account getAccount() {
+	public Account getAccount() {
 		return account;
 	}
 
-	public synchronized void offline() {
+	public void offline() {
 		this.account.setAlive(false);
 	}
 
-	public synchronized void online() {
+	public void online() {
 		this.account.setAlive(true);
 	}
 
 	public boolean isOnline() {
 		return this.account.isAlive();
+	}
+	
+
+	public void enableReading() {
+		this.reading = true;
+	}
+
+	public void disableReading() {
+		this.reading = false;
+	}
+
+	public void enableChecking() {
+		this.checking = true;
+	}
+
+	public void disableChecking() {
+		this.checking = false;
+	}
+
+	public boolean isChecking() {
+		return this.checking;
+	}
+
+	public boolean isReading() {
+		return this.reading;
 	}
 
 	public MessageHandler getMessageHandler() {

@@ -57,6 +57,7 @@ public enum WechatKeys implements KeyValue {
     loginicon("loginicon", "true"),
     uuid("uuid", ""),
     tip("tip", "0"),
+    t("t" , "webwx") ,
     
     retcode("retcode"),
     selector("selector"),
@@ -86,6 +87,10 @@ public enum WechatKeys implements KeyValue {
 	}
 	
 	public String get(Account account) {
+		return account.getLoginInfo(this.getKey());
+	}
+	
+	public <T> T getObject(Account account) {
 		return account.getLoginInfo(this.getKey());
 	}
 	

@@ -22,14 +22,11 @@ public class Account {
 
 	private volatile boolean alive = false;
 	private int memberCount = 0;
-	private long uid; // uid标识
+	private long uid;	
 	private String indexUrl;
 	private String userName;
 	private String nickName;
 	private String uuid;
-	private boolean useHotReload = false;
-	private String hotReloadDir = "itchat.pkl";
-	private int receivingRetryCount = 5;
 	private volatile long lastNormalRetcodeTime; 		// 最后一次收到正常retcode的时间，秒为单位
 	private JSONObject userSelf; // 登陆账号自身信息
 	private List<JSONObject> memberList = new ArrayList<JSONObject>(); // 好友+群聊+公众号+特殊账号
@@ -47,6 +44,14 @@ public class Account {
 
 	public boolean isAlive() {
 		return alive;
+	}
+	
+	public void offline() {
+		this.alive = false;
+	}
+	
+	public void online() {
+		this.alive = true;
 	}
 
 	public void setAlive(boolean alive) {
@@ -93,30 +98,6 @@ public class Account {
 		this.uuid = uuid;
 	}
 
-	public boolean isUseHotReload() {
-		return useHotReload;
-	}
-
-	public void setUseHotReload(boolean useHotReload) {
-		this.useHotReload = useHotReload;
-	}
-
-	public String getHotReloadDir() {
-		return hotReloadDir;
-	}
-
-	public void setHotReloadDir(String hotReloadDir) {
-		this.hotReloadDir = hotReloadDir;
-	}
-
-	public int getReceivingRetryCount() {
-		return receivingRetryCount;
-	}
-
-	public void setReceivingRetryCount(int receivingRetryCount) {
-		this.receivingRetryCount = receivingRetryCount;
-	}
-
 	public long getLastNormalRetcodeTime() {
 		return lastNormalRetcodeTime;
 	}
@@ -124,14 +105,6 @@ public class Account {
 	public void setLastNormalRetcodeTime(long lastNormalRetcodeTime) {
 		this.lastNormalRetcodeTime = lastNormalRetcodeTime;
 	}
-
-//	public List<BaseMsg> getMsgList() {
-//		return msgList;
-//	}
-//
-//	public void setMsgList(List<BaseMsg> msgList) {
-//		this.msgList = msgList;
-//	}
 
 	public JSONObject getUserSelf() {
 		return userSelf;
