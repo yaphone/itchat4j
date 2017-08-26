@@ -10,9 +10,7 @@ import org.apache.http.client.CookieStore;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-
-import cn.zhouyafeng.itchat4j.beans.BaseMsg;
-import cn.zhouyafeng.itchat4j.utils.enums.parameters.BaseParaEnum;
+import com.yachat.wechat.keys.WechatKeys;
 
 /**
  * 微信登录的帐号信息
@@ -32,9 +30,7 @@ public class Account {
 	private boolean useHotReload = false;
 	private String hotReloadDir = "itchat.pkl";
 	private int receivingRetryCount = 5;
-	private long lastNormalRetcodeTime; // 最后一次收到正常retcode的时间，秒为单位
-
-	private List<BaseMsg> msgList = new ArrayList<BaseMsg>();
+	private volatile long lastNormalRetcodeTime; 		// 最后一次收到正常retcode的时间，秒为单位
 	private JSONObject userSelf; // 登陆账号自身信息
 	private List<JSONObject> memberList = new ArrayList<JSONObject>(); // 好友+群聊+公众号+特殊账号
 	private List<JSONObject> contactList = new ArrayList<JSONObject>();// 好友
@@ -129,13 +125,13 @@ public class Account {
 		this.lastNormalRetcodeTime = lastNormalRetcodeTime;
 	}
 
-	public List<BaseMsg> getMsgList() {
-		return msgList;
-	}
-
-	public void setMsgList(List<BaseMsg> msgList) {
-		this.msgList = msgList;
-	}
+//	public List<BaseMsg> getMsgList() {
+//		return msgList;
+//	}
+//
+//	public void setMsgList(List<BaseMsg> msgList) {
+//		this.msgList = msgList;
+//	}
 
 	public JSONObject getUserSelf() {
 		return userSelf;
@@ -261,12 +257,9 @@ public class Account {
 	 * 请求参数
 	 */
 	public Map<String, Object> getParamMap() {
-		Map<String, String> map = new HashMap<String, String>();
-		for (BaseParaEnum baseRequest : BaseParaEnum.values()) {
-			map.put(baseRequest.para(), getLoginInfo().get(baseRequest.value()).toString());
-		}
+		Map<String, String>  baseMap = WechatKeys.getBaseMap(this);
 		HashMap<String, Object> params = new HashMap<String, Object>(1);
-		params.put("BaseRequest", map);
+		params.put(WechatKeys.BaseRequest.getKey() , baseMap);
 		return params;
 	}
 

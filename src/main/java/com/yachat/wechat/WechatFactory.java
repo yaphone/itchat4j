@@ -7,11 +7,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WechatFactory {
 
 	private Map<Long, Wechat> wechats;
-	private WechatSystem system;
+	private WechatInterface system;
 	private WechatTaskManager taskManager;
 	private MessageHandler defaultMessageHandler;
 
-	public WechatFactory(WechatSystem system, WechatTaskManager taskManager, MessageHandler defaultMessageHandler) {
+	public WechatFactory(WechatInterface system, WechatTaskManager taskManager, MessageHandler defaultMessageHandler) {
 		super();
 		this.system = system;
 		this.taskManager = taskManager;
@@ -45,6 +45,14 @@ public class WechatFactory {
 		Wechat wechat = new Wechat(account, system, messageHandler, this.taskManager);
 		this.wechats.put(uid, wechat);
 		return wechat;
+	}
+	
+	public void start() {
+		this.taskManager.start();
+	}
+	
+	public void stop() {
+		this.taskManager.stop();
 	}
 
 	/**

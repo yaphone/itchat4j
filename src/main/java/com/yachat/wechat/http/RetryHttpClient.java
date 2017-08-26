@@ -30,8 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
-
-import cn.zhouyafeng.itchat4j.utils.Config;
+import com.yachat.wechat.utils.Constants;
 
 public class RetryHttpClient {
 
@@ -68,7 +67,7 @@ public class RetryHttpClient {
 				for (Entry<String, String> entry : params.entrySet()) {
 					paramsList.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
 				}
-				requestUrl = "?" + EntityUtils.toString(new UrlEncodedFormEntity(paramsList, Consts.UTF_8));
+				requestUrl += "?" + EntityUtils.toString(new UrlEncodedFormEntity(paramsList, Consts.UTF_8));
 			}
 			HttpGet httpGet = new HttpGet(requestUrl);
 			if (!redirect) {
@@ -102,7 +101,7 @@ public class RetryHttpClient {
 	}
 
 	private void setHeaders(HttpUriRequest request, Map<String, String> headerMap) {
-		request.setHeader("User-Agent", Config.USER_AGENT);
+		request.setHeader("User-Agent", Constants.USER_AGENT);
 		if (headerMap != null) {
 			for (Entry<String, String> entry : headerMap.entrySet()) {
 				request.setHeader(entry.getKey(), entry.getValue());
@@ -126,13 +125,13 @@ public class RetryHttpClient {
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		} finally {
-			if (httpClient != null) {
-				try {
-					httpClient.close();
-				} catch (IOException e) {
-					LOGGER.error(e.getMessage(), e);
-				}
-			}
+//			if (httpClient != null) {
+//				try {
+//					httpClient.close();
+//				} catch (IOException e) {
+//					LOGGER.error(e.getMessage(), e);
+//				}
+//			}
 		}
 		return null;
 	}

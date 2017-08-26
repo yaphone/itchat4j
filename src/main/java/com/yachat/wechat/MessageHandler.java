@@ -1,6 +1,6 @@
 package com.yachat.wechat;
 
-import cn.zhouyafeng.itchat4j.beans.BaseMsg;
+import com.yachat.wechat.message.Message;
 
 
 /**
@@ -20,7 +20,7 @@ public interface MessageHandler {
 	 * @param msg
 	 * @return
 	 */
-	public String textMsgHandle(BaseMsg msg);
+	public String text(Message message);
 
 	/**
 	 * 处理图片消息
@@ -30,7 +30,7 @@ public interface MessageHandler {
 	 * @param msg
 	 * @return
 	 */
-	public String picMsgHandle(BaseMsg msg);
+	public String picture(Message message);
 
 	/**
 	 * 处理声音消息
@@ -40,7 +40,7 @@ public interface MessageHandler {
 	 * @param msg
 	 * @return
 	 */
-	public String voiceMsgHandle(BaseMsg msg);
+	public String voice(Message message);
 
 	/**
 	 * 处理小视频消息
@@ -50,7 +50,7 @@ public interface MessageHandler {
 	 * @param msg
 	 * @return
 	 */
-	public String viedoMsgHandle(BaseMsg msg);
+	public String video(Message message);
 
 	/**
 	 * 处理名片消息
@@ -60,7 +60,7 @@ public interface MessageHandler {
 	 * @param msg
 	 * @return
 	 */
-	public String nameCardMsgHandle(BaseMsg msg);
+	public String card(Message message);
 
 	/**
 	 * 处理系统消息
@@ -70,7 +70,7 @@ public interface MessageHandler {
 	 * @param msg
 	 * @return
 	 */
-	public void sysMsgHandle(BaseMsg msg);
+	public void sys(Message message);
 
 	/**
 	 * 处理确认添加好友消息
@@ -79,7 +79,7 @@ public interface MessageHandler {
 	 * @param msg
 	 * @return
 	 */
-	public String verifyAddFriendMsgHandle(BaseMsg msg);
+	public String verifyAddFriend(Message message);
 
 	/**
 	 * 处理收到的文件消息
@@ -88,6 +88,6 @@ public interface MessageHandler {
 	 * @param msg
 	 * @return
 	 */
-	public String mediaMsgHandle(BaseMsg msg);
+	public String media(Message message);
 
 }

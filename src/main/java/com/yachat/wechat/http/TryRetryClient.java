@@ -21,7 +21,7 @@ public class TryRetryClient {
 			return tryRetryGet(request, handler.retryTimes(),
 					handler.retryTimeoutMillis() > -1 ? handler.retryTimeoutMillis() : 100, callback);
 		} else {
-			return get(request, callback);
+			return get2(request, callback);
 		}
 	}
 
@@ -37,17 +37,17 @@ public class TryRetryClient {
 			return tryRetryPost(request, handler.retryTimes(),
 					handler.retryTimeoutMillis() > -1 ? handler.retryTimeoutMillis() : 100, callback);
 		} else {
-			return post(request, callback);
+			return post2(request, callback);
 		}
 	}
 
-	public <T> T get(Request request, Callback<T> callback) {
+	public <T> T get2(Request request, Callback<T> callback) {
 		HttpEntity entity = get(request);
 		Response<T> response = doResponse(entity, callback);
 		return response != null ? response.getData() : null;
 	}
 
-	public <T> T post(Request request, Callback<T> callback) {
+	public <T> T post2(Request request, Callback<T> callback) {
 		HttpEntity entity = post(request);
 		Response<T> response = doResponse(entity, callback);
 		return response != null ? response.getData() : null;
@@ -72,9 +72,9 @@ public class TryRetryClient {
 			}
 			times++;
 			sleep(tryTimeoutMillis);
-		} while (times >= tryTimes);
+		} while ( tryTimes > times);
 
-		throw new RuntimeException("Try " + tryTimes + " TimeOut");
+		throw new RuntimeException("Retry Http Request " + (tryTimes * tryTimeoutMillis /1000 ) + "s TimeOut");
 	}
 
 	private void sleep(long millis) {

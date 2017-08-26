@@ -28,7 +28,10 @@ public interface RetryHandler<IN, OUT> {
 	}
 
 	default String getEntity(HttpEntity entity) throws ParseException, IOException {
-		return EntityUtils.toString(entity, Consts.UTF_8);
+		if( entity != null ) {
+			return EntityUtils.toString(entity, Consts.UTF_8);
+		}
+		return null;
 	}
 
 	default Response<OUT> buildSuccess(OUT out) {

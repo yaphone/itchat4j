@@ -40,7 +40,9 @@ public class Request {
 		}
 		HashMap<String, String> stringParams = new HashMap<>();
 		for (Entry<String, Object> entry : this.parameters.entrySet()) {
-			stringParams.put(entry.getKey(), (String) entry.getValue());
+			if( entry != null && entry.getValue() != null) {
+				stringParams.put(entry.getKey(), entry.getValue().toString());
+			}
 		}
 		return stringParams;
 	}
