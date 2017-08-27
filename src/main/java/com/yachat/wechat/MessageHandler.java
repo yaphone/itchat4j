@@ -2,7 +2,6 @@ package com.yachat.wechat;
 
 import com.yachat.wechat.message.Message;
 
-
 /**
  * 消息处理接口
  * 
@@ -12,7 +11,7 @@ import com.yachat.wechat.message.Message;
  *
  */
 public interface MessageHandler {
-	
+
 	/**
 	 * 
 	 * @author https://github.com/yaphone
@@ -20,7 +19,7 @@ public interface MessageHandler {
 	 * @param msg
 	 * @return
 	 */
-	public String text(Message message);
+	public String text(Account account, Message message);
 
 	/**
 	 * 处理图片消息
@@ -30,7 +29,7 @@ public interface MessageHandler {
 	 * @param msg
 	 * @return
 	 */
-	public String picture(Message message);
+	public String picture(Account account, Message message);
 
 	/**
 	 * 处理声音消息
@@ -40,7 +39,7 @@ public interface MessageHandler {
 	 * @param msg
 	 * @return
 	 */
-	public String voice(Message message);
+	public String voice(Account account, Message message);
 
 	/**
 	 * 处理小视频消息
@@ -50,7 +49,7 @@ public interface MessageHandler {
 	 * @param msg
 	 * @return
 	 */
-	public String video(Message message);
+	public String video(Account account, Message message);
 
 	/**
 	 * 处理名片消息
@@ -60,7 +59,7 @@ public interface MessageHandler {
 	 * @param msg
 	 * @return
 	 */
-	public String card(Message message);
+	public String card(Account account, Message message);
 
 	/**
 	 * 处理系统消息
@@ -70,7 +69,7 @@ public interface MessageHandler {
 	 * @param msg
 	 * @return
 	 */
-	public void sys(Message message);
+	public void sys(Account account, Message message);
 
 	/**
 	 * 处理确认添加好友消息
@@ -79,7 +78,7 @@ public interface MessageHandler {
 	 * @param msg
 	 * @return
 	 */
-	public String verifyAddFriend(Message message);
+	public String verifyAddFriend(Account account, Message message);
 
 	/**
 	 * 处理收到的文件消息
@@ -88,6 +87,6 @@ public interface MessageHandler {
 	 * @param msg
 	 * @return
 	 */
-	public String media(Message message);
+	public String media(Account account, Message message);
 
 }
