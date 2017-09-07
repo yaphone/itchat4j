@@ -11,13 +11,23 @@ public class Wechat {
 	private static final Logger LOG = LoggerFactory.getLogger(Wechat.class);
 	private IMsgHandlerFace msgHandler;
 
-	public Wechat(IMsgHandlerFace msgHandler, String qrPath) {
+	private  String chatname="";
+
+	public String getChatname() {
+		return chatname;
+	}
+
+	public void setChatname(String chatname) {
+		this.chatname = chatname;
+	}
+
+	public Wechat(IMsgHandlerFace msgHandler, String qrPath,String chatName) {
 		System.setProperty("jsse.enableSNIExtension", "false"); // 防止SSL错误
 		this.msgHandler = msgHandler;
 
 		// 登陆
 		LoginController login = new LoginController();
-		login.login(qrPath);
+		login.login(qrPath,chatName);
 	}
 
 	public void start() {

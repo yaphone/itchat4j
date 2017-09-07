@@ -119,6 +119,7 @@ public class LoginServiceImpl implements ILoginService {
 			if (matcher.find()) {
 				if ((ResultEnum.SUCCESS.getCode().equals(matcher.group(1)))) {
 					core.setUuid(matcher.group(2));
+					LOG.info("【UUID：】"+matcher.group(2));
 				}
 			}
 		} catch (Exception e) {
@@ -129,8 +130,10 @@ public class LoginServiceImpl implements ILoginService {
 	}
 
 	@Override
-	public boolean getQR(String qrPath) {
-		qrPath = qrPath + File.separator + "QR.jpg";
+	public boolean getQR(String qrPath,String chatName) {
+		String QR_NAME=CommonTools.MD5(System.currentTimeMillis()+chatName);
+
+		qrPath = qrPath + File.separator + QR_NAME+".jpg";
 		String qrUrl = URLEnum.QRCODE_URL.getUrl() + core.getUuid();
 		HttpEntity entity = myHttpClient.doGet(qrUrl, null, true, null);
 		try {
@@ -162,7 +165,7 @@ public class LoginServiceImpl implements ILoginService {
 				core.getLoginInfo().get(StorageLoginInfoEnum.url.getKey()),
 				String.valueOf(System.currentTimeMillis() / 3158L),
 				core.getLoginInfo().get(StorageLoginInfoEnum.pass_ticket.getKey()));
-
+		LOG.info("【初始化url】"+url);
 		Map<String, Object> paramMap = core.getParamMap();
 
 		// 请求初始化接口
@@ -340,7 +343,9 @@ public class LoginServiceImpl implements ILoginService {
 
 		try {
 			String result = EntityUtils.toString(entity, Consts.UTF_8);
+//			LOG.info("【好友信息text】"+result);
 			JSONObject fullFriendsJsonList = JSON.parseObject(result);
+//			LOG.info("【好友信息json】"+fullFriendsJsonList);
 			// 查看seq是否为0，0表示好友列表已全部获取完毕，若大于0，则表示好友列表未获取完毕，当前的字节数（断点续传）
 			long seq = 0;
 			long currentTime = 0L;
@@ -382,6 +387,7 @@ public class LoginServiceImpl implements ILoginService {
 				} else if (o.getString("UserName").indexOf("@@") != -1) { // 群聊
 					if (!core.getGroupIdList().contains(o.getString("UserName"))) {
 						core.getGroupNickNameList().add(o.getString("NickName"));
+						LOG.info("【好友列表-群】"+o.getString("NickName")+"|||"+o.getString("UserName"));
 						core.getGroupIdList().add(o.getString("UserName"));
 						core.getGroupList().add(o);
 					}
@@ -416,8 +422,11 @@ public class LoginServiceImpl implements ILoginService {
 		HttpEntity entity = httpClient.doPost(url, JSON.toJSONString(paramMap));
 		try {
 			String text = EntityUtils.toString(entity, Consts.UTF_8);
+//			LOG.info("【取群信息返回text】\t"+text);
 			JSONObject obj = JSON.parseObject(text);
+//			LOG.info("【取群信息返回text to json】\t"+obj);
 			JSONArray contactList = obj.getJSONArray("ContactList");
+//			LOG.info("【取群信息返回ContactList】\t"+contactList);
 			for (int i = 0; i < contactList.size(); i++) { // 群好友
 				if (contactList.getJSONObject(i).getString("UserName").indexOf("@@") > -1) { // 群
 					core.getGroupNickNameList().add(contactList.getJSONObject(i).getString("NickName")); // 更新群昵称列表
@@ -426,6 +435,8 @@ public class LoginServiceImpl implements ILoginService {
 							contactList.getJSONObject(i).getJSONArray("MemberList")); // 更新群成员Map
 				}
 			}
+//			LOG.info("【core 群】\t"+core.getGroupIdList());
+//			LOG.info("【core 群】\t"+core.getGroupList());
 		} catch (Exception e) {
 			LOG.info(e.getMessage());
 		}
@@ -451,7 +462,7 @@ public class LoginServiceImpl implements ILoginService {
 	 *
 	 * @author https://github.com/yaphone
 	 * @date 2017年4月9日 下午12:16:26
-	 * @param result
+	 * @param loginContent
 	 */
 	private void processLoginInfo(String loginContent) {
 		String regEx = "window.redirect_uri=\"(\\S+)\";";
