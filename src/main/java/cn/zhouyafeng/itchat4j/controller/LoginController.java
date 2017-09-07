@@ -24,7 +24,7 @@ public class LoginController {
 	private ILoginService loginService = new LoginServiceImpl();
 	private static Core core = Core.getInstance();
 
-	public void login(String qrPath) {
+	public void login(String qrPath,String chatName) {
 		if (core.isAlive()) { // 已登陆
 			LOG.info("itchat4j已登陆");
 			return;
@@ -39,8 +39,9 @@ public class LoginController {
 						SleepUtils.sleep(2000);
 					}
 				}
+				LOG.info("【loginService.getUuid()】"+loginService.getUuid());
 				LOG.info("2. 获取登陆二维码图片");
-				if (loginService.getQR(qrPath)) {
+				if (loginService.getQR(qrPath,chatName)) {
 					break;
 				} else if (count == 10) {
 					LOG.error("2.2. 获取登陆二维码图片失败，系统退出");
@@ -77,8 +78,9 @@ public class LoginController {
 		loginService.webWxGetContact();
 
 		LOG.info("10. 获取群好友及群好友列表");
+		long start=System.currentTimeMillis();
 		loginService.WebWxBatchGetContact();
-
+		LOG.info("10.1. loading time:"+(System.currentTimeMillis()-start));
 		LOG.info("11. 缓存本次登陆好友相关消息");
 		WechatTools.setUserInfo(); // 登陆成功后缓存本次登陆好友相关消息（NickName, UserName）
 
