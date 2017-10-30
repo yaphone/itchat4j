@@ -1,7 +1,17 @@
 package cn.zhouyafeng.itchat4j.service.impl;
 
+import cn.zhouyafeng.itchat4j.utils.tools.QRCodeTools;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,6 +23,10 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.regex.Matcher;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.message.BasicNameValuePair;
@@ -44,7 +58,7 @@ import cn.zhouyafeng.itchat4j.utils.tools.CommonTools;
 
 /**
  * 登陆服务实现类
- * 
+ *
  * @author https://github.com/yaphone
  * @date 创建时间：2017年5月13日 上午12:09:35
  * @version 1.0
@@ -68,14 +82,15 @@ public class LoginServiceImpl implements ILoginService {
 		boolean isLogin = false;
 		// 组装参数和URL
 		List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
-		params.add(new BasicNameValuePair(LoginParaEnum.LOGIN_ICON.para(), LoginParaEnum.LOGIN_ICON.value()));
-		params.add(new BasicNameValuePair(LoginParaEnum.UUID.para(), core.getUuid()));
-		params.add(new BasicNameValuePair(LoginParaEnum.TIP.para(), LoginParaEnum.TIP.value()));
 
 		// long time = 4000;
 		while (!isLogin) {
 			// SleepUtils.sleep(time += 1000);
 			long millis = System.currentTimeMillis();
+			params.clear();
+			params.add(new BasicNameValuePair(LoginParaEnum.LOGIN_ICON.para(), LoginParaEnum.LOGIN_ICON.value()));
+			params.add(new BasicNameValuePair(LoginParaEnum.UUID.para(), core.getUuid()));
+			params.add(new BasicNameValuePair(LoginParaEnum.TIP.para(), LoginParaEnum.TIP.value()));
 			params.add(new BasicNameValuePair(LoginParaEnum.R.para(), String.valueOf(millis / 1579L)));
 			params.add(new BasicNameValuePair(LoginParaEnum._.para(), String.valueOf(millis)));
 			HttpEntity entity = httpClient.doGet(URLEnum.LOGIN_URL.getUrl(), params, true, null);
@@ -85,13 +100,21 @@ public class LoginServiceImpl implements ILoginService {
 				String status = checklogin(result);
 
 				if (ResultEnum.SUCCESS.getCode().equals(status)) {
+					QRCodeTools.dismissLoginCode();
 					processLoginInfo(result); // 处理结果
 					isLogin = true;
 					core.setAlive(isLogin);
 					break;
 				}
 				if (ResultEnum.WAIT_CONFIRM.getCode().equals(status)) {
-					LOG.info("请点击微信确认按钮，进行登陆");
+					LOG.info("3.1 请点击微信确认按钮，进行登陆");
+					String regEx = "window.userAvatar = 'data:img/jpg;base64,([^']+)';";
+					Matcher matcher = CommonTools.getMatcher(regEx, result);
+					if ( matcher.find() && matcher.groupCount() == 2 ) {
+						BasicNameValuePair pair = new BasicNameValuePair(matcher.group(1), matcher.group(2));
+						QRCodeTools.showLoginAvatar(pair.getValue());
+					}
+					QRCodeTools.showLoginAvatar(checkAvatar(result));
 				}
 
 			} catch (Exception e) {
@@ -129,28 +152,16 @@ public class LoginServiceImpl implements ILoginService {
 	}
 
 	@Override
-	public boolean getQR(String qrPath) {
-		qrPath = qrPath + File.separator + "QR.jpg";
+	public boolean getQR() {
 		String qrUrl = URLEnum.QRCODE_URL.getUrl() + core.getUuid();
 		HttpEntity entity = myHttpClient.doGet(qrUrl, null, true, null);
 		try {
-			OutputStream out = new FileOutputStream(qrPath);
 			byte[] bytes = EntityUtils.toByteArray(entity);
-			out.write(bytes);
-			out.flush();
-			out.close();
-			try {
-				CommonTools.printQr(qrPath); // 打开登陆二维码图片
-			} catch (Exception e) {
-				LOG.info(e.getMessage());
-			}
-
+			return QRCodeTools.showLoginCode(bytes);
 		} catch (Exception e) {
 			LOG.info(e.getMessage());
 			return false;
 		}
-
-		return true;
 	}
 
 	@Override
@@ -447,11 +458,25 @@ public class LoginServiceImpl implements ILoginService {
 	}
 
 	/**
+	 * 检查头像
+	 *
+	 * @param result
+	 * @return
+	 */
+	public String checkAvatar(String result) {
+		String regEx = "window.userAvatar = 'data:img/jpg;base64,([^']+)';";
+		Matcher matcher = CommonTools.getMatcher(regEx, result);
+		if (matcher.find()) {
+			return matcher.group(1);
+		}
+		return null;
+	}
+
+	/**
 	 * 处理登陆信息
 	 *
 	 * @author https://github.com/yaphone
 	 * @date 2017年4月9日 下午12:16:26
-	 * @param result
 	 */
 	private void processLoginInfo(String loginContent) {
 		String regEx = "window.redirect_uri=\"(\\S+)\";";
@@ -522,7 +547,7 @@ public class LoginServiceImpl implements ILoginService {
 		Map<String, List<String>> possibleUrlMap = new HashMap<String, List<String>>();
 		possibleUrlMap.put("wx.qq.com", new ArrayList<String>() {
 			/**
-			 * 
+			 *
 			 */
 			private static final long serialVersionUID = 1L;
 
@@ -534,7 +559,7 @@ public class LoginServiceImpl implements ILoginService {
 
 		possibleUrlMap.put("wx2.qq.com", new ArrayList<String>() {
 			/**
-			 * 
+			 *
 			 */
 			private static final long serialVersionUID = 1L;
 
@@ -545,7 +570,7 @@ public class LoginServiceImpl implements ILoginService {
 		});
 		possibleUrlMap.put("wx8.qq.com", new ArrayList<String>() {
 			/**
-			 * 
+			 *
 			 */
 			private static final long serialVersionUID = 1L;
 
@@ -557,7 +582,7 @@ public class LoginServiceImpl implements ILoginService {
 
 		possibleUrlMap.put("web2.wechat.com", new ArrayList<String>() {
 			/**
-			 * 
+			 *
 			 */
 			private static final long serialVersionUID = 1L;
 
@@ -568,7 +593,7 @@ public class LoginServiceImpl implements ILoginService {
 		});
 		possibleUrlMap.put("wechat.com", new ArrayList<String>() {
 			/**
-			 * 
+			 *
 			 */
 			private static final long serialVersionUID = 1L;
 
@@ -582,7 +607,7 @@ public class LoginServiceImpl implements ILoginService {
 
 	/**
 	 * 同步消息 sync the messages
-	 * 
+	 *
 	 * @author https://github.com/yaphone
 	 * @date 2017年5月12日 上午12:24:55
 	 * @return
@@ -627,11 +652,11 @@ public class LoginServiceImpl implements ILoginService {
 
 	/**
 	 * 检查是否有新消息 check whether there's a message
-	 * 
+	 *
 	 * @author https://github.com/yaphone
 	 * @date 2017年4月16日 上午11:11:34
 	 * @return
-	 * 
+	 *
 	 */
 	private Map<String, String> syncCheck() {
 		Map<String, String> resultMap = new HashMap<String, String>();

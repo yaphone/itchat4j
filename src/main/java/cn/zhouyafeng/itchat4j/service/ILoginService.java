@@ -34,10 +34,9 @@ public interface ILoginService {
 	 * 
 	 * @author https://github.com/yaphone
 	 * @date 2017年5月13日 上午12:13:51
-	 * @param qrPath
 	 * @return
 	 */
-	boolean getQR(String qrPath);
+	boolean getQR();
 
 	/**
 	 * web初始化

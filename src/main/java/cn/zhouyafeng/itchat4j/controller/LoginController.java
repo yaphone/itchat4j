@@ -13,7 +13,7 @@ import cn.zhouyafeng.itchat4j.utils.tools.CommonTools;
 
 /**
  * 登陆控制器
- * 
+ *
  * @author https://github.com/yaphone
  * @date 创建时间：2017年5月13日 下午12:56:07
  * @version 1.0
@@ -24,25 +24,22 @@ public class LoginController {
 	private ILoginService loginService = new LoginServiceImpl();
 	private static Core core = Core.getInstance();
 
-	public void login(String qrPath) {
+	public void login() {
 		if (core.isAlive()) { // 已登陆
 			LOG.info("itchat4j已登陆");
 			return;
 		}
 		while (true) {
 			for (int count = 0; count < 10; count++) {
-				LOG.info("获取UUID");
+				LOG.info("1. 获取微信UUID");
 				while (loginService.getUuid() == null) {
-					LOG.info("1. 获取微信UUID");
-					while (loginService.getUuid() == null) {
-						LOG.warn("1.1. 获取微信UUID失败，两秒后重新获取");
-						SleepUtils.sleep(2000);
-					}
+					LOG.warn("1.1. 获取微信UUID失败，两秒后重新获取");
+					SleepUtils.sleep(2000);
 				}
 				LOG.info("2. 获取登陆二维码图片");
-				if (loginService.getQR(qrPath)) {
+				if (loginService.getQR()) {
 					break;
-				} else if (count == 10) {
+				} else if (count == 9) {
 					LOG.error("2.2. 获取登陆二维码图片失败，系统退出");
 					System.exit(0);
 				}
@@ -51,7 +48,7 @@ public class LoginController {
 			if (!core.isAlive()) {
 				loginService.login();
 				core.setAlive(true);
-				LOG.info(("登陆成功"));
+				LOG.info(("4. 登陆成功"));
 				break;
 			}
 			LOG.info("4. 登陆超时，请重新扫描二维码图片");
