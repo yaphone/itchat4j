@@ -34,7 +34,7 @@ public class SimpleDemo implements IMsgHandlerFace {
 			// MessageTools.sendFileMsgByUserId(userId, docFilePath); // 发送文件
 			// MessageTools.sendPicMsgByUserId(userId, docFilePath);
 			String text = msg.getText(); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
-			LOG.info(text);
+			//LOG.info(text);
 			if (text.equals("111")) {
 				WechatTools.logout();
 			}
