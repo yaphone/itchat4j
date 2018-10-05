@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import cn.zhouyafeng.itchat4j.api.WechatTools;
 import cn.zhouyafeng.itchat4j.core.Core;
 import cn.zhouyafeng.itchat4j.service.ILoginService;
+import cn.zhouyafeng.itchat4j.service.impl.FrameLoginServicelmpl;
 import cn.zhouyafeng.itchat4j.service.impl.LoginServiceImpl;
 import cn.zhouyafeng.itchat4j.thread.CheckLoginStatusThread;
 import cn.zhouyafeng.itchat4j.utils.SleepUtils;
@@ -21,7 +22,7 @@ import cn.zhouyafeng.itchat4j.utils.tools.CommonTools;
  */
 public class LoginController {
 	private static Logger LOG = LoggerFactory.getLogger(LoginController.class);
-	private ILoginService loginService = new LoginServiceImpl();
+	private ILoginService loginService = new FrameLoginServicelmpl();
 	private static Core core = Core.getInstance();
 
 	public void login(String qrPath) {

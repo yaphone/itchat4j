@@ -51,12 +51,12 @@ import cn.zhouyafeng.itchat4j.utils.tools.CommonTools;
  *
  */
 public class LoginServiceImpl implements ILoginService {
-	private static Logger LOG = LoggerFactory.getLogger(LoginServiceImpl.class);
+	protected static Logger LOG = LoggerFactory.getLogger(LoginServiceImpl.class);
 
-	private Core core = Core.getInstance();
-	private MyHttpClient httpClient = core.getMyHttpClient();
+	protected Core core = Core.getInstance();
+	protected MyHttpClient httpClient = core.getMyHttpClient();
 
-	private MyHttpClient myHttpClient = core.getMyHttpClient();
+	protected MyHttpClient myHttpClient = core.getMyHttpClient();
 
 	public LoginServiceImpl() {
 
