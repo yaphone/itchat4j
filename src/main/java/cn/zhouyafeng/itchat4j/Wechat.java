@@ -9,25 +9,25 @@ import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 
 public class Wechat {
 	private static final Logger LOG = LoggerFactory.getLogger(Wechat.class);
-	private IMsgHandlerFace msgHandler;
+	private final IMsgHandlerFace msgHandler;
+	private final LoginController login;
 
 	public Wechat(IMsgHandlerFace msgHandler, String qrPath) {
 		System.setProperty("jsse.enableSNIExtension", "false"); // 防止SSL错误
 		this.msgHandler = msgHandler;
 
 		// 登陆
-		LoginController login = new LoginController();
+		login = new LoginController();
 		login.login(qrPath);
 	}
 
 	public void start() {
 		LOG.info("+++++++++++++++++++开始消息处理+++++++++++++++++++++");
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				MsgCenter.handleMsg(msgHandler);
-			}
-		}).start();
+		new Thread(() -> MsgCenter.handleMsg(msgHandler)).start();
+	}
+
+	public LoginController getLogin() {
+		return login;
 	}
 
 }

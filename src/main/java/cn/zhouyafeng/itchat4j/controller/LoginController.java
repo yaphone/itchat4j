@@ -13,7 +13,7 @@ import cn.zhouyafeng.itchat4j.utils.tools.CommonTools;
 
 /**
  * 登陆控制器
- * 
+ *
  * @author https://github.com/yaphone
  * @date 创建时间：2017年5月13日 下午12:56:07
  * @version 1.0
@@ -21,8 +21,16 @@ import cn.zhouyafeng.itchat4j.utils.tools.CommonTools;
  */
 public class LoginController {
 	private static Logger LOG = LoggerFactory.getLogger(LoginController.class);
-	private ILoginService loginService = new LoginServiceImpl();
+	private final ILoginService loginService = new LoginServiceImpl();
 	private static Core core = Core.getInstance();
+
+	/**
+	 * 重新获取联系人
+	 */
+	public void initContact() {
+		loginService.webWxGetContact();
+		loginService.WebWxBatchGetContact();
+	}
 
 	public void login(String qrPath) {
 		if (core.isAlive()) { // 已登陆

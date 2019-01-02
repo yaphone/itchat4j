@@ -22,7 +22,7 @@ import cn.zhouyafeng.itchat4j.utils.enums.StorageLoginInfoEnum;
 
 /**
  * 此示例演示如何获取所有好友的头像
- * 
+ *
  * @author https://github.com/yaphone
  * @date 创建时间：2017年6月26日 下午11:27:46
  * @version 1.0
@@ -38,27 +38,27 @@ public class PicYourFriends implements IMsgHandlerFace {
 	public String textMsgHandle(BaseMsg msg) {
 
 		if (!msg.isGroupMsg()) { // 群消息不处理
-			String text = msg.getText(); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
-			String baseUrl = "https://" + core.getIndexUrl(); // 基础URL
-			String skey = (String) core.getLoginInfo().get(StorageLoginInfoEnum.skey.getKey());
+			final String text = msg.getText(); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
+			final String baseUrl = "https://" + core.getIndexUrl(); // 基础URL
+			final String skey = (String) core.getLoginInfo().get(StorageLoginInfoEnum.skey.getKey());
 			if (text.equals("111")) {
 				LOG.info("开始下载好友头像");
-				List<JSONObject> friends = WechatTools.getContactList();
+				final List<JSONObject> friends = WechatTools.getContactList();
 				for (int i = 0; i < friends.size(); i++) {
-					JSONObject friend = friends.get(i);
-					String url = baseUrl + friend.getString("HeadImgUrl") + skey;
+					final JSONObject friend = friends.get(i);
+					final String url = baseUrl + friend.getString("HeadImgUrl") + skey;
 					// String fileName = friend.getString("NickName");
-					String headPicPath = path + File.separator + i + ".jpg";
+					final String headPicPath = path + File.separator + i + ".jpg";
 
-					HttpEntity entity = myHttpClient.doGet(url, null, true, null);
+					final HttpEntity entity = myHttpClient.doGet(url, null, true, null);
 					try {
-						OutputStream out = new FileOutputStream(headPicPath);
-						byte[] bytes = EntityUtils.toByteArray(entity);
+						final OutputStream out = new FileOutputStream(headPicPath);
+						final byte[] bytes = EntityUtils.toByteArray(entity);
 						out.write(bytes);
 						out.flush();
 						out.close();
 
-					} catch (Exception e) {
+					} catch (final Exception e) {
 						LOG.info(e.getMessage());
 					}
 
@@ -99,9 +99,9 @@ public class PicYourFriends implements IMsgHandlerFace {
 	}
 
 	public static void main(String[] args) {
-		String qrPath = "D://itchat4j//login"; // 保存登陆二维码图片的路径，这里需要在本地新建目录
-		IMsgHandlerFace msgHandler = new PicYourFriends(); // 实现IMsgHandlerFace接口的类
-		Wechat wechat = new Wechat(msgHandler, qrPath); // 【注入】
+		final String qrPath = "D://itchat4j//login"; // 保存登陆二维码图片的路径，这里需要在本地新建目录
+		final IMsgHandlerFace msgHandler = new PicYourFriends(); // 实现IMsgHandlerFace接口的类
+		final Wechat wechat = new Wechat(msgHandler, qrPath); // 【注入】
 		wechat.start(); // 启动服务，会在qrPath下生成一张二维码图片，扫描即可登陆，注意，二维码图片如果超过一定时间未扫描会过期，过期时会自动更新，所以你可能需要重新打开图片
 	}
 
@@ -115,6 +115,12 @@ public class PicYourFriends implements IMsgHandlerFace {
 	public String mediaMsgHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void outlineHandle(BaseMsg msg) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

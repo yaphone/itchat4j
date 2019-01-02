@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * 收到的微信消息
- * 
+ *
  * @author https://github.com/yaphone
  * @date 创建时间：2017年7月3日 下午10:28:06
  * @version 1.0
@@ -12,9 +12,11 @@ import java.io.Serializable;
  */
 public class BaseMsg implements Serializable {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
+	private String dateId;// 天
+	private String actualUserName;// 如果是群的话，该字段表示消息发送者
 	private int subMsgType;
 	private int voiceLength;
 	private String fileName;
@@ -290,4 +292,21 @@ public class BaseMsg implements Serializable {
 	public void setFileSize(String fileSize) {
 		this.fileSize = fileSize;
 	}
+
+	public String getActualUserName() {
+		return actualUserName;
+	}
+
+	public void setActualUserName(String actualUserName) {
+		this.actualUserName = actualUserName;
+	}
+
+	public String getDateId() {
+		return dateId;
+	}
+
+	public void setDateId(String dateId) {
+		this.dateId = dateId;
+	}
+
 }
