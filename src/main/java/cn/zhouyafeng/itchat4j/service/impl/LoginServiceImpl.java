@@ -243,80 +243,75 @@ public class LoginServiceImpl implements ILoginService {
 	@Override
 	public void startReceiving() {
 		core.setAlive(true);
-		new Thread(new Runnable() {
-			int retryCount = 0;
-
-			@Override
-			public void run() {
-				while (core.isAlive()) {
-					try {
-						final Map<String, String> resultMap = syncCheck();
-						// LOG.info(JSONObject.toJSONString(resultMap));
-						final String retcode = resultMap.get("retcode");
-						final String selector = resultMap.get("selector");
-						if (retcode.equals(RetCodeEnum.UNKOWN.getCode())) {
-							LOG.info(RetCodeEnum.UNKOWN.getType());
-							continue;
-						} else if (retcode.equals(RetCodeEnum.LOGIN_OUT.getCode())) { // 退出
-							LOG.info(RetCodeEnum.LOGIN_OUT.getType());
-							break;
-						} else if (retcode.equals(RetCodeEnum.LOGIN_OTHERWHERE.getCode())) { // 其它地方登陆
-							LOG.info(RetCodeEnum.LOGIN_OTHERWHERE.getType());
-							break;
-						} else if (retcode.equals(RetCodeEnum.MOBILE_LOGIN_OUT.getCode())) { // 移动端退出
-							LOG.info(RetCodeEnum.MOBILE_LOGIN_OUT.getType());
-							break;
-						} else if (retcode.equals(RetCodeEnum.NORMAL.getCode())) {
-							core.setLastNormalRetcodeTime(System.currentTimeMillis()); // 最后收到正常报文时间
-							final JSONObject msgObj = webWxSync();
-							if (selector.equals("2")) {
-								if (msgObj != null) {
-									try {
-										JSONArray msgList = new JSONArray();
-										msgList = msgObj.getJSONArray("AddMsgList");
-										msgList = MsgCenter.produceMsg(msgList);
-										for (int j = 0; j < msgList.size(); j++) {
-											final BaseMsg baseMsg = JSON.toJavaObject(msgList.getJSONObject(j),
-													BaseMsg.class);
-											core.getMsgList().add(baseMsg);
-										}
-									} catch (final Exception e) {
-										LOG.info(e.getMessage());
+		new Thread(() -> {
+			while (core.isAlive()) {
+				try {
+					final Map<String, String> resultMap = syncCheck();
+					// LOG.info(JSONObject.toJSONString(resultMap));
+					final String retcode = resultMap.get("retcode");
+					final String selector = resultMap.get("selector");
+					if (retcode.equals(RetCodeEnum.UNKOWN.getCode())) {
+						// LOG.info(RetCodeEnum.UNKOWN.getType());
+						continue;
+					} else if (retcode.equals(RetCodeEnum.LOGIN_OUT.getCode())) { // 退出
+						LOG.info(RetCodeEnum.LOGIN_OUT.getType());
+						break;
+					} else if (retcode.equals(RetCodeEnum.LOGIN_OTHERWHERE.getCode())) { // 其它地方登陆
+						LOG.info(RetCodeEnum.LOGIN_OTHERWHERE.getType());
+						break;
+					} else if (retcode.equals(RetCodeEnum.MOBILE_LOGIN_OUT.getCode())) { // 移动端退出
+						LOG.info(RetCodeEnum.MOBILE_LOGIN_OUT.getType());
+						break;
+					} else if (retcode.equals(RetCodeEnum.NORMAL.getCode())) {
+						core.setLastNormalRetcodeTime(System.currentTimeMillis()); // 最后收到正常报文时间
+						final JSONObject msgObj = webWxSync();
+						if (selector.equals("2")) {
+							if (msgObj != null) {
+								try {
+									JSONArray msgList1 = new JSONArray();
+									msgList1 = msgObj.getJSONArray("AddMsgList");
+									msgList1 = MsgCenter.produceMsg(msgList1);
+									for (int j1 = 0; j1 < msgList1.size(); j1++) {
+										final BaseMsg baseMsg = JSON.toJavaObject(msgList1.getJSONObject(j1),
+												BaseMsg.class);
+										core.getMsgList().add(baseMsg);
 									}
+								} catch (final Exception e1) {
+									LOG.info(e1.getMessage());
 								}
-							} else if (selector.equals("7")) {
-								webWxSync();
-							} else if (selector.equals("4")) {
-								continue;
-							} else if (selector.equals("3")) {
-								continue;
-							} else if (selector.equals("6")) {
-								if (msgObj != null) {
-									try {
-										JSONArray msgList = new JSONArray();
-										msgList = msgObj.getJSONArray("AddMsgList");
-										final JSONArray modContactList = msgObj.getJSONArray("ModContactList"); // 存在删除或者新增的好友信息
-										msgList = MsgCenter.produceMsg(msgList);
-										for (int j = 0; j < msgList.size(); j++) {
-											final JSONObject userInfo = modContactList.getJSONObject(j);
-											// 存在主动加好友之后的同步联系人到本地
-											core.getContactList().add(userInfo);
-										}
-									} catch (final Exception e) {
-										LOG.info(e.getMessage());
-									}
-								}
-
 							}
-						} else {
-							final JSONObject obj = webWxSync();
-						}
-					} catch (final Exception e) {
-						LOG.info(e.getMessage());
+						} else if (selector.equals("7")) {
+							webWxSync();
+						} else if (selector.equals("4")) {
+							continue;
+						} else if (selector.equals("3")) {
+							continue;
+						} else if (selector.equals("6")) {
+							if (msgObj != null) {
+								try {
+									JSONArray msgList2 = new JSONArray();
+									msgList2 = msgObj.getJSONArray("AddMsgList");
+									final JSONArray modContactList = msgObj.getJSONArray("ModContactList"); // 存在删除或者新增的好友信息
+									msgList2 = MsgCenter.produceMsg(msgList2);
+									for (int j2 = 0; j2 < msgList2.size(); j2++) {
+										final JSONObject userInfo = modContactList.getJSONObject(j2);
+										// 存在主动加好友之后的同步联系人到本地
+										core.getContactList().add(userInfo);
+									}
+								} catch (final Exception e2) {
+									LOG.info(e2.getMessage());
+								}
+							}
 
+						}
+					} else {
+						final JSONObject obj = webWxSync();
 					}
+				} catch (final Exception e3) {
+					LOG.info(e3.getMessage());
 
 				}
+
 			}
 		}).start();
 
@@ -407,16 +402,28 @@ public class LoginServiceImpl implements ILoginService {
 		final HttpEntity entity = httpClient.doPost(url, JSON.toJSONString(paramMap));
 		try {
 			final String text = EntityUtils.toString(entity, Consts.UTF_8);
+			// LOG.info(text);
 			final JSONObject obj = JSON.parseObject(text);
 			final JSONArray contactList = obj.getJSONArray("ContactList");
 			core.getGroupList().clear();
 			core.getGroupNickNameList().clear();
 			for (int i = 0; i < contactList.size(); i++) { // 群好友
-				if (contactList.getJSONObject(i).getString("UserName").indexOf("@@") > -1) { // 群
-					core.getGroupNickNameList().add(contactList.getJSONObject(i).getString("NickName")); // 更新群昵称列表
-					core.getGroupList().add(contactList.getJSONObject(i)); // 更新群信息（所有）列表
-					core.getGroupMemeberMap().put(contactList.getJSONObject(i).getString("UserName"),
-							contactList.getJSONObject(i).getJSONArray("MemberList")); // 更新群成员Map
+				final JSONObject group = contactList.getJSONObject(i);
+				if (group.getString("UserName").indexOf("@@") > -1) { // 群
+					core.getGroupNickNameList().add(group.getString("NickName")); // 更新群昵称列表
+					core.getGroupList().add(group); // 更新群信息（所有）列表
+
+					final JSONArray members = group.getJSONArray("MemberList");
+					core.getGroupMemeberMap().put(group.getString("UserName"), members); // 更新群成员Map
+
+					for (int m = 0; m < members.size(); m++) {
+						final JSONObject member = members.getJSONObject(m);
+						core.getGroupMemberNickMap().put(
+								group.getString("UserName") + "-" + member.getString("UserName"),
+								member.getString("NickName"));
+					}
+
+					core.getGroupNickMap().put(group.getString("UserName"), group.getString("NickName")); // 更新群成员Map
 				}
 			}
 		} catch (final Exception e) {
@@ -640,7 +647,7 @@ public class LoginServiceImpl implements ILoginService {
 		params.add(new BasicNameValuePair("r", String.valueOf(new Date().getTime())));
 		params.add(new BasicNameValuePair("synckey", (String) core.getLoginInfo().get("synckey")));
 		params.add(new BasicNameValuePair("_", String.valueOf(new Date().getTime())));
-		SleepUtils.sleep(7);
+		SleepUtils.sleep(1000);
 		try {
 			final HttpEntity entity = myHttpClient.doGet(url, params, true, null);
 			if (entity == null) {

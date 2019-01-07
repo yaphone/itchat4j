@@ -14,7 +14,7 @@ import cn.zhouyafeng.itchat4j.utils.enums.parameters.BaseParaEnum;
 
 /**
  * 核心存储类，全局只保存一份，单例模式
- * 
+ *
  * @author https://github.com/yaphone
  * @date 创建时间：2017年4月23日 下午2:33:56
  * @version 1.0
@@ -44,21 +44,23 @@ public class Core {
 
 	private String userName;
 	private String nickName;
-	private List<BaseMsg> msgList = new ArrayList<BaseMsg>();
+	private List<BaseMsg> msgList = new ArrayList<>();
 
 	private JSONObject userSelf; // 登陆账号自身信息
-	private List<JSONObject> memberList = new ArrayList<JSONObject>(); // 好友+群聊+公众号+特殊账号
-	private List<JSONObject> contactList = new ArrayList<JSONObject>();// 好友
-	private List<JSONObject> groupList = new ArrayList<JSONObject>();; // 群
-	private Map<String, JSONArray> groupMemeberMap = new HashMap<String, JSONArray>(); // 群聊成员字典
-	private List<JSONObject> publicUsersList = new ArrayList<JSONObject>();;// 公众号／服务号
-	private List<JSONObject> specialUsersList = new ArrayList<JSONObject>();;// 特殊账号
-	private List<String> groupIdList = new ArrayList<String>(); // 群ID列表
-	private List<String> groupNickNameList = new ArrayList<String>(); // 群NickName列表
+	private List<JSONObject> memberList = new ArrayList<>(); // 好友+群聊+公众号+特殊账号
+	private List<JSONObject> contactList = new ArrayList<>();// 好友
+	private List<JSONObject> groupList = new ArrayList<>();; // 群
+	private Map<String, JSONArray> groupMemeberMap = new HashMap<>(); // 群聊成员字典
+	private Map<String, String> groupNickMap = new HashMap<>(); // 群昵称字典
+	private final Map<String, String> groupMemberNickMap = new HashMap<>(); // 群联系人字典
+	private List<JSONObject> publicUsersList = new ArrayList<>();;// 公众号／服务号
+	private List<JSONObject> specialUsersList = new ArrayList<>();;// 特殊账号
+	private List<String> groupIdList = new ArrayList<>(); // 群ID列表
+	private List<String> groupNickNameList = new ArrayList<>(); // 群NickName列表
 
-	private Map<String, JSONObject> userInfoMap = new HashMap<String, JSONObject>();
+	private Map<String, JSONObject> userInfoMap = new HashMap<>();
 
-	Map<String, Object> loginInfo = new HashMap<String, Object>();
+	Map<String, Object> loginInfo = new HashMap<>();
 	// CloseableHttpClient httpClient = HttpClients.createDefault();
 	MyHttpClient myHttpClient = MyHttpClient.getInstance();
 	String uuid = null;
@@ -75,13 +77,13 @@ public class Core {
 	public Map<String, Object> getParamMap() {
 		return new HashMap<String, Object>(1) {
 			/**
-			 * 
+			 *
 			 */
 			private static final long serialVersionUID = 1L;
 
 			{
-				Map<String, String> map = new HashMap<String, String>();
-				for (BaseParaEnum baseRequest : BaseParaEnum.values()) {
+				final Map<String, String> map = new HashMap<>();
+				for (final BaseParaEnum baseRequest : BaseParaEnum.values()) {
 					map.put(baseRequest.para(), getLoginInfo().get(baseRequest.value()).toString());
 				}
 				put("BaseRequest", map);
@@ -257,8 +259,20 @@ public class Core {
 		this.groupNickNameList = groupNickNameList;
 	}
 
+	public Map<String, String> getGroupMemberNickMap() {
+		return groupMemberNickMap;
+	}
+
 	public Map<String, JSONArray> getGroupMemeberMap() {
 		return groupMemeberMap;
+	}
+
+	public Map<String, String> getGroupNickMap() {
+		return groupNickMap;
+	}
+
+	public void setGroupNickMap(Map<String, String> groupNickMap) {
+		this.groupNickMap = groupNickMap;
 	}
 
 	public void setGroupMemeberMap(Map<String, JSONArray> groupMemeberMap) {

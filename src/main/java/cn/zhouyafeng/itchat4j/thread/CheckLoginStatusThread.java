@@ -31,9 +31,10 @@ public class CheckLoginStatusThread implements Runnable {
 			final long t1 = System.currentTimeMillis(); // 秒为单位
 			if (t1 - core.getLastNormalRetcodeTime() > 60 * 1000) { // 超过60秒，判为离线
 				core.setAlive(false);
-				LOG.info("微信已离线");
+				LOG.info("wechat outline");
 				final BaseMsg msg = new BaseMsg();
-				msg.setType(MsgTypeEnum.OUTLINE.getCode());
+				msg.setType(MsgTypeEnum.OUTLINE.getType());
+				msg.setContent("OUTLINE");
 				core.getMsgList().add(msg);
 
 			}

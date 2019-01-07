@@ -17,6 +17,8 @@ public class BaseMsg implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String dateId;// 天
 	private String actualUserName;// 如果是群的话，该字段表示消息发送者
+	private String groupNickName;// 昵称 因为群ID每次登录都会变
+	private String nickName;// 昵称 因为群ID每次登录都会变
 	private int subMsgType;
 	private int voiceLength;
 	private String fileName;
@@ -307,6 +309,22 @@ public class BaseMsg implements Serializable {
 
 	public void setDateId(String dateId) {
 		this.dateId = dateId;
+	}
+
+	public String getGroupNickName() {
+		return groupNickName;
+	}
+
+	public void setGroupNickName(String groupNickName) {
+		this.groupNickName = groupNickName;
+	}
+
+	public String getNickName() {
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
 	}
 
 }

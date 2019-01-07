@@ -4,7 +4,8 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cn.zhouyafeng.itchat4j.api.MessageTools;
 import cn.zhouyafeng.itchat4j.api.WechatTools;
@@ -24,7 +25,7 @@ import cn.zhouyafeng.itchat4j.utils.tools.DownloadTools;
  *
  */
 public class SimpleDemo implements IMsgHandlerFace {
-	Logger LOG = Logger.getLogger(SimpleDemo.class);
+	Logger LOG = LoggerFactory.getLogger(SimpleDemo.class);
 
 	@Override
 	public String textMsgHandle(BaseMsg msg) {
