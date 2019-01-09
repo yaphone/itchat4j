@@ -32,6 +32,43 @@ public class LoginController {
 		loginService.WebWxBatchGetContact();
 	}
 
+	/**
+	 * cookie保持的话 可以直接尝试登录，不需要扫码
+	 */
+	public void reload() {
+		loginService.login();
+		core.setAlive(true);
+		LOG.info(("登陆成功"));
+		LOG.info("5. 登陆成功，微信初始化");
+		if (!loginService.webWxInit()) {
+			LOG.info("6. 微信初始化异常");
+			System.exit(0);
+		}
+
+		LOG.info("6. 开启微信状态通知");
+		loginService.wxStatusNotify();
+
+		LOG.info("7. 清除。。。。");
+		CommonTools.clearScreen();
+		LOG.info(String.format("欢迎回来， %s", core.getNickName()));
+
+		LOG.info("8. 开始接收消息");
+		loginService.startReceiving();
+
+		LOG.info("9. 获取联系人信息");
+		loginService.webWxGetContact();
+
+		LOG.info("10. 获取群好友及群好友列表");
+		loginService.WebWxBatchGetContact();
+
+		LOG.info("11. 缓存本次登陆好友相关消息");
+		WechatTools.setUserInfo(); // 登陆成功后缓存本次登陆好友相关消息（NickName, UserName）
+
+		LOG.info("12.开启微信状态检测线程");
+		new Thread(new CheckLoginStatusThread()).start();
+		WechatTools.dumpCookie();
+	}
+
 	public void login(String qrPath, boolean reload) {
 		if (core.isAlive()) { // 已登陆
 			LOG.info("itchat4j已登陆");

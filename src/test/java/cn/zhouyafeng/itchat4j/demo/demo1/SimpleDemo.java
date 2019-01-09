@@ -109,7 +109,12 @@ public class SimpleDemo implements IMsgHandlerFace {
 	@Override
 	public void outlineHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
-
+		try {
+			Thread.sleep(10000);
+		} catch (final InterruptedException e) {
+			e.printStackTrace();
+		}
+		MyWechat.getInstance().wechat.getLogin().reload();
 	}
 
 }

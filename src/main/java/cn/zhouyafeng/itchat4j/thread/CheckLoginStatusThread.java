@@ -36,6 +36,7 @@ public class CheckLoginStatusThread implements Runnable {
 				msg.setType(MsgTypeEnum.OUTLINE.getType());
 				msg.setContent("OUTLINE");
 				core.getMsgList().add(msg);
+				break;
 
 			}
 			SleepUtils.sleep(10 * 1000); // 休眠10秒

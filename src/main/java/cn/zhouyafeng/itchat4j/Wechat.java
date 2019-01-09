@@ -12,13 +12,13 @@ public class Wechat {
 	private final IMsgHandlerFace msgHandler;
 	private final LoginController login;
 
-	public Wechat(IMsgHandlerFace msgHandler, String qrPath, boolean reload) {
+	public Wechat(IMsgHandlerFace msgHandler, String qrPath, boolean hotReload) {
 		System.setProperty("jsse.enableSNIExtension", "false"); // 防止SSL错误
 		this.msgHandler = msgHandler;
 
 		// 登陆
 		login = new LoginController();
-		login.login(qrPath, reload);
+		login.login(qrPath, hotReload);
 	}
 
 	public void start() {
