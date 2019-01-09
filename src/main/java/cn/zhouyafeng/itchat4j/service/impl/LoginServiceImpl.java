@@ -416,7 +416,7 @@ public class LoginServiceImpl implements ILoginService {
 
 					final JSONArray members = group.getJSONArray("MemberList");
 					core.getGroupMemeberMap().put(group.getString("UserName"), members); // 更新群成员Map
-
+					core.getGroupMap().put(group.getString("UserName"), group);
 					for (int m = 0; m < members.size(); m++) {
 						final JSONObject member = members.getJSONObject(m);
 						core.getGroupMemberNickMap().put(

@@ -55,6 +55,7 @@ public class Core {
 	private List<JSONObject> contactList = new ArrayList<>();// 好友
 	private List<JSONObject> groupList = new ArrayList<>();; // 群
 	private Map<String, JSONArray> groupMemeberMap = new HashMap<>(); // 群聊成员字典
+	private final Map<String, JSONObject> groupMap = new HashMap<>(); // 群聊成员字典
 	private Map<String, String> groupNickMap = new HashMap<>(); // 群昵称字典
 	private final Map<String, String> groupMemberNickMap = new HashMap<>(); // 群联系人字典
 	private List<JSONObject> publicUsersList = new ArrayList<>();;// 公众号／服务号
@@ -290,6 +291,10 @@ public class Core {
 
 	public void setIndexUrl(String indexUrl) {
 		this.indexUrl = indexUrl;
+	}
+
+	public Map<String, JSONObject> getGroupMap() {
+		return groupMap;
 	}
 
 	@SuppressWarnings("unchecked")
