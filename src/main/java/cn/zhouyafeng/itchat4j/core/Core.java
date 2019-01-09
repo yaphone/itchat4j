@@ -1,9 +1,13 @@
 package cn.zhouyafeng.itchat4j.core;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.io.FileUtils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -64,9 +68,10 @@ public class Core {
 	// CloseableHttpClient httpClient = HttpClients.createDefault();
 	MyHttpClient myHttpClient = MyHttpClient.getInstance();
 	String uuid = null;
+	private static Map<String, String> cookieMap = new HashMap<>();// 暂存cookie
 
 	boolean useHotReload = false;
-	String hotReloadDir = "itchat.pkl";
+	static String hotReloadDir = "itchat.pkl";
 	int receivingRetryCount = 5;
 
 	private long lastNormalRetcodeTime; // 最后一次收到正常retcode的时间，秒为单位
@@ -139,12 +144,12 @@ public class Core {
 		this.useHotReload = useHotReload;
 	}
 
-	public String getHotReloadDir() {
+	public static String getHotReloadDir() {
 		return hotReloadDir;
 	}
 
 	public void setHotReloadDir(String hotReloadDir) {
-		this.hotReloadDir = hotReloadDir;
+		Core.hotReloadDir = hotReloadDir;
 	}
 
 	public int getReceivingRetryCount() {
@@ -285,6 +290,23 @@ public class Core {
 
 	public void setIndexUrl(String indexUrl) {
 		this.indexUrl = indexUrl;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static Map<String, String> getCookieMap() {
+		if (cookieMap.keySet().size() == 0) {
+			try {
+				final String cookies = FileUtils.readFileToString(new File(hotReloadDir), "utf-8");
+				return cookieMap = JSONObject.parseObject(cookies, HashMap.class);
+			} catch (final IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return cookieMap;
+	}
+
+	public static void setCookieMap(Map<String, String> cookieMap) {
+		Core.cookieMap = cookieMap;
 	}
 
 }

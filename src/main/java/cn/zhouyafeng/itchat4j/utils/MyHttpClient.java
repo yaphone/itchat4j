@@ -1,12 +1,14 @@
 package cn.zhouyafeng.itchat4j.utils;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.http.Consts;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.client.ClientProtocolException;
@@ -21,6 +23,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -42,13 +45,16 @@ public class MyHttpClient {
 	private static MyHttpClient instance = null;
 
 	private static CookieStore cookieStore;
+	private static String USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36";
+	private static Header agentHeader;
 	private static HttpHost proxy = new HttpHost("172.18.13.171", 3128, HttpHost.DEFAULT_SCHEME_NAME);// 代理
 	static {
 		cookieStore = new BasicCookieStore();
-
+		agentHeader = new BasicHeader("User-Agent", USER_AGENT);
 		// 将CookieStore设置到httpClient中
 		logger.info("proxy:" + proxy.getHostName() + ":" + proxy.getPort());
-		httpClient = HttpClients.custom().setProxy(proxy).setDefaultCookieStore(cookieStore).build();
+		httpClient = HttpClients.custom().setProxy(proxy).setDefaultCookieStore(cookieStore)
+				.setDefaultHeaders(Arrays.asList(agentHeader)).build();
 	}
 
 	public static String getCookie(String name) {
@@ -60,6 +66,19 @@ public class MyHttpClient {
 		}
 		return null;
 
+	}
+
+	public static void setCookie(CookieStore dumpCookieStore) {
+		if (dumpCookieStore != null) {
+			cookieStore = dumpCookieStore;
+			try {
+				httpClient.close();
+			} catch (final IOException e) {
+				e.printStackTrace();
+			}
+			httpClient = HttpClients.custom().setProxy(proxy).setDefaultCookieStore(cookieStore)
+					.setDefaultHeaders(Arrays.asList(agentHeader)).build();
+		}
 	}
 
 	private MyHttpClient() {
@@ -181,6 +200,10 @@ public class MyHttpClient {
 
 	public static CloseableHttpClient getHttpClient() {
 		return httpClient;
+	}
+
+	public static CookieStore getCookieStore() {
+		return cookieStore;
 	}
 
 }

@@ -25,6 +25,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import cn.zhouyafeng.itchat4j.api.WechatTools;
 import cn.zhouyafeng.itchat4j.beans.BaseMsg;
 import cn.zhouyafeng.itchat4j.core.Core;
 import cn.zhouyafeng.itchat4j.core.MsgCenter;
@@ -683,5 +684,24 @@ public class LoginServiceImpl implements ILoginService {
 			return rs[0];
 		}
 		return "";
+	}
+
+	@Override
+	public String pushLogin() {
+
+		MyHttpClient.setCookie(WechatTools.readCookieStore());
+		final String url = String.format(URLEnum.WEB_WX_PUSH_LOGIN_URL.getUrl(), MyHttpClient.getCookie("wxuin"));
+		final HttpEntity entity = myHttpClient.doGet(url, null, true, null);
+		try {
+			final String result = EntityUtils.toString(entity);
+			final JSONObject data = JSONObject.parseObject(result);
+			if (data.containsKey("uuid")) {
+				return data.getString("uuid");
+			}
+		} catch (final Exception e) {
+			LOG.error("微信pushLogin异常！", e);
+		}
+
+		return null;
 	}
 }
