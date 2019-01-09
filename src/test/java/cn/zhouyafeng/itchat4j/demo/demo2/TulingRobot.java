@@ -22,7 +22,7 @@ import cn.zhouyafeng.itchat4j.utils.tools.DownloadTools;
 
 /**
  * 图灵机器人示例
- * 
+ *
  * @author https://github.com/yaphone
  * @date 创建时间：2017年4月24日 上午12:13:26
  * @version 1.0
@@ -37,22 +37,22 @@ public class TulingRobot implements IMsgHandlerFace {
 	@Override
 	public String textMsgHandle(BaseMsg msg) {
 		String result = "";
-		String text = msg.getText();
-		Map<String, String> paramMap = new HashMap<String, String>();
+		final String text = msg.getText();
+		final Map<String, String> paramMap = new HashMap<>();
 		paramMap.put("key", apiKey);
 		paramMap.put("info", text);
 		paramMap.put("userid", "123456");
-		String paramStr = JSON.toJSONString(paramMap);
+		final String paramStr = JSON.toJSONString(paramMap);
 		try {
-			HttpEntity entity = myHttpClient.doPost(url, paramStr);
+			final HttpEntity entity = myHttpClient.doPost(url, paramStr);
 			result = EntityUtils.toString(entity, "UTF-8");
-			JSONObject obj = JSON.parseObject(result);
+			final JSONObject obj = JSON.parseObject(result);
 			if (obj.getString("code").equals("100000")) {
 				result = obj.getString("text");
 			} else {
 				result = "处理有误";
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.info(e.getMessage());
 		}
 		return result;
@@ -65,23 +65,23 @@ public class TulingRobot implements IMsgHandlerFace {
 
 	@Override
 	public String voiceMsgHandle(BaseMsg msg) {
-		String fileName = String.valueOf(new Date().getTime());
-		String voicePath = "D://itchat4j/voice" + File.separator + fileName + ".mp3";
+		final String fileName = String.valueOf(new Date().getTime());
+		final String voicePath = "D://itchat4j/voice" + File.separator + fileName + ".mp3";
 		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VOICE.getType(), voicePath);
 		return "收到语音";
 	}
 
 	@Override
 	public String viedoMsgHandle(BaseMsg msg) {
-		String fileName = String.valueOf(new Date().getTime());
-		String viedoPath = "D://itchat4j/viedo" + File.separator + fileName + ".mp4";
+		final String fileName = String.valueOf(new Date().getTime());
+		final String viedoPath = "D://itchat4j/viedo" + File.separator + fileName + ".mp4";
 		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VIEDO.getType(), viedoPath);
 		return "收到视频";
 	}
 
 	public static void main(String[] args) {
-		IMsgHandlerFace msgHandler = new TulingRobot();
-		Wechat wechat = new Wechat(msgHandler, "D://itchat4j/login");
+		final IMsgHandlerFace msgHandler = new TulingRobot();
+		final Wechat wechat = new Wechat(msgHandler, "D://itchat4j/login", false);
 		wechat.start();
 	}
 
@@ -106,6 +106,12 @@ public class TulingRobot implements IMsgHandlerFace {
 	public String mediaMsgHandle(BaseMsg msg) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void outlineHandle(BaseMsg msg) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
