@@ -14,7 +14,7 @@ import cn.zhouyafeng.itchat4j.utils.enums.parameters.BaseParaEnum;
 
 /**
  * 核心存储类，全局只保存一份，单例模式
- * 
+ *
  * @author https://github.com/yaphone
  * @date 创建时间：2017年4月23日 下午2:33:56
  * @version 1.0
@@ -22,7 +22,7 @@ import cn.zhouyafeng.itchat4j.utils.enums.parameters.BaseParaEnum;
  */
 public class Core {
 
-	private static Core instance;
+	private static volatile Core instance;
 
 	private Core() {
 
@@ -75,7 +75,7 @@ public class Core {
 	public Map<String, Object> getParamMap() {
 		return new HashMap<String, Object>(1) {
 			/**
-			 * 
+			 *
 			 */
 			private static final long serialVersionUID = 1L;
 
