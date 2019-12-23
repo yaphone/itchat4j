@@ -123,8 +123,8 @@ public class LoginServiceImpl implements ILoginService {
                     LOG.error("微信登陆异常！", e);
                 }
             }
+            isLoginLoop.set(true);
         }
-        isLoginLoop.set(true);
         return isLogin;
     }
 
