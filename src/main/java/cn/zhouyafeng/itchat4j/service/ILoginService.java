@@ -11,10 +11,8 @@ public interface ILoginService {
 
     /**
      * 重新登录
-     *
-     * @return
      */
-    boolean reLogin();
+    void reLogin();
 
     /**
      * 登陆
@@ -28,7 +26,7 @@ public interface ILoginService {
     /**
      * 获取UUID
      *
-     * @param qrPath
+     * @param
      * @return
      * @author https://github.com/yaphone
      * @date 2017年5月13日 上午12:21:40

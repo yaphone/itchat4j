@@ -35,6 +35,8 @@ public class WechatTools {
 
     private static Core core = Core.getInstance();
 
+    private static ILoginService loginService = LoginServiceImpl.getInstance();
+
     /**
      * 根据用户名发送文本消息
      *
@@ -219,18 +221,14 @@ public class WechatTools {
      * @return
      */
     public static boolean reLogin() {
-        ILoginService loginService = LoginServiceImpl.getInstance();
-
         if (core.isAlive() || core.isLogin()) {
             return false;
         } else {
             LOG.info("+++++++++++++++++++开始重新启动+++++++++++++++++++++");
             new Thread(() -> {
-                if (loginService.reLogin()) {
-                    LOG.info("开始重启");
-                    LoginController login = new LoginController();
-                    login.login(core.getQrPath());
-                }
+                loginService.reLogin();
+                LoginController login = new LoginController();
+                login.login(core.getQrPath());
             }).start();
             return true;
         }

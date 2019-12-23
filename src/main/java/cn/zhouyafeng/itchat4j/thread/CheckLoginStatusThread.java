@@ -1,5 +1,7 @@
 package cn.zhouyafeng.itchat4j.thread;
 
+import cn.zhouyafeng.itchat4j.service.ILoginService;
+import cn.zhouyafeng.itchat4j.service.impl.LoginServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

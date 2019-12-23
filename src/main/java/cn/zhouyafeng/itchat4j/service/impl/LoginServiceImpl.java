@@ -55,6 +55,7 @@ public class LoginServiceImpl implements ILoginService {
 
     private final AtomicBoolean isLoginLoop = new AtomicBoolean(true);
     private static final Object LOGIN_LOCK = new Object();
+    private static AtomicBoolean LOCK = new AtomicBoolean(false);
 
     private static Logger LOG = LoggerFactory.getLogger(LoginServiceImpl.class);
 
@@ -77,16 +78,17 @@ public class LoginServiceImpl implements ILoginService {
     }
 
     @Override
-    public boolean reLogin() {
-        if (isLoginLoop.get()) {
+    public synchronized void reLogin() {
+        if (isLoginLoop.get() && LOCK.get()) {
             isLoginLoop.set(false);
-            return true;
         }
-        return false;
     }
+
+    private static int login_count = 0;
 
     @Override
     public boolean login() {
+
 
         boolean isLogin = false;
         // 组装参数和URL
@@ -95,7 +97,13 @@ public class LoginServiceImpl implements ILoginService {
         params.add(new BasicNameValuePair(LoginParaEnum.UUID.para(), core.getUuid()));
         params.add(new BasicNameValuePair(LoginParaEnum.TIP.para(), LoginParaEnum.TIP.value()));
 
+        int count;
         synchronized (LOGIN_LOCK) {
+            LOCK.set(true);
+            isLoginLoop.set(true);
+            count = ++login_count;
+            LOG.info("登录，第【" + count + "】次进入锁");
+
             // long time = 4000;
             while (isLoginLoop.get()) {
                 // SleepUtils.sleep(time += 1000);
@@ -111,7 +119,6 @@ public class LoginServiceImpl implements ILoginService {
                     if (ResultEnum.SUCCESS.getCode().equals(status)) {
                         processLoginInfo(result); // 处理结果
                         isLogin = true;
-                        isLoginLoop.set(false);
                         core.setLogin(true);
                         break;
                     }
@@ -123,8 +130,9 @@ public class LoginServiceImpl implements ILoginService {
                     LOG.error("微信登陆异常！", e);
                 }
             }
-            isLoginLoop.set(true);
+            LOCK.set(false);
         }
+        LOG.info("登录，第【" + count + "】次跳出锁，isLogin：" + isLogin);
         return isLogin;
     }
 
@@ -476,7 +484,7 @@ public class LoginServiceImpl implements ILoginService {
     /**
      * 处理登陆信息
      *
-     * @param result
+     * @param
      * @author https://github.com/yaphone
      * @date 2017年4月9日 下午12:16:26
      */
