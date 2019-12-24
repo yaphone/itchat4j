@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 
@@ -275,95 +278,94 @@ public class LoginServiceImpl implements ILoginService {
 
     }
 
+    private static final ThreadPoolExecutor receivingExecutor = new ThreadPoolExecutor(1, 1, 5,
+            TimeUnit.SECONDS, new LinkedBlockingQueue<>(1), new ThreadPoolExecutor.DiscardOldestPolicy());
+
     @Override
     public void startReceiving() {
         core.setAlive(true);
-        new Thread(new Runnable() {
+        receivingExecutor.execute(() -> {
             int retryCount = 0;
 
-            @Override
-            public void run() {
-                while (core.isAlive()) {
-                    try {
-                        Map<String, String> resultMap = syncCheck();
-                        LOG.info(JSONObject.toJSONString(resultMap));
-                        String retcode = resultMap.get("retcode");
-                        String selector = resultMap.get("selector");
-                        if (retcode.equals(RetCodeEnum.UNKOWN.getCode())) {
-                            LOG.info(RetCodeEnum.UNKOWN.getType());
+            while (core.isAlive()) {
+                try {
+                    Map<String, String> resultMap = syncCheck();
+                    LOG.info(JSONObject.toJSONString(resultMap));
+                    String retcode = resultMap.get("retcode");
+                    String selector = resultMap.get("selector");
+                    if (retcode.equals(RetCodeEnum.UNKOWN.getCode())) {
+                        LOG.info(RetCodeEnum.UNKOWN.getType());
+                        continue;
+                    } else if (retcode.equals(RetCodeEnum.LOGIN_OUT.getCode())) { // 退出
+                        LOG.info(RetCodeEnum.LOGIN_OUT.getType());
+                        break;
+                    } else if (retcode.equals(RetCodeEnum.LOGIN_OTHERWHERE.getCode())) { // 其它地方登陆
+                        LOG.info(RetCodeEnum.LOGIN_OTHERWHERE.getType());
+                        break;
+                    } else if (retcode.equals(RetCodeEnum.MOBILE_LOGIN_OUT.getCode())) { // 移动端退出
+                        LOG.info(RetCodeEnum.MOBILE_LOGIN_OUT.getType());
+                        break;
+                    } else if (retcode.equals(RetCodeEnum.NORMAL.getCode())) {
+                        core.setLastNormalRetcodeTime(System.currentTimeMillis()); // 最后收到正常报文时间
+                        JSONObject msgObj = webWxSync();
+                        if (selector.equals("2")) {
+                            if (msgObj != null) {
+                                try {
+                                    JSONArray msgList = new JSONArray();
+                                    msgList = msgObj.getJSONArray("AddMsgList");
+                                    msgList = MsgCenter.produceMsg(msgList);
+                                    for (int j = 0; j < msgList.size(); j++) {
+                                        BaseMsg baseMsg = JSON.toJavaObject(msgList.getJSONObject(j),
+                                                BaseMsg.class);
+                                        core.getMsgList().add(baseMsg);
+                                    }
+                                } catch (Exception e) {
+                                    LOG.info(e.getMessage());
+                                }
+                            }
+                        } else if (selector.equals("7")) {
+                            webWxSync();
+                        } else if (selector.equals("4")) {
                             continue;
-                        } else if (retcode.equals(RetCodeEnum.LOGIN_OUT.getCode())) { // 退出
-                            LOG.info(RetCodeEnum.LOGIN_OUT.getType());
-                            break;
-                        } else if (retcode.equals(RetCodeEnum.LOGIN_OTHERWHERE.getCode())) { // 其它地方登陆
-                            LOG.info(RetCodeEnum.LOGIN_OTHERWHERE.getType());
-                            break;
-                        } else if (retcode.equals(RetCodeEnum.MOBILE_LOGIN_OUT.getCode())) { // 移动端退出
-                            LOG.info(RetCodeEnum.MOBILE_LOGIN_OUT.getType());
-                            break;
-                        } else if (retcode.equals(RetCodeEnum.NORMAL.getCode())) {
-                            core.setLastNormalRetcodeTime(System.currentTimeMillis()); // 最后收到正常报文时间
-                            JSONObject msgObj = webWxSync();
-                            if (selector.equals("2")) {
-                                if (msgObj != null) {
-                                    try {
-                                        JSONArray msgList = new JSONArray();
-                                        msgList = msgObj.getJSONArray("AddMsgList");
-                                        msgList = MsgCenter.produceMsg(msgList);
-                                        for (int j = 0; j < msgList.size(); j++) {
-                                            BaseMsg baseMsg = JSON.toJavaObject(msgList.getJSONObject(j),
-                                                    BaseMsg.class);
-                                            core.getMsgList().add(baseMsg);
-                                        }
-                                    } catch (Exception e) {
-                                        LOG.info(e.getMessage());
+                        } else if (selector.equals("3")) {
+                            continue;
+                        } else if (selector.equals("6")) {
+                            if (msgObj != null) {
+                                try {
+                                    JSONArray msgList = new JSONArray();
+                                    msgList = msgObj.getJSONArray("AddMsgList");
+                                    JSONArray modContactList = msgObj.getJSONArray("ModContactList"); // 存在删除或者新增的好友信息
+                                    msgList = MsgCenter.produceMsg(msgList);
+                                    for (int j = 0; j < msgList.size(); j++) {
+                                        JSONObject userInfo = modContactList.getJSONObject(j);
+                                        // 存在主动加好友之后的同步联系人到本地
+                                        core.getContactList().add(userInfo);
                                     }
+                                } catch (Exception e) {
+                                    LOG.info(e.getMessage());
                                 }
-                            } else if (selector.equals("7")) {
-                                webWxSync();
-                            } else if (selector.equals("4")) {
-                                continue;
-                            } else if (selector.equals("3")) {
-                                continue;
-                            } else if (selector.equals("6")) {
-                                if (msgObj != null) {
-                                    try {
-                                        JSONArray msgList = new JSONArray();
-                                        msgList = msgObj.getJSONArray("AddMsgList");
-                                        JSONArray modContactList = msgObj.getJSONArray("ModContactList"); // 存在删除或者新增的好友信息
-                                        msgList = MsgCenter.produceMsg(msgList);
-                                        for (int j = 0; j < msgList.size(); j++) {
-                                            JSONObject userInfo = modContactList.getJSONObject(j);
-                                            // 存在主动加好友之后的同步联系人到本地
-                                            core.getContactList().add(userInfo);
-                                        }
-                                    } catch (Exception e) {
-                                        LOG.info(e.getMessage());
-                                    }
-                                }
+                            }
 
-                            }
-                        } else {
-                            JSONObject obj = webWxSync();
                         }
-                    } catch (Exception e) {
-                        LOG.info(e.getMessage());
-                        retryCount += 1;
-                        if (core.getReceivingRetryCount() < retryCount) {
-                            core.setAlive(false);
-                        } else {
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e1) {
-                                LOG.info(e.getMessage());
-                            }
+                    } else {
+                        JSONObject obj = webWxSync();
+                    }
+                } catch (Exception e) {
+                    LOG.info(e.getMessage());
+                    retryCount += 1;
+                    if (core.getReceivingRetryCount() < retryCount) {
+                        core.setAlive(false);
+                    } else {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e1) {
+                            LOG.info(e.getMessage());
                         }
                     }
-
                 }
             }
-        }).start();
 
+        });
     }
 
     @Override
