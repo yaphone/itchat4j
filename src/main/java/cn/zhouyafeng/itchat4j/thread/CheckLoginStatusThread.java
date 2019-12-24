@@ -31,6 +31,21 @@ public class CheckLoginStatusThread implements Runnable {
             if (t1 - core.getLastNormalRetcodeTime() > 60 * 1000) { // 超过60秒，判为离线
                 core.setAlive(false);
                 core.setLogin(false);
+                // 清除历史状态
+                core.setMemberCount(0);
+
+                core.getMemberList().clear();
+                core.getContactList().clear();
+                core.getGroupList().clear();
+
+                core.getGroupMemeberMap().clear();
+                core.getPublicUsersList().clear();
+                core.getSpecialUsersList().clear();
+
+                core.getGroupIdList().clear();
+                core.getGroupNickNameList().clear();
+
+                core.getLoginInfo().clear();
                 LOG.info("微信已离线");
             }
             SleepUtils.sleep(10 * 1000); // 休眠10秒
