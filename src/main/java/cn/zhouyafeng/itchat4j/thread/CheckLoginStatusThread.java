@@ -2,6 +2,7 @@ package cn.zhouyafeng.itchat4j.thread;
 
 import cn.zhouyafeng.itchat4j.service.ILoginService;
 import cn.zhouyafeng.itchat4j.service.impl.LoginServiceImpl;
+import cn.zhouyafeng.itchat4j.utils.EmailUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +48,21 @@ public class CheckLoginStatusThread implements Runnable {
 
                 core.getLoginInfo().clear();
                 LOG.info("微信已离线");
+
+                if (null != core.getEmailUtils() && null != core.getEmails()) {
+                    EmailUtils emailUtils = core.getEmailUtils();
+                    for (EmailUtils.Email email : core.getEmails()) {
+                        boolean flag = emailUtils.setMail(email);
+                        if (flag) {
+                            try {
+                                emailUtils.send();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                LOG.info("邮件发送失败");
+                            }
+                        }
+                    }
+                }
             }
             SleepUtils.sleep(10 * 1000); // 休眠10秒
         }

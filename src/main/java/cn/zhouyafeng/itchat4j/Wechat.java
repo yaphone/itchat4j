@@ -1,12 +1,15 @@
 package cn.zhouyafeng.itchat4j;
 
 import cn.zhouyafeng.itchat4j.core.Core;
+import cn.zhouyafeng.itchat4j.utils.EmailUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cn.zhouyafeng.itchat4j.controller.LoginController;
 import cn.zhouyafeng.itchat4j.core.MsgCenter;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
+
+import java.util.List;
 
 public class Wechat {
     private static final Logger LOG = LoggerFactory.getLogger(Wechat.class);
@@ -29,4 +32,15 @@ public class Wechat {
         new Thread(() -> MsgCenter.handleMsg(msgHandler)).start();
     }
 
+    /**
+     * 设置离线发送邮件提醒
+     *
+     * @param config
+     * @param emails
+     */
+    public void setLoginOutSendEmail(EmailUtils.EmailConfig config, EmailUtils.Email... emails) {
+        EmailUtils emailUtils = new EmailUtils();
+        emailUtils.init(config);
+        core.setLoginOutSendEmail(emailUtils, emails);
+    }
 }

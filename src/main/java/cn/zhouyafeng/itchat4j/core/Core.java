@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.zhouyafeng.itchat4j.utils.EmailUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
@@ -294,4 +295,26 @@ public class Core {
         this.indexUrl = indexUrl;
     }
 
+    private EmailUtils emailUtils;
+
+    private EmailUtils.Email[] emails;
+
+    /**
+     * 设置登出发送提醒邮件
+     *
+     * @param emailUtils
+     * @param emails
+     */
+    public synchronized void setLoginOutSendEmail(EmailUtils emailUtils, EmailUtils.Email[] emails) {
+        this.emailUtils = emailUtils;
+        this.emails = emails;
+    }
+
+    public EmailUtils getEmailUtils() {
+        return emailUtils;
+    }
+
+    public EmailUtils.Email[] getEmails() {
+        return emails;
+    }
 }
