@@ -106,8 +106,6 @@ public class EmailUtils {
         session.setDebug(false);
         // 用session对象来创建并初始化邮件对象
         mimeMsg = new MimeMessage(session);
-        // 生成附件组件的实例
-        mp = new MimeMultipart();
     }
 
     /**
@@ -134,6 +132,9 @@ public class EmailUtils {
             if (null != email.cc && email.cc.length > 0) {
                 mimeMsg.setRecipients(Message.RecipientType.CC, toInternetAddressList(email.cc));
             }
+
+            // 生成附件组件的实例
+            mp = new MimeMultipart();
 
             // 在组件上添加邮件文本
             BodyPart bp = new MimeBodyPart();
