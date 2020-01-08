@@ -3,6 +3,7 @@ package cn.zhouyafeng.itchat4j.core;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 
+import cn.zhouyafeng.itchat4j.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +19,7 @@ import cn.zhouyafeng.itchat4j.utils.tools.CommonTools;
 
 /**
  * 消息处理中心
- * 
+ *
  * @author https://github.com/yaphone
  * @date 创建时间：2017年5月14日 下午12:47:50
  * @version 1.0
@@ -31,7 +32,7 @@ public class MsgCenter {
 
 	/**
 	 * 接收消息，放入队列
-	 * 
+	 *
 	 * @author https://github.com/yaphone
 	 * @date 2017年4月23日 下午2:30:48
 	 * @param msgList
@@ -114,7 +115,7 @@ public class MsgCenter {
 
 	/**
 	 * 消息处理
-	 * 
+	 *
 	 * @author https://github.com/yaphone
 	 * @date 2017年5月14日 上午10:52:34
 	 * @param msgHandler
@@ -128,29 +129,43 @@ public class MsgCenter {
 						try {
 							if (msg.getType().equals(MsgTypeEnum.TEXT.getType())) {
 								String result = msgHandler.textMsgHandle(msg);
-								MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
+								if(StringUtils.isNotEmpty(result)){
+                                    MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
+                                }
 							} else if (msg.getType().equals(MsgTypeEnum.PIC.getType())) {
 
 								String result = msgHandler.picMsgHandle(msg);
-								MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
+                                if(StringUtils.isNotEmpty(result)){
+                                    MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
+                                }
 							} else if (msg.getType().equals(MsgTypeEnum.VOICE.getType())) {
 								String result = msgHandler.voiceMsgHandle(msg);
-								MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
+                                if(StringUtils.isNotEmpty(result)){
+                                    MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
+                                }
 							} else if (msg.getType().equals(MsgTypeEnum.VIEDO.getType())) {
 								String result = msgHandler.viedoMsgHandle(msg);
-								MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
+                                if(StringUtils.isNotEmpty(result)){
+                                    MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
+                                }
 							} else if (msg.getType().equals(MsgTypeEnum.NAMECARD.getType())) {
 								String result = msgHandler.nameCardMsgHandle(msg);
-								MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
+                                if(StringUtils.isNotEmpty(result)){
+                                    MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
+                                }
 							} else if (msg.getType().equals(MsgTypeEnum.SYS.getType())) { // 系统消息
 								msgHandler.sysMsgHandle(msg);
 							} else if (msg.getType().equals(MsgTypeEnum.VERIFYMSG.getType())) { // 确认添加好友消息
 								String result = msgHandler.verifyAddFriendMsgHandle(msg);
-								MessageTools.sendMsgById(result,
-										core.getMsgList().get(0).getRecommendInfo().getUserName());
+                                if(StringUtils.isNotEmpty(result)){
+                                    MessageTools.sendMsgById(result,
+                                            core.getMsgList().get(0).getRecommendInfo().getUserName());
+                                }
 							} else if (msg.getType().equals(MsgTypeEnum.MEDIA.getType())) { // 多媒体消息
 								String result = msgHandler.mediaMsgHandle(msg);
-								MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
+                                if(StringUtils.isNotEmpty(result)){
+                                    MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
+                                }
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
