@@ -30,7 +30,7 @@ public class LoginController {
 			return;
 		}
 		while (true) {
-			for (int count = 0; count < 10; count++) {
+			for (int count = 0; count <= 10; count++) {
 				LOG.info("获取UUID");
 				while (loginService.getUuid() == null) {
 					LOG.info("1. 获取微信UUID");
