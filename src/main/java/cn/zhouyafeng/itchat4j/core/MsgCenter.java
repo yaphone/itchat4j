@@ -54,6 +54,10 @@ public class MsgCenter {
 				// 群消息与普通消息不同的是在其消息体（Content）中会包含发送者id及":<br/>"消息，这里需要处理一下，去掉多余信息，只保留消息内容
 				if (m.getString("Content").contains("<br/>")) {
 					String content = m.getString("Content").substring(m.getString("Content").indexOf("<br/>") + 5);
+
+					//获取发送者的ID
+					m.put("fasongzheID",m.getString("Content").substring(0,m.getString("Content").indexOf("<br/>")-1));
+
 					m.put("Content", content);
 					m.put("groupMsg", true);
 				}
